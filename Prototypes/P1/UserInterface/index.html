@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="favicon.png">
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!--Import Google Icon Font-->
+  <link href="https://fonts.googleapis.com/css?family=Cinzel|News+Cycle" rel="stylesheet">
+  <link type="text/css" rel="stylesheet" href="css/main.css" media="screen,projection">
+  <meta name="author" content="Kyle Gough">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="keywords" content="chatbot trader ftse 100 chat bot assisant stock price">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> <!--jQuery-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css"> <!--Materialize CSS-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+  <script src="js/artyom.window.min.js"></script> <!--Artyom Speech API Wrapper-->
+  <script src="https://d3js.org/d3.v4.min.js"></script> <!--###D3.js###-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script> <!--Chart.js-->
+  <script src="js/main.js"></script> <!--Custom JS-->
+  <base href="" />
+  <title>Trader ChatBot</title>
+</head>
+
+<body>
+
+<nav>
+  <div class="nav-wrapper">
+    <a href="#" class="brand-logo">Trader ChatBot</a>
+    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+    <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <li><a class="modal-trigger" href="#favourites">Favourites</a></li>
+      <li><a class="modal-trigger" href="#help">Help</a></li>
+      <li><a class="modal-trigger" href="#settings">Settings</a></li>
+    </ul>
+    <ul class="side-nav" id="mobile-demo">
+      <li><a class="modal-trigger" href="#favourites">Favourites</a></li>
+      <li><a class="modal-trigger" href="#help">Help</a></li>
+      <li><a class="modal-trigger" href="#settings">Settings</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+  <!--Website Content-->
+  <div class="container m-t-1 p-b-1">
+    <div class="row">
+      <div class="col s12">
+        <div id="chat-window">
+          <!--CHAT BOT WINDOW-->
+        </div>
+      </div>
+    </div>
+
+    <div id="overlay-container" class="m-t-1 m-b-1">
+      <div id="overlay">
+        <a id="btn-speech" class="right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Toggle Audio Output"><i class="material-icons">volume_off</i></a>
+        <a id="btn-mic" class="right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Record Voice Input"><i class="material-icons">mic</i></a>
+        <a id="btn-send" class="right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Submit Query"><i class="material-icons">send</i></a>
+      </div>
+    </div>
+    <div class="row p-t-1 m-t-1 m-b-0 p-b-0">
+      <div id="query-input" class="input-field col s10 offset-s1">
+        <input placeholder="Enter query here..." id="query" type="text" class="validate">
+      </div>
+    </div>
+    <div id="query-error-div" class="row m-t-0 p-t-0">
+      <div class="col s10 offset-s1">
+        <span id="query-error-message">Query exceeds 250 characters.</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="page-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h5 class="white-text">Team</h5>
+        <ul>
+          <li><p class="grey-text text-lighten-3">Bhavin Shah <span class="text-lighten-2">- Project Manager/Back-End Developer</span></p></li>
+          <li><p class="grey-text text-lighten-3">Miguel Eusébio <span class="text-lighten-2">- Business Analyst</span></p></li>
+          <li><p class="grey-text text-lighten-3">Jay Carder <span class="text-lighten-2">- Lead Developer</span></p></li>
+          <li><p class="grey-text text-lighten-3">Kyle Gough <span class="text-lighten-2">- Front End Developer</span></p></li>
+          <li><p class="grey-text text-lighten-3">Thomas Archbold <span class="text-lighten-2">- AI Researcher/Back-End Developer</span></p></li>
+          <li><p class="grey-text text-lighten-3">Reece Mears <span class="text-lighten-2">- Writing Manager/Tester</span></p></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
+      <p class="m-0">&copy; 2018</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Favourites selection Modal-->
+<div id="favourites" class="modal modal-fixed-footer">
+  <div class="modal-content">
+    <h4 class="p-b-1">Favourites Selection</h4>
+
+    <div class="row m-b-1 p-b-1 p-l-1 p-r-1">
+      <div id="search-input" class="input-field col s12">
+        <input placeholder="Search..." id="fav-search" type="text" class="validate">
+      </div>
+    </div>
+    <div class="row m-t-1 p-t-1">
+    <div class="col s12">
+      <ul class="tabs tabs-fixed-width">
+        <li class="tab"><a class="active" href="#fav-company">Companies</a></li>
+        <li class="tab"><a href="#fav-sector">Sectors</a></li>
+      </ul>
+    </div>
+    <div id="fav-company" class="col s12">
+      <table class="fav-table highlight centered">
+        <thead>
+          <tr>
+            <th>Ticker</th>
+            <th>Company</th>
+            <th>Favourite</th>
+          </tr>
+        </thead>
+        <tbody class="fav-table-body">
+          <tr id="company-no-result">
+            <td colspan="3">No results, please refine your search.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="fav-sector" class="col s12">
+      <table class="fav-table highlight centered">
+        <thead>
+          <tr>
+            <th>FTSE Sector</th>
+            <th>Favourite</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="sector-no-result">
+            <td colspan="2">No results, please refine your search.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Save Changes</a>
+  </div>
+</div>
+
+<!-- Help Modal-->
+<div id="help" class="modal modal-fixed-footer">
+  <div class="modal-content">
+    <h4 class="p-b-1">Help</h4>
+  </div>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+  </div>
+</div>
+
+<!-- Settings Modal-->
+<div id="settings" class="modal modal-fixed-footer">
+  <div class="modal-content">
+    <h4 class="p-b-1">Settings</h4>
+  </div>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+  </div>
+</div>
+
+</body>
+</html>

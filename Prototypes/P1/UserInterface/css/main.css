@@ -1,0 +1,377 @@
+/*----------------------------------------------------------------------------*/
+/*Main CSS file for Trader ChatBot.
+/*Last Updated: 07/02/2018
+/*Author: Kyle Gough*/
+
+/*----------------------------------------------------------------------------*/
+/*Spacing Rules*/
+
+.m-0 { margin: 0!important; }
+.m-b-0 { margin-bottom: 0!important; }
+.m-t-0 { margin-top: 0!important; }
+.m-l-0 { margin-left: 0!important; }
+.m-r-0 { margin-right: 0!important; }
+
+.m-1 { margin: 1em!important; }
+.m-b-1 { margin-bottom: 1em!important; }
+.m-t-1 { margin-top: 1em!important; }
+.m-l-1 { margin-left: 1em!important; }
+.m-r-1 { margin-right: 1em!important; }
+
+.p-0 { padding: 0!important; }
+.p-b-0 { padding-bottom: 0!important; }
+.p-t-0 { padding-top: 0!important; }
+.p-l-0 { padding-left: 0!important; }
+.p-r-0 { padding-right: 0!important; }
+
+.p-1 { padding: 1em!important; }
+.p-b-1 { padding-bottom: 1em!important; }
+.p-t-1 { padding-top: 1em!important; }
+.p-l-1 { padding-left: 1em!important; }
+.p-r-1 { padding-right: 1em!important; }
+
+.full-width { width: 100%; }
+
+/*----------------------------------------------------------------------------*/
+/*Navigation Bar*/
+
+.brand-logo {
+  padding-left: 1em!important;
+  font-size: 1.5em!important;
+}
+
+nav {
+  -webkit-box-shadow: 0 3px 6px 1px rgba(135,135,135,0.76);
+  -moz-box-shadow: 0 3px 6px 1px rgba(135,135,135,0.76);
+  box-shadow: 0 3px 6px 1px rgba(135,135,135,0.76);
+  z-index: 1000;
+  background-color: #efefef!important;
+}
+
+.brand-logo, #nav-mobile li, #mobile-demo li {
+  color: #116466!important;
+}
+
+#nav-mobile li a {
+  padding-left: 2em;
+  padding-right: 2em;
+  color: #116466;
+}
+
+/*----------------------------------------------------------------------------*/
+/*Colour Scheme*/
+
+footer {
+  background-color: #1a1a1d!important;
+  text-shadow: 0 -1px 0 #232323;
+}
+
+* { color: #116466; }
+body { font-family: 'News Cycle', sans-serif; }
+
+.brand-logo, h1 { font-family: 'Cinzel', serif!important; }
+
+/*----------------------------------------------------------------------------*/
+/*Buttons*/
+
+ a.btn {
+   background-color: transparent!important;
+   border-color: #26a69a!important;
+   color: #116466!important;
+   border-radius: 2px!important;
+   border: 2px!important;
+ }
+
+ .btn-round {
+   background-color: white!important;
+ }
+
+ a.btn-round i {
+   color: #116466;
+ }
+
+ .material-tooltip span {
+   color: white!important;
+ }
+
+ .btn-record i {
+   animation: flashred-text 0.5s linear 0s infinite alternate!important;
+   animation-fill-mode: both!important;
+ }
+
+
+/*----------------------------------------------------------------------------*/
+/*Chat Window*/
+
+#chat-window {
+  overflow-y: scroll;
+  height: 70vh;
+  box-shadow: 0 2px 0 0 #c1c1c1!important;
+  border-radius: 2px;
+  padding: 1em 2em 6em 2em!important;
+  background-color: #fdfdfd;
+}
+
+/*Div container for query input field*/
+#query-input, #search-input {
+  border-radius: 1em;
+  padding: 0 2em 0 2em!important;
+  border: 2px solid #116466;
+  box-shadow: 0 2px 0 0 #116466;
+  margin-top: 4px!important;
+  -webkit-transition: all 0.5s, -webkit-transform 2s; /* Safari */
+  transition: all 0.5s;
+}
+
+#query-input:focus:not(.query-error), #query-input:hover:not(.query-error) {
+  border-color: #4CAF50!important;
+  box-shadow: 0 2px 0 0 #4CAF50!important;
+}
+
+/*Overrides bottom green box shadow on selected input forms.*/
+input.valid[type="text"]:not(.browser-default) {
+  box-shadow: 0 0 0 0 #4CAF50!important;
+}
+
+.query-error {
+  border: 2px solid black;
+  box-shadow: 0 2px 0 0 black;
+  animation: flashred 0.5s linear 0s infinite alternate!important;
+  animation-fill-mode: both!important;
+}
+
+#query-error-div {
+  height: 10px;
+}
+
+#query-error-message {
+  font-size: 0.75rem;
+  color: #f44336!important;
+  font-weight: bold;
+  display: none;
+}
+
+/*Input field*/
+#query, #fav-search {
+  border-bottom: 0!important;
+  margin-bottom: 0!important;
+}
+
+.left-border {
+  border-left: 2px solid #bbdefb;
+  padding-left: 2em;
+}
+
+.right-border {
+  border-right: 2px solid #ffecb3;
+  padding-right: 2em;
+}
+
+.right-border-error {
+  border-right: 2px solid #ffcdd2;
+  padding-right: 2em;
+}
+
+.timestamp--left, .timestamp--right {
+  color: #9e9e9e!important;
+  font-size: 0.75rem!important;
+  display: block;
+}
+
+.timestamp--left { float: left; }
+.timestamp--right { float: right; }
+
+.timestamp-row {
+  padding: 0!important;
+  margin: 0!important;
+}
+
+.chat {
+  border-radius: 1em;
+  border: 2px solid black;
+  max-width: 66%;
+  display: inline-block;
+}
+
+.chat p {
+  margin: 0.75em 1.25em 0.75em 1.25em!important;
+  color: #004d40!important;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+.chat-query {
+  float: left;
+  background-color: #e3f2fd;
+  box-shadow: 0 2px 0 0 #e3f2fd!important;
+  border-color: #bbdefb;
+}
+
+.chat-response {
+  float: right;
+  background-color: #fff8e1;
+  box-shadow: 0 2px 0 0 #fff8e1!important;
+  border-color: #ffecb3;
+}
+
+.chat-response-error {
+  float: right;
+  background-color: #ffebee;
+  box-shadow: 0 2px 0 0 #ffebee!important;
+  border-color: #ffcdd2;
+}
+
+.left { float: left; }
+.right { float: right; }
+
+.response-divider {
+  height: 1px;
+  border-bottom: 1px solid #f5f5f5;
+  margin: 2em;
+}
+
+/*Spinning loader container div*/
+#loader-div { padding: 1em; }
+
+/*Spinning loader*/
+.loader {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #116466;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin-inf 0.75s linear infinite;
+}
+
+#overlay-container {
+  position: relative;
+  margin-top: 2em;
+}
+#overlay {
+  position: absolute;
+  top: -90px;
+  left: -40px;
+  width: 100%;
+  height: 100%;
+}
+
+/*----------------------------------------------------------------------------*/
+/*Scrollbar*/
+
+/* Width */
+::-webkit-scrollbar { width: 15px; }
+/* Track */
+::-webkit-scrollbar-track { background: #f1f1f1; }
+/* Handle */
+::-webkit-scrollbar-thumb { background: #888; }
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/*----------------------------------------------------------------------------*/
+/*Favourites Modal*/
+
+.fav-search-input {
+  border-radius: 1em;
+  padding: 0 2em 0 2em!important;
+  border: 1px solid #116466!important;
+  box-shadow: 0 1px 0 0 #116466!important;
+  margin-top: 4px!important;
+  -webkit-transition: all 0.5s, -webkit-transform 2s; /* Safari */
+  transition: all 0.5s;
+}
+
+.fav-search-input:focus, .fav-search-input:hover {
+  border-color: #4CAF50!important;
+  box-shadow: 0 1px 0 0 #4CAF50!important;
+}
+
+.tabs {
+  overflow: hidden!important;
+}
+
+.modal.modal-fixed-footer {
+  height: 80%!important;
+}
+
+.modal {
+  max-height: 80%!important;
+  width: 80%!important;
+}
+
+tr {
+  border: 1px solid #90caf9!important;
+  background-color: #f7f7f7;
+}
+
+thead tr {
+  background-color: #e8eaf6;
+}
+
+ul.tabs {
+  background-color: #ffebee;
+  border: 1px solid #ef9a9a;
+}
+
+.switch label .lever {
+  border-radius: 2px!important;
+}
+
+.switch label .lever::before,
+.switch label .lever::after {
+  border-radius: 2px!important;
+}
+
+/*----------------------------------------------------------------------------*/
+/*Graph D3.js*/
+
+.response-graph {
+  width: 800px;
+  height: 600px;
+}
+
+/*----------------------------------------------------------------------------*/
+/*Animations*/
+
+/*Rotation animation*/
+@keyframes spin-inf {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@-webkit-keyframes spin-inf {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/*Animation for flashing red input fields to show an error.*/
+@keyframes flashred {
+  0% {
+    border: 2px solid #e57373;
+    box-shadow: 0 2px 0 0 #ef9a9a;
+  }
+  100% {
+    border: 2px solid #b71c1c;
+    box-shadow: 0 2px 0 0 #c62828;
+  }
+}
+
+@-webkit-keyframes flashred {
+  0% {
+    border: 2px solid #e57373;
+    box-shadow: 0 2px 0 0 #ef9a9a;
+  }
+  100% {
+    border: 2px solid #b71c1c;
+    box-shadow: 0 2px 0 0 #c62828;
+  }
+}
+
+@keyframes flashred-text {
+  0% { color: #e57373; }
+  100% { color: #c62828; }
+}
+
+@-webkit-keyframes flashred-text {
+  0% { color: #e57373; }
+  100% { color: #c62828; }
+}
