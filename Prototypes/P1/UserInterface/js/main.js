@@ -408,8 +408,10 @@ $(document).ready(function() {
   //Sends a query to the web server, and waits for a response.
   function sendQuery(query) {
     $.ajax({
-      url: "https://www.google.com/fakepage.php", //###change to php file later.
-      data: query,
+      //Edited to call the python script in the client folder, will update to the parsing folder
+      //When it works, just proof of concept for now
+      url: "/P1/Client/dialogflow.php", 
+      data: {user_query:query},
       method: "POST",
       timeout: timeout,
       error: function(xhr, ajaxOptions, thrownError) {
@@ -430,7 +432,8 @@ $(document).ready(function() {
   //TODO
   function parseResponse(data) {
     console.log("parse response layer"); //###
-    displayResponse("response recieved"); //###
+    var currentTime = new Date(); // oh boy love me some time
+    displayResponse(currentTime.toUTCString(), data); // Added such that Dialogflow can respond
   }
 
   //TODO

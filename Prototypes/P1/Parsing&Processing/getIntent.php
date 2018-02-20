@@ -4,9 +4,13 @@ ini_set('display_errors', '1');
 ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 include('getCurrentForCompany.php');
 
-if (isset($_POST["NLPResponse"])){
+if (isset($_POST['user_query'])){
     /*funcion call goes here*/
-    getIntent($_POST["NLPResponse"]);
+    
+    /* DIALOGFLOW */
+    $output = passthru('python dialogflow.py "'.$_POST['user_query'].'"');
+    /* Send Dialogflow JSON to getIntent */
+    getIntent($output);
 }
 
 
