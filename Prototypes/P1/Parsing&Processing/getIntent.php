@@ -4,13 +4,29 @@ ini_set('display_errors', '1');
 ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 include('getCurrentForCompany.php');
 
+require_once __DIR__.'/vendor/autoload.php';
+
+use DialogFlow\Client;
+use DialogFlow\Model\Query;
+use DialogFlow\Method\QueryApi;
+
 if (isset($_POST['user_query'])){
-    /*funcion call goes here*/
+    $query = $_POST['user_query'];
+    try {
+        $client = new Client('f4bc3c425f1c4e6b9c52f21493decb19');
+        $queryApi = new QueryApi($client);
     
-    /* DIALOGFLOW */
-    $output = passthru('python dialogflow.py "'.$_POST['user_query'].'"');
-    /* Send Dialogflow JSON to getIntent */
-    getIntent($output);
+        $meaning = $queryApi->extractMeaning($query, [
+            'sessionId' => '1234567890',
+            'lang' => 'en',
+        ]);
+        $response = new Query($meaning);
+
+    } catch (\Exception $error) {
+        echo $error->getMessage();
+    }
+    
+    getIntent($response);
 }
 
 
@@ -18,6 +34,13 @@ getIntent("nothing");
 function getIntent($jsonData){
 
     /*Parse Json*/
+
+    /* 
+    Example of getting speech using this new API:
+    echo $response->getResult()->getFulfillment()->getSpeech();  
+    Equivalent to:
+    echo $array['result']['fulfillment']['speech']
+    */
 
     $jsonData = file_get_contents('exampleJson.txt');
     $array = json_decode($jsonData, true);
