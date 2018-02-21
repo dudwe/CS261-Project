@@ -410,7 +410,7 @@ $(document).ready(function() {
     $.ajax({
       //Edited to call the python script in the client folder, will update to the parsing folder
       //When it works, just proof of concept for now
-      url: "/P1/Client/dialogflow.php", 
+      url: "../Client/dialogflow.php", 
       data: {user_query:query},
       method: "POST",
       timeout: timeout,
@@ -421,6 +421,7 @@ $(document).ready(function() {
       },
       success: function(data) {
         hideLoading(); //Hides the rotating loading animation.
+        alert(data);//debug mode for seeing raw json output 
         parseResponse(data);
       }
     });

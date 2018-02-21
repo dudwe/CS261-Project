@@ -35,7 +35,8 @@ Next Earnings Date Feb 22, 2018
 */
 
 /*Gathers and returns a set of current performance data for a company*/
-function getCurrentForCompany($stock){
+
+function getCurrentForCompanyLegacy($stock){
     /*read into the database to get the relevant url from investing.com*/
     $html = str_get_html(file_get_contents('https://www.investing.com/equities/barclays'));
     /*place data into array*/
@@ -68,4 +69,33 @@ function getCurrentForCompany($stock){
     print_r($returnData);
     return $returnData;
 }
+
+
+
+/*
+This method is significantly faster than the legacy version, but we will need to calculate the % change on the fly, we will need to discuss how we wish to do that
+This method will not give a reading for the opening time (8.00 am ) but will give (8.01 am)
+Ticker updates every minute
+DATE,CLOSE,HIGH,LOW,OPEN,VOLUME*/
+function getCurrentForCompany($stock){
+    $html = file_get_contents('https://finance.google.com/finance/getprices?q=BA&x=LON&i=60&p=1=d,c,h,l,o,v'); //code will go here
+    $rows = explode("\n",$html);
+    //echo count($rows);
+    /*Gets the last reading*/
+    $data=str_getcsv($rows[count($rows)-2]);
+    /*decodes the time*/
+    /*gets and decodes opening time*/
+    $startTime = str_getcsv($rows[7])[0];
+    $startTime = substr($startTime, 1);
+    
+    
+    /*calculates the current reading time*/
+    $enctime=$data[0]*(60)+$startTime;
+    $str= date('r', $enctime);
+    $data[0]=$str;
+    //print_r($data);
+    return $data;
+
+}
+
 ?>
