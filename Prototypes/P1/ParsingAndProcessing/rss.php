@@ -1,7 +1,7 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
-	//include "../Database/globalvars.php";
+	include "../Database/globalvars.php";
     include "../Database/db_connect.php";
 	//var_dump(getRSS("Fixed Line Telecommunications",True,$conn));
 	
@@ -53,7 +53,7 @@ ini_set('display_errors', '1');
 	}
 	
 
-	
+	//getRSS("BCS",False,$conn);
 	function getRSS($search,$ftse100,$conn){
         $rss = new DOMDocument();
         $sectorNames= get_sectors($conn); 
@@ -124,6 +124,7 @@ ini_set('display_errors', '1');
             echo '<small><em>Posted on '.$date.'</em></small></p>';
             echo '<p>'.$description.'</p>';
         }*/
+        print_r($feed);
         return $feed;
 	}
 ?> 
