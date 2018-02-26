@@ -5,8 +5,6 @@ include "globalvars.php";
 /* Insert data into QUERIES table */
 function insert_query($conn, $query_str, $intent, $entity) {
 
-    // TODO: check that intent and entity do not exist in same row
-
     $exists = "SELECT * FROM queries WHERE intent = '" . $intent . "' AND entity = '" . $entity . "'";
     $res = $conn->query($exists);
 

@@ -3,6 +3,8 @@
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
+include "globalvars.php";
+
 function create_tables($conn) {
 
     if (create_sectors($conn) && create_stocks($conn) && create_queries($conn) &&
