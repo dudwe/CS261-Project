@@ -5,53 +5,16 @@ ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 include('getCurrentForCompany.php');
 include('getTime.php');
 include('getSector.php');
-/*require_once __DIR__.'/vendor/autoload.php';
-
-use DialogFlow\Client;
-use DialogFlow\Model\Query;
-use DialogFlow\Method\QueryApi;
-
-if (isset($_POST['user_query'])){
-    $query = $_POST['user_query'];
-    try {
-        $client = new Client('f4bc3c425f1c4e6b9c52f21493decb19');
-        $queryApi = new QueryApi($client);
-    
-        $meaning = $queryApi->extractMeaning($query, [
-            'sessionId' => '1234567890',
-            'lang' => 'en',
-        ]);
-        $response = new Query($meaning);
-
-    } catch (\Exception $error) {
-        echo $error->getMessage();
-    }
-    
-    getIntent($response);
-}*/
 
 
 function getIntent($jsonData){
 
     /*Parse Json*/
 
-    /* 
-    Example of getting speech using this new API:
-    echo $response->getResult()->getFulfillment()->getSpeech();  
-    Equivalent to:
-    echo $array['result']['fulfillment']['speech']
-    */
-
-    //$jsonData = file_get_contents('exampleJson.txt');
     $jsonData=json_encode($jsonData);
     $array = json_decode($jsonData, true);
     $arrayparam=$array['result']['parameters'];
-    print_r($arrayparam);
-    //echo $array['result']['resolvedQuery'] . "</br>";
-    //echo $array['result']['parameters']['stocks'] . "</br>";
-    //echo $array['result']['parameters']['timeframe'] . "</br>";
-    //echo $array['result']['metadata']['intentName'] . "</br>";
-    //echo $array['result']['fulfillment']['speech'] . "</br>";
+
     $queryString = $array['result']['resolvedQuery'];
     if(array_key_exists('stocks',$arrayparam)){
         $stockId = $array['result']['parameters']['stocks'];
@@ -59,8 +22,8 @@ function getIntent($jsonData){
     else{
         $stockId = $array['result']['parameters']['sector'];
     }
-    if(array_key_exists('timeframe',$arrayparam)){
-        $timeframe=$array['result']['parameters']['timeframe'];
+    if(array_key_exists('time-frame',$arrayparam)){
+        $timeframe=$array['result']['parameters']['time-frame'];
     }
     
     $intent = $array['result']['metadata']['intentName'];
@@ -87,8 +50,13 @@ function getIntent($jsonData){
         break;
     case "get_stock_performance":
         //echo "get stock performance";
-        var_dump($jsonData);
+        //var_dump($jsonData);
+        $objOutput->timeframe=$timeframe;
         $dataArray=getTimeframe($stockId,$timeframe);
+        if($timeframe=="" or stripos($timeframe,'today')!== false){
+            $dataArray2=getCurrentForCompany($stockId);
+            $objOutput->auxillary=$dataArray2;
+        }
         break;
     case "get_sector_news":
         //echo "get sector news";

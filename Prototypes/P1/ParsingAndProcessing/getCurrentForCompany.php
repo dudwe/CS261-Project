@@ -3,56 +3,74 @@ include_once('simple_html_dom.php');
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
-getCurrentForCompany("barc");
-echo "hello";
+print_r(getCurrentForCompany("barc"));
 function getCurrentForCompany($stock){
-        if(strlen($stock)==2){
-            $stock=$stock.'.';
+    /*read into the database to get the relevant url from investing.com*/
+    $html = str_get_html(file_get_contents('https://www.investing.com/equities/barclays'));
+    /*place data into array*/
+    $returnData = array();
+    $currentprice = $html->find('div[class="top bold inlineblock"]', 0);
+    $tempArr=array();
+    foreach($currentprice->find('span') as $element){
+        if($element->innertext != '&nbsp;&nbsp;'){
+            
+            array_push($tempArr,$element->innertext);
         }
-        $html = str_get_html(file_get_contents('http://shares.telegraph.co.uk/quote/?epic='.$stock));/*code goes here*/
-        foreach($html->find('table[id="mam-quote-brief"]') as $datatable) {
-            foreach($datatable->find('tr') as $tr) {
-                foreach($tr->find('td') as $td) {
-                        $temp[]=$td->plaintext;
-                }
+    }
+    
+    $returnData['Date']= $html->find('div[class=bottom lighterGrayFont arial_11]',0)->find('span[class=bold pid-282-time]',0)->innertext;;
+    $returnData['SharePrice']=$tempArr[0];
+    $returnData['PointChange']=$tempArr[1];
+    $returnData['PercentChange']=$tempArr[2];
+    $returnData['Bid']=$html->find('div[class=bottomText float_lang_base_1]',0)->find('li',1)->find('span',1)->find('span',0)->innertext;
+    $returnData['Offer']=$html->find('div[class=bottomText float_lang_base_1]',0)->find('li',1)->find('span',1)->find('span',1)->innertext;
+    
+    $table= $html->find('div[class=clear overviewDataTable"]',0);
+
+    foreach($table->find('div[class="inlineblock"]') as $block) {
+        //echo $block->plaintext;
+        //echo "</br>";
+        foreach($block->find('span[class=float_lang_base_2 bold]') as $element) {
+            if(strpos($block->plaintext, "Prev. Close") !== false){
+                $returnData['Close']=$element->innertext;
+            }         
+            if(strpos($block->plaintext, "Day's Range") !== false){
+                $myArray = explode('-', $element->innertext);                
+                $returnData['High']=$myArray[1];
+                $returnData['Low']=$myArray[0];
             }
-        }
-        foreach($html->find('table[id="mam-quote-line"]') as $datatable) {
-            foreach($datatable->find('tr') as $tr) {
-                foreach($tr->find('td') as $td) {
-                        $temp[]=$td->plaintext;
-                }
+            if(strpos($block->plaintext, "Revenue") !== false){
+                $returnData['Revenue']=$element->innertext;
             }
-        }
-        foreach($html->find('table[class="full vertical"]') as $datatable) {
-            foreach($datatable->find('tr') as $tr) {
-                foreach($tr->find('td') as $td) {
-                        $temp[]=$td->plaintext;
-                }
+           
+            if(strpos($block->plaintext, "Open") !== false){
+                $returnData['Open']=$element->innertext;
             }
+            if(strpos($block->plaintext, "EPS") !== false){
+                $returnData['EPS']=$element->innertext;
+            }
+            if(strpos($block->plaintext, "Volume") !== false){
+                $returnData['Volume']=$element->innertext;
+            }
+            if(strpos($block->plaintext, "Market Cap") !== false){
+                $returnData['MarketCap']=$element->innertext;
+            }
+            if(strpos($block->plaintext, "Dividend") !== false){
+                $returnData['DivYield']=$element->innertext;
+            }
+            if(strpos($block->plaintext, "Average Vol.") !== false){
+                $returnData['AverageVol']=$element->innertext;
+            }
+            if(strpos($block->plaintext, "P/E Ratio") !== false){
+                $returnData['PERatio']=$element->innertext;
+            } 
+            if(strpos($block->plaintext, "Shares Outstanding") !== false){
+                $returnData['SharesInIssue']=$element->innertext;
+            } 
         }
-        $returnData['SharePrice']=$temp[2];
-        $returnData['PointChange']=$temp[3]; //caluclated from prev close
-        $returnData['PercentChange']=$temp[4];//caluclated from prev close
-        $returnData['Bid']=$temp[5];
-        $returnData['Offer']=$temp[6];
-        $returnData['High']=$temp[7];
-        $returnData['Low']=$temp[8];
-        $returnData['Open']=$temp[9];
-        $returnData['Close']=$temp[10];
-        $returnData['VolTotal']=$temp[11];
-        $returnData['TradePrice']=$temp[12];
-        $returnData['TradeVol']=$temp[13];
-        $returnData['PreviousSharePrice ']=$temp[20];
-        $returnData['SharesInIssue']=$temp[21];
-        $returnData['MarketCap']=$temp[22];
-        $returnData['PERatio']=$temp[23];
-        $returnData['DivPerShare']=$temp[24];
-        $returnData['DivYield']=$temp[25];
-        $returnData['DivCover']=$temp[26];
-        $returnData['EPS']=$temp[27];
-        var_dump($returnData);
-        return $returnData;
+    }
+    //print_r($returnData);
+    return $returnData;
 }
 
 

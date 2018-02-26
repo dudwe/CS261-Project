@@ -1,6 +1,6 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+//error_reporting(E_ALL);
+//ini_set('display_errors', '1');
 ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 //date_default_timezone_set('Europe/London');
 //$date = date('M-d-Y');
@@ -44,7 +44,7 @@ function getTimeframe($stockId,$queryString){
 
 function getIntraDay($stockId){
     $url='https://finance.google.com/finance/getprices?q='.$stockId.'&x=LON&i=60&p=1=d,c,h,l,o,v';
-    echo $url;
+    ///echo $url;
     $html = file_get_contents('https://finance.google.com/finance/getprices?q='.$stockId.'&x=LON&i=60&p=1=d,c,h,l,o,v'); //string
     $rows = explode("\n",$html);
     $array = array();
@@ -79,7 +79,7 @@ function getHistorical($ticker, $startDate, $endDate) {
 
     //$url ="http://finance.google.com/finance/historical?q=".$ticker."&startdate=".$startDate."&enddate=".$endDate."&output=csv";
     $url ="http://finance.google.com/finance/historical?q=LON%3A".$ticker."&startdate=".$startDate[0]."+"."$startDate[1]"."%2c+".$startDate[2]."&enddate=".$endDate[0]."+"."$endDate[1]"."%2c+".$endDate[2]."&output=csv";
-    echo $url;
+    //echo $url;
     $fp = file_get_contents($url);
     $rows = explode("\n",$fp);
     $array = array();
