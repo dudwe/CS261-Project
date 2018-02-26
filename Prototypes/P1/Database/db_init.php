@@ -3,6 +3,8 @@
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
+include "globalvars.php";
+
 function create_tables($conn) {
 
     if (create_sectors($conn) && create_stocks($conn) && create_queries($conn) &&
@@ -10,7 +12,7 @@ function create_tables($conn) {
         echo "Database created successfully!<br>";
         return 1;
     } else {
-        echo $conn0>error . "<br>";
+        echo $conn->error . "<br>";
         return 0;
     }
 
@@ -142,7 +144,7 @@ function populate_sectors($conn) {
         ('Beverages',                           '/indices/beverages'),
         ('Chemicals',                           '/indices/chemicals'),
         ('Construction & Materials',            '/indices/construction---mats'),
-        ('Electricty',                          '/indices/electricity'),
+        ('Electricity',                          '/indices/electricity'),
         ('Electronic & Electrical Equipment',   '/indices/electronic-equipment'),
         ('Equity Investment Instruments',       '/indices/equity-investment-instruments'),
         ('Financial Services',                  '/indices/ftse-350-financial-services'),
