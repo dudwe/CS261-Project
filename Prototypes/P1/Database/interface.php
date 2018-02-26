@@ -47,14 +47,15 @@ function insert_history($conn, $inserted_id) {
         if ($conn->query($sql) === TRUE) {
             return 1;
         } else {
-            echo $sql "<br>Error executing query: " . $conn->error . "<br>";
+            echo $sql. "<br>Error executing query: " . $conn->error . "<br>";
             return 0;
         }
 
-    } else {
-        echo $existence "<br>Error executing query: " . $conn->error . "<br>";
+    }/* else {
+        echo $existence. "<br>Error executing query: " . $conn->error . "<br>";
         return 0;
-    }
+    }*/
+    
 
 /* Insert data into FAV_STOCKS table */
 function insert_fav_stock($conn, $stock_name, $freq) {

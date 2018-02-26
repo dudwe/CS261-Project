@@ -2,10 +2,12 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
-include('getCurrentForCompany.php');
-include('getTime.php');
-include('getSector.php');
-
+include_once('getCurrentForCompany.php');
+include_once('getTime.php');
+include_once('getSector.php');
+include_once('rss.php');
+include_once('../Database/interface.php');
+include_once('../Database/db_connect.php');
 
 function getIntent($jsonData){
 
@@ -20,7 +22,7 @@ function getIntent($jsonData){
         $stockId = $array['result']['parameters']['stocks'];
     }
     else{
-        $stockId = $array['result']['parameters']['sector'];
+        $stockId = $array['result']['parameters']['sectors'];
     }
     if(array_key_exists('time-frame',$arrayparam)){
         $timeframe=$array['result']['parameters']['time-frame'];
@@ -47,6 +49,7 @@ function getIntent($jsonData){
         break;
     case "get_stock_news":
         //echo "call stock news";
+        $dataArray=getRSS($stockId,False);
         break;
     case "get_stock_performance":
         //echo "get stock performance";
@@ -59,7 +62,7 @@ function getIntent($jsonData){
         }
         break;
     case "get_sector_news":
-        //echo "get sector news";
+        $dataArray=getRSS($stockId,False);
         break;
     case "get_sector_performance":
         //echo "get sector performance";

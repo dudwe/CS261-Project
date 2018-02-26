@@ -3,10 +3,16 @@ include_once('simple_html_dom.php');
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
-print_r(getCurrentForCompany("barc"));
+include_once('../Database/interface.php');
+include_once('../Database/db_connect.php');
+
 function getCurrentForCompany($stock){
+    $conn= db();
+    $url = get_scrape_url($conn,$stock);
+    //echo $url;
     /*read into the database to get the relevant url from investing.com*/
-    $html = str_get_html(file_get_contents('https://www.investing.com/equities/barclays'));
+    //echo 'https://www.investing.com'.$url;
+    $html = str_get_html(file_get_contents('https://www.investing.com'.$url));
     /*place data into array*/
     $returnData = array();
     $currentprice = $html->find('div[class="top bold inlineblock"]', 0);
@@ -18,7 +24,7 @@ function getCurrentForCompany($stock){
         }
     }
     
-    $returnData['Date']= $html->find('div[class=bottom lighterGrayFont arial_11]',0)->find('span[class=bold pid-282-time]',0)->innertext;;
+    $returnData['Date']= $html->find('div[class=bottom lighterGrayFont arial_11]',0)->find('span',1)->innertext;;
     $returnData['SharePrice']=$tempArr[0];
     $returnData['PointChange']=$tempArr[1];
     $returnData['PercentChange']=$tempArr[2];
