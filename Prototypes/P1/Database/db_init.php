@@ -142,7 +142,7 @@ function populate_sectors($conn) {
         ('Beverages',                           '/indices/beverages'),
         ('Chemicals',                           '/indices/chemicals'),
         ('Construction & Materials',            '/indices/construction---mats'),
-        ('Electricty',                          '/indices/electricity'),
+        ('Electricity',                          '/indices/electricity'),
         ('Electronic & Electrical Equipment',   '/indices/electronic-equipment'),
         ('Equity Investment Instruments',       '/indices/equity-investment-instruments'),
         ('Financial Services',                  '/indices/ftse-350-financial-services'),
