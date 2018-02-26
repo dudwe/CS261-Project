@@ -10,7 +10,7 @@ function create_tables($conn) {
         echo "Database created successfully!<br>";
         return 1;
     } else {
-        echo $conn0>error . "<br>";
+        echo $conn->error . "<br>";
         return 0;
     }
 
