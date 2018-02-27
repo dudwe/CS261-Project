@@ -16,20 +16,17 @@ $(document).ready(function() {
 
   function initialisation() {
     //Testing chat queries and commands.
-    displayQuery("02/12/18 13:10:14", "Hello");
-    displayResponse("02/12/18 13:10:20", "Goodbye");
-    displayQuery("02/12/18 14:45:59", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
-    displayResponse("02/12/18 14:46:08", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
     displayQuery("12/02/18 13:13:09", "What is the spot price of Apple?");
     displayResponse("12/02/18 13:13:24", "The spot price of Apple is £2.30");
+    displayQuery("02/12/18 14:45:59", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
+    displayResponse("02/12/18 14:46:08", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
+
 
     /*-//TODO-REMOVE--*/
     companyLog.add({id: "CHEF", ticker: "CHEF", name: "My name is chef", pollRate: 2, fav: false});
     companyLog.add({id: "SPAG", ticker: "SPAG", name: "Somebody toucha my spaghet", pollRate: 15, fav: false});
     sectorLog.add({id: "1", name: "Banks", fav: false});
     sectorLog.add({id: "2", name: "Financial Services", fav: true});
-
-    displayGraphResponse("12/02/18 13:13:09", "GRAPH TEST 1");
     /*-//TODO-REMOVE--*/
 
     getFavourites();
@@ -55,8 +52,6 @@ $(document).ready(function() {
     $("#fav-save").click(saveFavourites);
     $("#btn-send").click(submitQuery); //Redirect button click and ENTER to submitQuery function.
 
-
-    displayResponse("2017", "NORMAL");
     displayErrorResponse("2018", "ERROR");
     displayGraphResponse("2019", "GRAPH");
 
@@ -553,7 +548,7 @@ $(document).ready(function() {
   function sendQuery(query) {
     $.ajax({
       url: "../Client/dialogflow.php",
-      data: {user_query:query},
+      data: {user_query: query},
       method: "POST",
       timeout: timeout,
       error: function(xhr, ajaxOptions, thrownError) {
@@ -563,7 +558,7 @@ $(document).ready(function() {
       },
       success: function(data) {
         hideLoading(); //Hides the rotating loading animation.
-        //alert(data); //debug method prints dialog json to screen
+        alert(data); //debug method prints dialog json to screen //TODO
         parseResponse(data);
       }
     });
