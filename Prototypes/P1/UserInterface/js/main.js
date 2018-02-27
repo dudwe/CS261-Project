@@ -558,7 +558,6 @@ $(document).ready(function() {
       },
       success: function(data) {
         hideLoading(); //Hides the rotating loading animation.
-        alert(data); //debug method prints dialog json to screen //TODO
         parseResponse(data);
       }
     });
@@ -599,9 +598,10 @@ $(document).ready(function() {
 /*Reponse Types*/
 
   //TODO
-  function parseResponse(data) {
-    console.log("parse response layer"); //###
-    displayResponse("response recieved"); //###
+  function parseResponse(data) {    
+    console.log("Parsing Response"); //###
+    var currentTime = new Date();
+    displayResponse(currentTime.toUTCString(), data);
   }
 
   /*[SharePrice] => PointChange, PercentChange, Bid, Offer, Open, Close, High, Low
