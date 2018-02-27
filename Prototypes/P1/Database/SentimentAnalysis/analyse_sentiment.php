@@ -9,16 +9,16 @@ function analyse_headline_sentiment($headline) {
 
     $sat = new SentimentAnalyzerTest(new SentimentAnalyzer());
 
-    $sat->trainAnalyzer("training/data.pos", "positive", 0);
-    $sat->trainAnalyzer("training/data.neg", "negative", 0);
+    $sat->trainAnalyzer(__DIR__."/training/data.pos", "positive", 0);
+    $sat->trainAnalyzer(__DIR__."/training/data.neg", "negative", 0);
 
     $analysis = $sat->analyzeSentence($headline);
 
-    echo "Sentence: " . $headline . 
+    /*echo "Sentence: " . $headline . 
         "<br>Sentiment: " . $analysis["sentiment"] .
         "<br>P(positive) = " . $analysis["accuracy"]["positivity"] .
         "<br>P(negative) = " . $analysis["accuracy"]["negativity"] .
-        "<br>";
+        "<br>";*/
 
     return $analysis;
 
