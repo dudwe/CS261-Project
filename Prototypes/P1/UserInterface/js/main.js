@@ -58,6 +58,7 @@ $(document).ready(function() {
     displayResponse("2017", "NORMAL");
     displayErrorResponse("2018", "ERROR");
     displayGraphResponse("2019", "GRAPH");
+    displayStockHighlight("2020", "TEST");
 
   }
 
@@ -187,6 +188,14 @@ $(document).ready(function() {
     displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p><canvas class='response-graph'></canvas>");
     $(".chat-response:last p").text(response);
     createLineGraph(); //Displays a graph in the response.
+    say(response); //Says the response using speech synthesis.
+  }
+
+  //TODO
+  function displayStockHighlight(timestamp, response) {
+    var i = "<p></p>";
+    displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p><canvas class='response-graph'></canvas>");
+    $(".chat-response:last p").text(response);
     say(response); //Says the response using speech synthesis.
   }
 
@@ -508,7 +517,7 @@ $(document).ready(function() {
   function sendQuery(query) {
     $.ajax({
       url: "../Client/dialogflow.php",
-      data: {user_query:query},
+      data: {user_query: query},
       method: "POST",
       timeout: timeout,
       error: function(xhr, ajaxOptions, thrownError) {
@@ -518,7 +527,7 @@ $(document).ready(function() {
       },
       success: function(data) {
         hideLoading(); //Hides the rotating loading animation.
-        alert(data); //debug method prints dialog json to screen
+        alert(data); //TODO
         parseResponse(data);
       }
     });

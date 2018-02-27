@@ -72,6 +72,60 @@ body { font-family: 'News Cycle', sans-serif; }
 .brand-logo, h1 { font-family: 'Cinzel', serif!important; }
 
 /*----------------------------------------------------------------------------*/
+/*Stocks*/
+
+.stock-fall span:not(.stock-currency), .stock-fall i { color: #d32f2f; }
+.stock-rise span:not(.stock-currency), .stock-rise i { color: #43a047; }
+.stock-flat span:not(.stock-currency), .stock-flat i { color: #ff6d00; }
+.stock-icon {
+  font-size: 4.5rem;
+}
+
+.stock-rise, .stock-fall, .stock.flat {
+  margin: 0!important;
+}
+
+
+/*TODO*/
+.material-icons {
+  vertical-align: middle !important;
+  padding-bottom: 10px;
+}
+.stock-info-1 {
+  font-size: 1.8rem;
+  padding-right: 5px;
+}
+.stock-info-2 {
+  font-size: 1.2rem;
+}
+.stock-info-3 {
+  font-size: 1.2rem;
+}
+.stock-info-4 {
+  font-size: 1.8rem;
+}
+.stock-currency {
+  color: #212121;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding-right: 20px;
+}
+.stock-name {
+  font-size: 1.2rem;
+  color: #212121!important;
+  font-weight: bold;
+  padding-right: 2em;
+}
+.table-no-format tr {
+  border: none!important;
+  background-color: transparent;
+}
+.table-no-format td {
+  padding: 0!important;
+}
+/*TODO*/
+
+/*----------------------------------------------------------------------------*/
 /*Buttons*/
 
  a.btn {
