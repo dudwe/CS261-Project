@@ -24,7 +24,7 @@ $(document).ready(function() {
 
     /*-//TODO-REMOVE--*/
     companyLog.add({id: "CHEF", ticker: "CHEF", name: "My name is chef", pollRate: 2, fav: false});
-    companyLog.add({id: "SPAG", ticker: "SPAG", name: "Somebody toucha my spaghet", pollRate: 15, fav: false});
+    companyLog.add({id: "SPAG", ticker: "SPAG", name: "Somebody toucha my spaghet", pollRate: 15, fav: true});
     sectorLog.add({id: "1", name: "Banks", fav: false});
     sectorLog.add({id: "2", name: "Financial Services", fav: true});
     /*-//TODO-REMOVE--*/
@@ -474,7 +474,7 @@ $(document).ready(function() {
   //TODO
   function setPollRate(companyID, fav) {
     var pollRate = companyLog.getPollRate(companyID); //Poll rate of the company;
-    $("*[data-id=" + companyID + "].poll-rate-selector").prop("disabled", fav);
+    $("*[data-id=" + companyID + "].poll-rate-selector").prop("disabled", !fav);
   }
 
   //TODO
@@ -598,7 +598,7 @@ $(document).ready(function() {
 /*Reponse Types*/
 
   //TODO
-  function parseResponse(data) {    
+  function parseResponse(data) {
     console.log("Parsing Response"); //###
     var currentTime = new Date();
     displayResponse(currentTime.toUTCString(), data);

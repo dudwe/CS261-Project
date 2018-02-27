@@ -14,7 +14,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css"> <!--Materialize CSS-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
   <script src="js/artyom.window.min.js"></script> <!--Artyom Speech API Wrapper-->
-  <script src="https://d3js.org/d3.v4.min.js"></script> <!--###D3.js###-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script> <!--Chart.js-->
   <script src="js/main.js"></script> <!--Custom JS-->
   <base href="" />
@@ -30,12 +29,10 @@
     <ul id="nav-mobile" class="right hide-on-med-and-down">
       <li><a class="modal-trigger" href="#favourites">Favourites</a></li>
       <li><a class="modal-trigger" href="#help">Help</a></li>
-      <li><a class="modal-trigger" href="#notifications">Notifications</a></li>
     </ul>
     <ul class="side-nav" id="mobile-demo">
       <li><a class="modal-trigger" href="#favourites">Favourites</a></li>
       <li><a class="modal-trigger" href="#help">Help</a></li>
-      <li><a class="modal-trigger" href="#notifications">Notifications</a></li>
     </ul>
   </div>
 </nav>
@@ -200,37 +197,8 @@
   <div class="modal-content">
     <h4 class="p-b-1">Help</h4>
   </div>
-  </div>
   <div class="modal-footer">
     <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
-  </div>
-</div>
-
-<!-- Notifications Modal-->
-<div id="notifications" class="modal modal-fixed-footer">
-  <div class="modal-content">
-    <h4 class="p-b-1">Notifications</h4>
-    <div class="row">
-      <div class="col s12">
-        <table class="notification-table highlight centered">
-          <thead>
-            <tr>
-              <th>Company</th>
-              <th>Poll Rate (in minutes)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!--POLL - List of favourite companies!-->
-
-
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  </div>
-  <div class="modal-footer">
-    <a id="notifications-save" class="modal-action modal-close waves-effect waves-green btn-flat">Save Changes</a>
   </div>
 </div>
 
