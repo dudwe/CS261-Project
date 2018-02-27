@@ -518,7 +518,7 @@ $(document).ready(function() {
       },
       success: function(data) {
         hideLoading(); //Hides the rotating loading animation.
-        //alert(data); //debug method prints dialog json to screen
+        alert(data); //debug method prints dialog json to screen
         parseResponse(data);
       }
     });

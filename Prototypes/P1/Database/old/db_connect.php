@@ -6,6 +6,20 @@ ini_set("display_errors", 1);
 include "globalvars.php";
 include "db_init.php";
 
+/* Lazy way to do it according to stack */
+function  db_connection() {
+    static $conn;
+    if ($conn === NULL){ 
+
+        // Use the global variables as defined in gloabalvars.php
+        global $server, $user, $password, $database;
+
+        $conn = mysqli_connect($server, $user, $password, $database);
+        // $conn = mysqli_connect("localhost", "bank", "password","traderbot_db");
+    }
+    return $conn;
+}
+
 /*$conn = new mysqli($server, $user, $password);
 
 if ($conn->connect_error) {
@@ -28,34 +42,34 @@ if ($conn->connect_error) {
     }
 }*/
 
-/*Lazy way to do it according to stack*/
-function db () {
-    static $conn;
-    if ($conn===NULL){ 
-        $conn = mysqli_connect ("localhost", "bank", "password","traderbot_db");
-    }
-    return $conn;
-}
 
- /* Best way to do it according to stack 
+/* Best way to do it according to stack 
     stackoverflow.com/questions/32188985/php-make-other-functions-access-the-conn-variable-inside-my-database-connecti*/
-/*class Database
-{
-     TRUE if static variables have been initialized. FALSE otherwise
-    
-    private static $init = FALSE;
+/*
+class Database {
+
+    // TRUE if static variables have been initialized. FALSE otherwise
+
     The mysqli connection object
+    private static $init = FALSE;
+
+    *
+    * Initializes the static class variables. Only runs initialization once.
+    * Does not return anything.
     *
     public static $conn;
-    * initializes the static class variables. Only runs initialization once.
-    * does not return anything.
-    *
-    public static function initialize()
-    {
-        if (self::$init===TRUE)return;
+
+    public static function initialize() {
+
+        if (self::$init === TRUE)
+            return;
+
         self::$init = TRUE;
         self::$conn = new mysqli("localhost", "bank", "password","traderbot_db");
+
     }
-} */
+}
+
+*/
 
 ?>
