@@ -24,8 +24,8 @@ $(document).ready(function() {
     displayResponse("12/02/18 13:13:24", "The spot price of Apple is £2.30");
 
     /*-//TODO-REMOVE--*/
-    companyLog.add({id: "CHEF", ticker: "CHEF", name: "My name is chef", fav: false});
-    companyLog.add({id: "SPAG", ticker: "SPAG", name: "Somebody toucha my spaghet", fav: false});
+    companyLog.add({id: "CHEF", ticker: "CHEF", name: "My name is chef", pollRate: 2, fav: false});
+    companyLog.add({id: "SPAG", ticker: "SPAG", name: "Somebody toucha my spaghet", pollRate: 15, fav: false});
     sectorLog.add({id: "1", name: "Banks", fav: false});
     sectorLog.add({id: "2", name: "Financial Services", fav: true});
 
@@ -37,14 +37,15 @@ $(document).ready(function() {
     //TODO REMOVE AFTER IMPLEMENTATION #########################################
     //Add company favourite changes to the corresponding array when detected.
     $(".fav-company-switch").click(function() {
-      var companyID = $(this).attr("data_id"); //Gets the ID attribute of the company.
+      var companyID = $(this).attr("data-id"); //Gets the ID attribute of the company.
       var fav = $(this).prop("checked");
       companyLog.addChange({id: companyID, fav: fav}); //Creates a new object for the change.
       console.log("COMPANY CHANGE: " + companyID + " : " + fav);
+      setPollRate(companyID, fav);
     });
     //Add sector favourite changes to the corresponding array when detected.
     $(".fav-sector-switch").click(function() {
-      var sectorID = $(this).attr("data_id"); //Gets the ID attribute of the sector.
+      var sectorID = $(this).attr("data-id"); //Gets the ID attribute of the sector.
       var fav = $(this).prop("checked");
       sectorLog.addChange({id: sectorID, fav: fav}); //Creates a new object for the change.
       console.log("SECTOR CHANGE: " + sectorID + " : " + fav);
@@ -58,7 +59,6 @@ $(document).ready(function() {
     displayResponse("2017", "NORMAL");
     displayErrorResponse("2018", "ERROR");
     displayGraphResponse("2019", "GRAPH");
-    displayStockHighlight("2020", "TEST");
 
   }
 
@@ -192,14 +192,6 @@ $(document).ready(function() {
   }
 
   //TODO
-  function displayStockHighlight(timestamp, response) {
-    var i = "<p></p>";
-    displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p><canvas class='response-graph'></canvas>");
-    $(".chat-response:last p").text(response);
-    say(response); //Says the response using speech synthesis.
-  }
-
-  //TODO
   function displayHighlightedResponse(timestamp, response) {
 
   }
@@ -267,12 +259,30 @@ $(document).ready(function() {
   }
 
   //TODO
+  //data :: {id: String, ticker: String, name: String, pollRate: Int, fav: Bool}
   companyLog.add = function(data) {
     this.list.push(data); //TODO
-    addCompany(data.id, data.ticker, data.name, data.fav);
+    addCompany(data.id, data.ticker, data.name, data.pollRate, data.fav);
   };
 
+  //Gets the poll rate for a specific company.
+  companyLog.getPollRate = function(companyID) {
+    console.log("Getting poll rate for: " + companyID);
+    var index = this.list.findIndex(function(e) {
+      return companyID === e.id;
+    });
+    if (index !== -1) {
+      console.log("Rate: " + this.list[index].pollRate);
+      return this.list[index].pollRate;
+    }
+    else { //No ID match.
+      console.log("ERR");
+      return -1;
+    }
+  }
+
   //TODO
+  //data :: {id: String, name: String, fav: Bool}
   sectorLog.add = function(data) {
     this.list.push(data); //TODO
     addSector(data.id, data.name, data.fav);
@@ -300,14 +310,15 @@ $(document).ready(function() {
         });
         //Add company favourite changes to the corresponding array when detected.
         $(".fav-company-switch").click(function() {
-          var companyID = $(this).attr("data_id"); //Gets the ID attribute of the company.
+          var companyID = $(this).attr("data-id"); //Gets the ID attribute of the company.
           var fav = $(this).prop("checked");
           companyLog.addChange({id: companyID, fav: fav}); //Creates a new object for the change.
           console.log("COMPANY CHANGE: " + companyID + " : " + fav);
+          setPollRate(companyID, fav);
         });
         //Add sector favourite changes to the corresponding array when detected.
         $(".fav-sector-switch").click(function() {
-          var sectorID = $(this).attr("data_id"); //Gets the ID attribute of the sector.
+          var sectorID = $(this).attr("data-id"); //Gets the ID attribute of the sector.
           var fav = $(this).prop("checked");
           sectorLog.addChange({id: sectorID, fav: fav}); //Creates a new object for the change.
           console.log("SECTOR CHANGE: " + sectorID + " : " + fav);
@@ -351,24 +362,38 @@ $(document).ready(function() {
   }
 
   //Adds a company row to the favourites modal.
-  function addCompany(id, ticker, name, fav) {
-    var companyRow = "<tr><td>" + ticker + "</td><td>";
-    companyRow += name + "</td><td><div class='switch'><label><input data_id='" + id +  "' class='fav-company-switch' type='checkbox'";
-    if (fav) {
-      companyRow += " checked"; //Marks the company as favourited.
+  function addCompany(id, ticker, name, pollRate, fav) {
+    var tickerRow = "<td>" + ticker + "</td>";
+    var nameRow = "<td>" + name + "</td>";
+    var pollRow = "<td><input class='poll-rate-selector' data-id='" + id + "' ";
+
+    if (pollRate > 0) {
+      pollRow += "value='" + pollRate + "'";
     }
-    companyRow += "><span class='lever'></span></label></div></td></tr>";
+    else {
+      pollRow += "value='-'";
+    }
+    if (!fav) {
+      pollRow += " disabled";
+    }
+
+    pollRow += " type='text'></td>"
+    var favRow = "<td><div class='switch'><label><input data-id='";
+    favRow += id +  "' class='fav-company-switch' type='checkbox'";
+    if (fav) { favRow += " checked"; } //Marks the company as favourited.
+    favRow += "><span class='lever'></span></label></div></td>";
+    var companyRow = "<tr>" + tickerRow + nameRow + pollRow + favRow + "</tr>";
     $("#fav-company table tbody tr:last").after(companyRow); //Appends the company to the table.
   }
 
   //Adds a sector row to the favourites modal.
   function addSector(id, name, fav) {
-    var sectorRow= "<tr id='sector-" + id + "'><td>" + name + "</td>";
-    sectorRow += "<td><div class='switch'><label><input data_id='" + id + "' class='fav-sector-switch' type='checkbox'";
-    if (fav) {
-      sectorRow += " checked"; //Marks the sector as favourited.
-    }
-    sectorRow += "><span class='lever'></span></label></div></td></tr>";
+    var nameRow = "<td>" + name + "</td>";
+    var favRow = "<td><div class='switch'><label><input data-id='";
+    favRow += id + "' class='fav-sector-switch' type='checkbox'";
+    if (fav) { favRow += " checked"; } //Marks the sector as favourited.
+    favRow += "><span class='lever'></span></label></div></td>";
+    var sectorRow = "<tr>" + nameRow + favRow + "</tr>";
     $("#fav-sector table tbody tr:last").after(sectorRow); //Appends the sector to the table.
   }
 
@@ -451,6 +476,17 @@ $(document).ready(function() {
     });
   }
 
+  //TODO
+  function setPollRate(companyID, fav) {
+    var pollRate = companyLog.getPollRate(companyID); //Poll rate of the company;
+    $("*[data-id=" + companyID + "].poll-rate-selector").prop("disabled", fav);
+  }
+
+  //TODO
+  function changePollRate() {
+
+  }
+
 /*----------------------------------------------------------------------------*/
 /*Query*/
 
@@ -517,7 +553,7 @@ $(document).ready(function() {
   function sendQuery(query) {
     $.ajax({
       url: "../Client/dialogflow.php",
-      data: {user_query: query},
+      data: {user_query:query},
       method: "POST",
       timeout: timeout,
       error: function(xhr, ajaxOptions, thrownError) {
@@ -527,7 +563,7 @@ $(document).ready(function() {
       },
       success: function(data) {
         hideLoading(); //Hides the rotating loading animation.
-        alert(data); //TODO
+        //alert(data); //debug method prints dialog json to screen
         parseResponse(data);
       }
     });
