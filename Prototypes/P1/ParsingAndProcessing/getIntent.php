@@ -121,6 +121,7 @@ function getIntent($jsonData){
         $dataArray=getCurrentForCompany($stockId);
         $tmp=filterSummary($dataArray);
         $tmp['Volume']=$dataArray['Volume'];
+        $tmp['AverageVol']=$dataArray['AverageVol'];
         $dataArray=$tmp;
         break;            
    case "get_market_cap":
@@ -149,7 +150,7 @@ function getIntent($jsonData){
     case "get_stock_performance":
         $objOutput->timeframe=$timeframe;
         $dataArray=getTimeframe($stockId,$timeframe);
-        if($timeframe=="" or stripos($timeframe,'today')!== false){
+        if($timeframe=="" or $timeframe=='Today'){
             $dataArray2=getCurrentForCompany($stockId);
             $dataArray2=filterSummary($dataArray2);
             $objOutput->auxillary=$dataArray2;
@@ -165,7 +166,7 @@ function getIntent($jsonData){
         $dataArray=getBuyOrSell($stockId,$buyorsell);
         $objOutput->buyOrSell=$buyorsell;
         break;    
-    case "Default Fallback Intent":
+    default:
         echo "error";
         $error=1;
         $stockId="Error";
@@ -184,7 +185,7 @@ function getIntent($jsonData){
 }
 
 function filterSummary($array){
-    return array('SharePrice'=>$array['SharePrice'],'PointChange'=>$array['PointChange'],'PercentChange'=>$array['PercentChange'],'Bid'=>$array['Bid'],'Offer'=>$array['Offer'],'Open'=>$array['Open'],'Close'=>$array['Close'],'High'=>$array['High'],'Low'=>$array['Low'],'Low'=>$array['Low']);
+    return array('Date'=>$array['Date'],'SharePrice'=>$array['SharePrice'],'PointChange'=>$array['PointChange'],'PercentChange'=>$array['PercentChange'],'Bid'=>$array['Bid'],'Offer'=>$array['Offer'],'Open'=>$array['Open'],'Close'=>$array['Close'],'High'=>$array['High'],'Low'=>$array['Low'],'Low'=>$array['Low']);
 }
 
 

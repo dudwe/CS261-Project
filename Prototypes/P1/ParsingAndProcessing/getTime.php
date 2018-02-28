@@ -12,45 +12,55 @@ ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 //print_r($data);
 //echo "hello this is dog";
 //echo date_default_timezone_get();
+include_once('simple_html_dom.php');
+print_r(getTimeframe("FTSE100","Week"));
 
-function getTimeframe($stockId,$queryString){
-    if (stripos($queryString,'week') !== false){
+function getTimeframe($stockId,$timeframe){
         $date = date("M-d-Y",mktime(0, 0, 0, date("m"), date("d"),   date("Y")));
-        $dateArray=explode('-',$date);
-        $lastDate = date("M-d-Y",mktime(0, 0, 0, date("m"), date("d")-7,   date("Y")));
-        $ldateArray=explode('-',$lastDate);
-        return getHistorical($stockId,$ldateArray,$dateArray);
+        $dateArray=explode('-',$date); 
+        $dataset=array();
+    switch($timeframe){
+        case "Week":
+            $lastDate = date("M-d-Y",mktime(0, 0, 0, date("m"), date("d")-7,   date("Y")));
+            $ldateArray=explode('-',$lastDate);
+            break;
+        case "Month":
+            $lastDate = date("M-d-Y",mktime(0, 0, 0, date("m")-1, date("d"),   date("Y")));
+            $ldateArray=explode('-',$lastDate);
+            break;
+        case "Year":
+            $lastDate = date("M-d-Y",mktime(0, 0, 0, date("m"), date("d"),   date("Y")-1));
+            $ldateArray=explode('-',$lastDate);
+            break;
+        default:
+                $dataset=getIntraDay($stockId);
+        }
+    if(isset($lastDate) & $stockId!="FTSE100"){
+        $dataset=getHistorical($stockId,$ldateArray,$dateArray);
     }
-    else if (stripos($queryString,'month') !== false){
-        $date = date("M-d-Y",mktime(0, 0, 0, date("m"), date("d"),   date("Y")));
-        $dateArray=explode('-',$date);
-        $lastDate = date("M-d-Y",mktime(0, 0, 0, date("m")-1, date("d"),   date("Y")));
-        $ldateArray=explode('-',$lastDate);
-        return getHistorical($stockId,$ldateArray,$dateArray);
+    else if (isset($lastDate) & $stockId=="FTSE100" ){
+        echo "scraping historical ftse";
+        $dataset=getHistoricalFTSE($stockId,$ldateArray,$dateArray);
     }
-    else if (stripos($queryString,'year') !== false){
-        $date = date("M-d-Y",mktime(0, 0, 0, date("m"), date("d"),   date("Y")));
-        $dateArray=explode('-',$date);
-        $lastDate = date("M-d-Y",mktime(0, 0, 0, date("m"), date("d"),   date("Y")-1));
-        $ldateArray=explode('-',$lastDate);
-        return getHistorical($stockId,$ldateArray,$dateArray);
-    }
-    else {
-        return getIntraDay($stockId);
-    }
-    
+    return $dataset;
 }
 //60Y6DZZMGNX55LH2
+
 
 function getIntraDay($stockId){
     if(strpos($stockId,".")!== false & strlen($stockId)!=4){
         $stockId=str_replace(".","",$stockId);
     }
+    if($stockId==="FTSE100"){
     
-    $url='https://finance.google.com/finance/getprices?q='.$stockId.'&x=LON&i=60&p=1=d,c,h,l,o,v';
+        $url='https://finance.google.com/finance/getprices?q=UKX&x=INDEXFTSE&i=60&p=1=d,c,h,l,o,v';
+    }
+    else{
+        $url='https://finance.google.com/finance/getprices?q='.$stockId.'&x=LON&i=60&p=1=d,c,h,l,o,v';
+    }
     ///echo $url;
     
-    $html = file_get_contents('https://finance.google.com/finance/getprices?q='.$stockId.'&x=LON&i=60&p=1=d,c,h,l,o,v'); //string
+    $html = file_get_contents($url); //string
     $rows = explode("\n",$html);
     $array = array();
     foreach($rows as $row) {
@@ -80,11 +90,38 @@ function getIntraDay($stockId){
     return $csv;
 }
 
-function getHistorical($ticker, $startDate, $endDate) {
+function getHistoricalFTSE($startdate,$endDate){
 
+    $url="http://finance.google.com/finance/historical?q=INDEXFTSE:UKX&startdate=".$startDate[0]."+"."$startDate[1]"."%2c+".   $startDate[2]."&enddate=".$endDate[0]."+"."$endDate[1]"."%2c+".$endDate[2];
+     $html = str_get_html(file_get_contents($url));
+     $table=$html->find('table[class="gf-table historical_price"]',0);
+    $dataArray=array();
+    
+     foreach($table->find('tr') as $tr){
+        $day=array();
+        array_push($day,$tr->find('td',0)->plaintext);
+        array_push($day,$tr->find('td',1)->plaintext);
+        array_push($day,$tr->find('td',2)->plaintext);
+        array_push($day,$tr->find('td',3)->plaintext);
+        array_push($day,$tr->find('td',4)->plaintext);
+        
+        /*$objOutput = new stdClass();   
+        $objOutput->Date= $tr->find('td',0)->plaintext;
+        $objOutput->Open=$tr->find('td',1)->plaintext;
+        $objOutput->High=$tr->find('td',2)->plaintext;
+        $objOutput->Low=$tr->find('td',3)->plaintext;
+        $objOutput->Close=$tr->find('td',4)->plaintext;*/
+        array_push($dataArray,$day);
+     }
+     return $dataArray;
+}
+
+
+function getHistorical($ticker, $startDate, $endDate) {
     //$url ="http://finance.google.com/finance/historical?q=".$ticker."&startdate=".$startDate."&enddate=".$endDate."&output=csv";
-    $url ="http://finance.google.com/finance/historical?q=LON%3A".$ticker."&startdate=".$startDate[0]."+"."$startDate[1]"."%2c+".$startDate[2]."&enddate=".$endDate[0]."+"."$endDate[1]"."%2c+".$endDate[2]."&output=csv";
-    //echo $url;
+    $url ="http://finance.google.com/finance/historical?q=LON%3A".$ticker."&startdate=".$startDate[0]."+"."$startDate[1]"."%2c+".   $startDate[2]."&enddate=".$endDate[0]."+"."$endDate[1]"."%2c+".$endDate[2]."&output=csv";
+    //https://finance.google.com/finance/historical?q=INDEXFTSE:UKX&startdate=Feb+28,+2017&enddate=Feb+28,+2018
+    echo $url;
     $fp = file_get_contents($url);
     $rows = explode("\n",$fp);
     $array = array();
@@ -93,6 +130,7 @@ function getHistorical($ticker, $startDate, $endDate) {
     }
     $array=array_slice($array,1);
     array_pop ($array);
+    print_r($array);
     return $array;
 }
 ?>
