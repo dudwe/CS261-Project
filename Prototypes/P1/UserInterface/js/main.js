@@ -19,8 +19,10 @@ $(document).ready(function() {
     displayQuery("12/02/18 13:13:09", "What is the spot price of Apple?");
     displayResponse("12/02/18 13:13:24", "The spot price of Apple is £2.30");
     displayQuery("02/12/18 14:45:59", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
-    displayResponse("02/12/18 14:46:08", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
 
+    //CHOICE HERE
+    displayResponse("02/12/18 14:46:08", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
+    displayResponseList("02/12/18 14:46:08", ["A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines."]);
 
     /*-//TODO-REMOVE--*/
     companyLog.add({id: "CHEF", ticker: "CHEF", name: "My name is chef", pollRate: 2, fav: false});
