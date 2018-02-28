@@ -13,32 +13,32 @@ ini_set('display_errors', '1');
         try {
             $client = new Client('f4bc3c425f1c4e6b9c52f21493decb19');
             $queryApi = new QueryApi($client);
-        
+
             $meaning = $queryApi->extractMeaning($query, [
                 'sessionId' => '1234567890',
                 'lang' => 'en',
             ]);
             $response = new Query($meaning);
-    
-            echo $response->getResult()->getFulfillment()->getSpeech();
+
+            //echo $response->getResult()->getFulfillment()->getSpeech();
         } catch (\Exception $error) {
-            echo $error->getMessage();
+            //echo $error->getMessage();
         }
-        getIntent($response);;
+        getIntent($response);
     }
-        /*
-        Debug method for working without the UI
-        $query = "what is the spot price of barclays?";
+
+        /*Debug method for working without the UI*/
+        /*$query = "what is the spot price of barclays?";
         try {
             $client = new Client('f4bc3c425f1c4e6b9c52f21493decb19');
             $queryApi = new QueryApi($client);
-        
+
             $meaning = $queryApi->extractMeaning($query, [
                 'sessionId' => '1234567890',
                 'lang' => 'en',
             ]);
             $response = new Query($meaning);
-    
+
             echo $response->getResult()->getFulfillment()->getSpeech();
         } catch (\Exception $error) {
             echo $error->getMessage();
