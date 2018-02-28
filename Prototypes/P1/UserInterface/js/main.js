@@ -55,8 +55,14 @@ $(document).ready(function() {
     displayErrorResponse("2018", "ERROR");
     displayGraphResponse("2019", "GRAPH");
 
+    $(".chat-response:last").append(getStockDisplay("Apple Industries", 291.87, 32.45, 1.98));
 
-    $(".chat-response:last").append(displayStockData("Apple Industries", 291.87, 32.45, 1.98));
+
+    //TODO
+    var response1 = "hello";
+    var response2 = getStockDisplay("Apple Industries", 291.87, 32.45, 1.98);
+    var responseFinal = [response1, response2];
+    displayResponseList("TIMESTAMP", responseFinal);
 
   }
 
@@ -150,9 +156,11 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /*Display*/
 
+  //timestamp :: String || Date
   //borderType :: left-border || right-border | right-border-error
   //timestampType :: timestamp--left || timestamp--right
   //responseType :: chat-query || chat-response | chat-response-error
+  //body :: jQuery Object || HTML || String
   function displayChatTemplate(timestamp, borderType, timestampType, responseType, body) {
     var template = $("<div class='chat-border'><div class='row timestamp-row'><p></p></div>"
       + "<div class='row'><div class='chat'></div></div></div>"
@@ -192,13 +200,8 @@ $(document).ready(function() {
   }
 
   //TODO
-  function displayHighlightedResponse(timestamp, response) {
-
-  }
-
-  //TODO
   //Gets a jQuery object for displaying information on a company stock.
-  function displayStockData(stockName, stock1, stock2, stock3) {
+  function getStockDisplay(stockName, stock1, stock2, stock3) {
     var stockTable = $("<table class='centered table-no-format'><tbody><tr>"
       + "<td><p class='stock-name'></p></td><td>"
       + "<p class='stock-performance'><i class='stock-icon material-icons'></i>"
@@ -223,6 +226,15 @@ $(document).ready(function() {
     stockTable.find(".stock-info-3").text(" (" + stock3 + "%)");
 
     return stockTable; //Return the jQuery object to be included in the chat window.
+  }
+
+  //TODO
+  function displayResponseList(timestamp, response) {
+    displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p>");
+    for (var i = 0; i < response.length; i++) {
+      var responseRow = $("<div></div>").addClass("row chat-response-row").append(response[i]);
+      $(".chat-response:last p").append(responseRow);
+    }
   }
 
   //Shows the loading icon.

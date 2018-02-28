@@ -75,6 +75,11 @@ nav {
   }
 }*/
 
+.chat-response-row {
+  margin-left: 0!important;
+  margin-right: 0!important;
+}
+
 /*----------------------------------------------------------------------------*/
 /*Stocks*/
 
@@ -420,7 +425,7 @@ input.poll-rate-selector {
 
 .response-graph {
   width: 800px;
-  height: 450px; /*600*/
+  height: 400px; /*600*/
 }
 
 /*----------------------------------------------------------------------------*/
