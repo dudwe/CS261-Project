@@ -101,9 +101,12 @@ function getIntent($jsonData){
         $dataArray=getCurrentForCompany($stockId);
         $dataArray=filterSummary($dataArray);
         break;
-    case "get_rev":
-        $dataArray=filterSummary($dataArray);
-        $dataArray=array('Revenue'=>$array['Revenue'],'MarketCap'=>$array['MarketCap']);
+    case "get_revenue":
+        $dataArray=getCurrentForCompany($stockId);
+        $tmp=filterSummary($dataArray);
+        $tmp['Revenue']=$dataArray['Revenue'];
+        $tmp['MarketCap']=$dataArray['MarketCap'];
+        $dataArray=$tmp;
         break;         
     case "get_open":
         $dataArray=getCurrentForCompany($stockId);
@@ -111,7 +114,8 @@ function getIntent($jsonData){
         break;     
     case "get_eps":
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('DivYield'=>$array['DivYield'],'PERatio'=>$array['PERatio']);
+        //var_dump($dataArray);
+        $dataArray=array('DivYield'=>$dataArray['DivYield'],'PERatio'=>$dataArray['PERatio']);
         break;         
     case "get_volume":
         $dataArray=getCurrentForCompany($stockId);
@@ -121,23 +125,23 @@ function getIntent($jsonData){
         break;            
    case "get_market_cap":
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('SharePrice'=>$array['SharePrice'],'SharesInIssue'=>$array['SharesInIssue'],'VolTotal'=>$array['VolTotal']);
+        $dataArray=array('SharePrice'=>$dataArray['SharePrice'],'SharesInIssue'=>$dataArray['SharesInIssue'],'Volume'=>$dataArray['Volume']);
         break;    
    case "get_div_yield":
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('EPS'=>$array['EPS'],'PERatio'=>$array['PERatio'],'VolTotal'=>$array['VolTotal']);
+        $dataArray=array('EPS'=>$dataArray['EPS'],'PERatio'=>$dataArray['PERatio'],'Volume'=>$dataArray['Volume']);
         break; 
    case "get_average_vol":
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('Volume'=>$array['Volume'],'AverageVol'=>$array['AverageVol']);
+        $dataArray=array('Volume'=>$dataArray['Volume'],'AverageVol'=>$dataArray['AverageVol']);
         break;         
    case "get_pe_ratio":
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('DivYield'=>$array['DivYield'],'EPS'=>$array['EPS'],'VolTotal'=>$array['VolTotal']);
+        $dataArray=array('DivYield'=>$dataArray['DivYield'],'EPS'=>$dataArray['EPS'],'Volume'=>$dataArray['Volume']);
         break;                  
    case "get_shares_in_issue":
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('MarketCap'=>$array['MarketCap'],'VolTotal'=>$array['VolTotal'],'SharePrice'=>$array['SharePrice']);
+        $dataArray=array('MarketCap'=>$dataArray['MarketCap'],'Volume'=>$dataArray['Volume'],'SharePrice'=>$dataArray['SharePrice']);
         break;                 
     case "get_stock_news":
         $dataArray=getRSS($stockId,False);
