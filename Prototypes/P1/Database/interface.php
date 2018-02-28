@@ -15,7 +15,6 @@ function  db_connection() {
         global $server, $user, $password, $database;
 
         $conn = mysqli_connect($server, $user, $password, $database);
-        // $conn = mysqli_connect("localhost", "bank", "password","traderbot_db");
     }
     return $conn;
 }
