@@ -1,8 +1,8 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
-	include_once "../Database/globalvars.php";
-    include_once "../Database/db_connect.php";
+    include_once('../Database/interface.php');
+    include_once('../Database/SentimentAnalysis/analyse_sentiment.php');
 	//var_dump(getRSS("Fixed Line Telecommunications",True,$conn));
 	
 	
@@ -55,7 +55,7 @@ ini_set('display_errors', '1');
 
 	//getRSS("BCS",False,$conn);
 	function getRSS($search,$ftse100){
-        $conn= db();
+        $conn= db_connection();
         $rss = new DOMDocument();
         $sectorNames= get_sectors($conn); 
         //$search = 'BCS';
@@ -105,27 +105,20 @@ ini_set('display_errors', '1');
                     .$search.
                     '&region=UK&lang=en-US');
         $feed = array();
-
+        
         foreach ($rss->getElementsByTagName('item') as $node) {
-            $item = array ( 
-                'title' => $node->getElementsByTagName('title')->item(0)->nodeValue,
-                'desc' => $node->getElementsByTagName('description')->item(0)->nodeValue,
-                'link' => $node->getElementsByTagName('link')->item(0)->nodeValue,
-                'date' => $node->getElementsByTagName('pubDate')->item(0)->nodeValue,
-                );
-            array_push($feed, $item);
+            if(strpos($node->getElementsByTagName('title')->item(0)->nodeValue, "Form") === false){
+                $objOutput = new stdClass();    
+                $objOutput->title=$node->getElementsByTagName('title')->item(0)->nodeValue;
+                $objOutput->desc=$node->getElementsByTagName('description')->item(0)->nodeValue;
+                $objOutput->link=$node->getElementsByTagName('link')->item(0)->nodeValue;
+                $objOutput->date=$node->getElementsByTagName('pubDate')->item(0)->nodeValue;
+                //$objOutput->sentiment=analyse_headline_sentiment($objOutput->title);/*TURN THIS OF FOR TESTSING*/
+                array_push($feed, $objOutput);
+            }
+            
         }
         //var_dump($feed);
-        /*foreach($feed as $news) {
-            $title = str_replace(' & ', ' &amp; ', $news['title']);
-            $link = $news['link'];
-            $description = $news['desc'];
-            $date = date('l F d, Y', strtotime($news['date']));
-            echo '<p><strong><a href="'.$link.'" title="'.$title.'">'.$title.'</a></strong><br />';
-            echo '<small><em>Posted on '.$date.'</em></small></p>';
-            echo '<p>'.$description.'</p>';
-        }*/
-        //print_r($feed);
         return $feed;
 	}
 ?> 

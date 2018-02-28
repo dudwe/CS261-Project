@@ -58,6 +58,96 @@ nav {
   color: #116466;
 }
 
+
+.container {
+  margin: 0 auto!important;
+  max-width: 1350px!important;
+  width: 100%!important;
+}
+@media only screen and (min-width : 601px) {
+  .container {
+    width: 100%!important;
+  }
+}
+@media only screen and (min-width : 993px) {
+  .container {
+    width: 80%!important;
+  }
+}
+
+.chat-response-row {
+  margin-left: 0!important;
+  margin-right: 0!important;
+  margin-bottom: 0!important;
+}
+
+/*----------------------------------------------------------------------------*/
+/*Stocks*/
+
+.stock-fall span:not(.stock-currency), .stock-fall i { color: #d32f2f; }
+.stock-rise span:not(.stock-currency), .stock-rise i { color: #43a047; }
+.stock-flat span:not(.stock-currency), .stock-flat i { color: #ff6d00; }
+.stock-icon {
+  font-size: 4.5rem;
+}
+
+.stock-rise, .stock-fall, .stock.flat {
+  margin: 0!important;
+}
+
+/*TODO*/
+.material-icons {
+  vertical-align: middle !important;
+  padding-bottom: 10px;
+}
+.stock-info-1 {
+  font-size: 1.8rem;
+  padding-right: 5px;
+}
+.stock-info-2 {
+  font-size: 1.2rem;
+}
+.stock-info-3 {
+  font-size: 1.2rem;
+}
+.stock-info-4 {
+  font-size: 1.8rem;
+}
+.stock-currency {
+  color: #212121;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding-right: 20px;
+}
+.stock-name {
+  font-size: 1.2rem;
+  color: #212121!important;
+  font-weight: bold;
+  padding-right: 2em;
+}
+.table-no-format tr {
+  border: none!important;
+  background-color: transparent;
+}
+.table-no-format td {
+  padding: 0!important;
+}
+/*TODO*/
+
+/*----------------------------------------------------------------------------*/
+/*News*/
+
+.link-preview img {
+  max-height: 120px;
+  max-width: 100%;
+}
+.link-preview h4 {
+  margin-top: 0;
+}
+.link-preview .alert {
+  margin-bottom: 0;
+}
+
 /*----------------------------------------------------------------------------*/
 /*Colour Scheme*/
 
@@ -114,7 +204,7 @@ body { font-family: 'News Cycle', sans-serif; }
 
 /*Div container for query input field*/
 #query-input, #search-input {
-  border-radius: 1em;
+  border-radius: 2em;
   padding: 0 2em 0 2em!important;
   border: 2px solid #116466;
   box-shadow: 0 2px 0 0 #116466;
@@ -189,7 +279,7 @@ input.valid[type="text"]:not(.browser-default) {
 .chat {
   border-radius: 1em;
   border: 2px solid black;
-  max-width: 66%;
+  max-width: 85%;
   display: inline-block;
 }
 
@@ -321,12 +411,22 @@ ul.tabs {
   border-radius: 2px!important;
 }
 
+input.poll-rate-selector {
+  width: 75px!important;
+  text-align: center;
+  border-bottom: solid 1px #eeeeee!important;
+  box-shadow: 0 1px 0 0 #bdbdbd!important;
+  background-color: white!important;
+  margin-bottom: 0!important;
+  border-radius: 1.2em!important;
+}
+
 /*----------------------------------------------------------------------------*/
-/*Graph D3.js*/
+/*Graph Chart.js*/
 
 .response-graph {
   width: 800px;
-  height: 600px;
+  height: 400px; /*600*/
 }
 
 /*----------------------------------------------------------------------------*/

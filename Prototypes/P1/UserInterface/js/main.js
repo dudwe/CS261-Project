@@ -16,20 +16,19 @@ $(document).ready(function() {
 
   function initialisation() {
     //Testing chat queries and commands.
-    displayQuery("02/12/18 13:10:14", "Hello");
-    displayResponse("02/12/18 13:10:20", "Goodbye");
-    displayQuery("02/12/18 14:45:59", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
-    displayResponse("02/12/18 14:46:08", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
     displayQuery("12/02/18 13:13:09", "What is the spot price of Apple?");
     displayResponse("12/02/18 13:13:24", "The spot price of Apple is £2.30");
+    displayQuery("02/12/18 14:45:59", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
+
+    //CHOICE HERE
+    displayResponse("02/12/18 14:46:08", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
+    displayResponseList("02/12/18 14:46:08", ["A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines."]);
 
     /*-//TODO-REMOVE--*/
-    companyLog.add({id: "CHEF", ticker: "CHEF", name: "My name is chef", fav: false});
-    companyLog.add({id: "SPAG", ticker: "SPAG", name: "Somebody toucha my spaghet", fav: false});
+    companyLog.add({id: "CHEF", ticker: "CHEF", name: "My name is chef", pollRate: 2, fav: false});
+    companyLog.add({id: "SPAG", ticker: "SPAG", name: "Somebody toucha my spaghet", pollRate: 15, fav: true});
     sectorLog.add({id: "1", name: "Banks", fav: false});
     sectorLog.add({id: "2", name: "Financial Services", fav: true});
-
-    displayGraphResponse("12/02/18 13:13:09", "GRAPH TEST 1");
     /*-//TODO-REMOVE--*/
 
     getFavourites();
@@ -37,14 +36,15 @@ $(document).ready(function() {
     //TODO REMOVE AFTER IMPLEMENTATION #########################################
     //Add company favourite changes to the corresponding array when detected.
     $(".fav-company-switch").click(function() {
-      var companyID = $(this).attr("data_id"); //Gets the ID attribute of the company.
+      var companyID = $(this).attr("data-id"); //Gets the ID attribute of the company.
       var fav = $(this).prop("checked");
       companyLog.addChange({id: companyID, fav: fav}); //Creates a new object for the change.
       console.log("COMPANY CHANGE: " + companyID + " : " + fav);
+      setPollChangeAvailability(companyID, fav);
     });
     //Add sector favourite changes to the corresponding array when detected.
     $(".fav-sector-switch").click(function() {
-      var sectorID = $(this).attr("data_id"); //Gets the ID attribute of the sector.
+      var sectorID = $(this).attr("data-id"); //Gets the ID attribute of the sector.
       var fav = $(this).prop("checked");
       sectorLog.addChange({id: sectorID, fav: fav}); //Creates a new object for the change.
       console.log("SECTOR CHANGE: " + sectorID + " : " + fav);
@@ -54,10 +54,17 @@ $(document).ready(function() {
     $("#fav-save").click(saveFavourites);
     $("#btn-send").click(submitQuery); //Redirect button click and ENTER to submitQuery function.
 
-
-    displayResponse("2017", "NORMAL");
     displayErrorResponse("2018", "ERROR");
     displayGraphResponse("2019", "GRAPH");
+
+    $(".chat-response:last").append(getStockDisplay("Apple Industries", 291.87, 32.45, 1.98));
+
+
+    //TODO
+    var response1 = "hello";
+    var response2 = getStockDisplay("Apple Industries", 291.87, 32.45, 1.98);
+    var responseFinal = [response1, response2];
+    displayResponseList("TIMESTAMP", responseFinal);
 
   }
 
@@ -151,16 +158,19 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /*Display*/
 
+  //timestamp :: String || Date
   //borderType :: left-border || right-border | right-border-error
   //timestampType :: timestamp--left || timestamp--right
   //responseType :: chat-query || chat-response | chat-response-error
+  //body :: jQuery Object || HTML || String
   function displayChatTemplate(timestamp, borderType, timestampType, responseType, body) {
-    $("#chat-window").append(
-      "<div class='" + borderType + "'><div class='row timestamp-row'>" +
-      "<p class='" + timestampType + "'>Received: " + timestamp + "</p></div>" +
-      "<div class='row'><div class='chat " + responseType + "'>" + body +
-      "</div></div></div><div class='response-divider'></div>"
-     );
+    var template = $("<div class='chat-border'><div class='row timestamp-row'><p></p></div>"
+      + "<div class='row'><div class='chat'></div></div></div>"
+      + "<div class='response-divider'></div>");
+    template.addClass(borderType);
+    template.find("p").addClass(timestampType).text("Received: " + timestamp);
+    template.find(".chat").addClass(responseType).append(body);
+    $("#chat-window").append(template);
   }
 
   //Adds a new text query to the chat window.
@@ -176,9 +186,10 @@ $(document).ready(function() {
     say(response);
   }
 
+  //Displays an error in a red-themed chat response.
   function displayErrorResponse(timestamp, response) {
     displayChatTemplate(timestamp, "right-border-error", "timestamp--right", "chat-response-error", "<p></p>");
-    $(".chat-response-error:last p").text("Error: " + response);
+    $(".chat-response-error:last p").text(response);
     say("Error. " + response);
   }
 
@@ -191,8 +202,41 @@ $(document).ready(function() {
   }
 
   //TODO
-  function displayHighlightedResponse(timestamp, response) {
+  //Gets a jQuery object for displaying information on a company stock.
+  function getStockDisplay(stockName, stock1, stock2, stock3) {
+    var stockTable = $("<table class='centered table-no-format'><tbody><tr>"
+      + "<td><p class='stock-name'></p></td><td>"
+      + "<p class='stock-performance'><i class='stock-icon material-icons'></i>"
+      + "<span class='stock-info-1'></span><span class='stock-currency'>GBP</span>"
+      + "<span class='stock-info-2'></span><span class='stock-info-3'></span></p></td></tr>");
 
+    var valToDetermineRiseFallFlat = -3; //TODO
+    if (valToDetermineRiseFallFlat > 0) { //Stock is rising.
+      stockTable.find(".stock-performance").addClass("stock-rise").find(".stock-icon").text("keyboard_arrow_up");
+    }
+    else if (valToDetermineRiseFallFlat < 0) { //Stock is falling.
+      stockTable.find(".stock-performance").addClass("stock-fall").find(".stock-icon").text("keyboard_arrow_down");
+    }
+    else { //Stock is neutral.
+      stockTable.find(".stock-performance").addClass("stock-flat").find(".stock-icon").text("remove");
+    }
+
+    //Includes stock information.
+    stockTable.find(".stock-name").text(stockName); //Include stock name.
+    stockTable.find(".stock-info-1").text(stock1);
+    stockTable.find(".stock-info-2").text(stock2);
+    stockTable.find(".stock-info-3").text(" (" + stock3 + "%)");
+
+    return stockTable; //Return the jQuery object to be included in the chat window.
+  }
+
+  //TODO
+  function displayResponseList(timestamp, response) {
+    displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p>");
+    for (var i = 0; i < response.length; i++) {
+      var responseRow = $("<div></div>").addClass("row chat-response-row").append(response[i]);
+      $(".chat-response:last p").append(responseRow);
+    }
   }
 
   //Shows the loading icon.
@@ -258,12 +302,41 @@ $(document).ready(function() {
   }
 
   //TODO
+  //data :: {id: String, ticker: String, name: String, pollRate: Int, fav: Bool}
   companyLog.add = function(data) {
     this.list.push(data); //TODO
-    addCompany(data.id, data.ticker, data.name, data.fav);
+    addCompany(data.id, data.ticker, data.name, data.pollRate, data.fav);
   };
 
+  //Gets the poll rate for a specific company.
+  companyLog.getPollRate = function(companyID) {
+    console.log("Getting poll rate for: " + companyID);
+    var index = this.list.findIndex(function(e) {
+      return companyID === e.id;
+    });
+    if (index !== -1) {
+      console.log("Rate: " + this.list[index].pollRate);
+      return this.list[index].pollRate;
+    }
+    else { //No ID match.
+      console.log("ERR");
+      return -1;
+    }
+  }
+
+  //Sets the poll rate for a specific company.
+  companyLog.setPollRate = function(companyID, pollRate) {
+    console.log("Setting poll rate for: " + companyID + " to " + pollRate);
+    var index = this.list.findIndex(function(e) {
+      return companyID === e.id;
+    });
+    if (index !== -1) {
+      this.list[index].pollRate = pollRate;
+    }
+  }
+
   //TODO
+  //data :: {id: String, name: String, fav: Bool}
   sectorLog.add = function(data) {
     this.list.push(data); //TODO
     addSector(data.id, data.name, data.fav);
@@ -291,14 +364,15 @@ $(document).ready(function() {
         });
         //Add company favourite changes to the corresponding array when detected.
         $(".fav-company-switch").click(function() {
-          var companyID = $(this).attr("data_id"); //Gets the ID attribute of the company.
+          var companyID = $(this).attr("data-id"); //Gets the ID attribute of the company.
           var fav = $(this).prop("checked");
           companyLog.addChange({id: companyID, fav: fav}); //Creates a new object for the change.
           console.log("COMPANY CHANGE: " + companyID + " : " + fav);
+          setPollChangeAvailability(companyID, fav);
         });
         //Add sector favourite changes to the corresponding array when detected.
         $(".fav-sector-switch").click(function() {
-          var sectorID = $(this).attr("data_id"); //Gets the ID attribute of the sector.
+          var sectorID = $(this).attr("data-id"); //Gets the ID attribute of the sector.
           var fav = $(this).prop("checked");
           sectorLog.addChange({id: sectorID, fav: fav}); //Creates a new object for the change.
           console.log("SECTOR CHANGE: " + sectorID + " : " + fav);
@@ -313,6 +387,7 @@ $(document).ready(function() {
     var companyChanges = companyLog.compareChanges(); //List of company changes that are different from the original.
     var sectorChanges = sectorLog.compareChanges(); //List of sector changes that are different from the original.
     var sendData = {companyList: companyChanges, sectorList: sectorChanges};
+    changePollRates(); //TODO
 
     //Debugging
     console.log("COMPANY LOG\n" + companyLog.toString());
@@ -342,24 +417,39 @@ $(document).ready(function() {
   }
 
   //Adds a company row to the favourites modal.
-  function addCompany(id, ticker, name, fav) {
-    var companyRow = "<tr><td>" + ticker + "</td><td>";
-    companyRow += name + "</td><td><div class='switch'><label><input data_id='" + id +  "' class='fav-company-switch' type='checkbox'";
-    if (fav) {
-      companyRow += " checked"; //Marks the company as favourited.
+  function addCompany(id, ticker, name, pollRate, fav) {
+    var tickerRow = "<td>" + ticker + "</td>";
+    var nameRow = "<td>" + name + "</td>";
+    var pollRow = "<td><input class='poll-rate-selector' data-id='" + id + "' ";
+    pollRow += "type='number' min='0' max='1000' maxlength='4'";
+
+    if (pollRate > 0) {
+      pollRow += "value='" + pollRate + "'";
     }
-    companyRow += "><span class='lever'></span></label></div></td></tr>";
+    else {
+      pollRow += "value='-'";
+    }
+    if (!fav) {
+      pollRow += " disabled";
+    }
+
+    pollRow += " type='text'></td>"
+    var favRow = "<td><div class='switch'><label><input data-id='";
+    favRow += id +  "' class='fav-company-switch' type='checkbox'";
+    if (fav) { favRow += " checked"; } //Marks the company as favourited.
+    favRow += "><span class='lever'></span></label></div></td>";
+    var companyRow = "<tr>" + tickerRow + nameRow + pollRow + favRow + "</tr>";
     $("#fav-company table tbody tr:last").after(companyRow); //Appends the company to the table.
   }
 
   //Adds a sector row to the favourites modal.
   function addSector(id, name, fav) {
-    var sectorRow= "<tr id='sector-" + id + "'><td>" + name + "</td>";
-    sectorRow += "<td><div class='switch'><label><input data_id='" + id + "' class='fav-sector-switch' type='checkbox'";
-    if (fav) {
-      sectorRow += " checked"; //Marks the sector as favourited.
-    }
-    sectorRow += "><span class='lever'></span></label></div></td></tr>";
+    var nameRow = "<td>" + name + "</td>";
+    var favRow = "<td><div class='switch'><label><input data-id='";
+    favRow += id + "' class='fav-sector-switch' type='checkbox'";
+    if (fav) { favRow += " checked"; } //Marks the sector as favourited.
+    favRow += "><span class='lever'></span></label></div></td>";
+    var sectorRow = "<tr>" + nameRow + favRow + "</tr>";
     $("#fav-sector table tbody tr:last").after(sectorRow); //Appends the sector to the table.
   }
 
@@ -412,20 +502,25 @@ $(document).ready(function() {
   var poll = window.setInterval(pollNotifications, 1000 * 60); //Set pollNotifications to execute every minute.
   var pollCount = 0; //Number of notification polls checked.
 
+  //TODO
   //Identifies which favourites need to be polled to the server then sends the AJAX request.
   function pollNotifications() {
     console.log("Poll Notifications (" + ++pollCount + ")");
     var notificationObj = []; //List of all companies to send notification polls for.
     for (var i = 0; i < companyLog.list.length; i++) {
-      if ((companyLog.list[i].fav === true) && (companyLog.list[i].poll <= 0)) {
-        if (pollCount % companyLog.list[i] === 0) { //If current time indicates favourite should be polled.
-          notificationObj.push({id: companyLog.list[i].id, lastRec: companyLog.list[i].lastRec}); //TODO
+      var company = companyLog.list[i];
+      if ((company.fav === true) && (company.pollRate > 0)) {
+        if (pollCount % company.pollRate === 0) { //If current time indicates favourite should be polled.
+          notificationObj.push({id: company.id, lastRec: company.lastRec}); //TODO
         }
       }
     }
 
     //Don't send AJAX request if nothing needs polling.
     if (notificationObj.length === 0) { return; }
+
+    console.log("NOTIFICATIONS");
+    console.log(notificationObj);
 
     //Sends the notification requests to the server.
     $.ajax({
@@ -441,6 +536,45 @@ $(document).ready(function() {
       }
     });
   }
+
+  //Allows only favourited companies' poll rate to be changed.
+  function setPollChangeAvailability(companyID, fav) {
+    $("*[data-id=" + companyID + "].poll-rate-selector").prop("disabled", !fav);
+  }
+
+  //Saves changes to company poll rates.
+  function changePollRates() {
+    console.log("Change Poll Rates");
+    $(".poll-rate-selector").each(function(index, element) {
+      var companyID = $(this).attr("data-id");
+      var pollRate = $(this).val();
+      var valid = validatePollRate(pollRate);
+      if (valid) { //Sets the valid poll rate in the company log.
+        companyLog.setPollRate(companyID, pollRate);
+      }
+      else { //Replace existing invalid poll rate with valid stored poll rate.
+        pollRate = companyLog.getPollRate(companyID);
+        $(this).val(pollRate);
+      }
+      console.log(companyID + " at rate " + pollRate + " is " + valid);
+    });
+  }
+
+  //Validates a poll rate to ensure it is an integer between 0 and 1000 inclusive.
+  function validatePollRate(pollRate) {
+    if ($.isNumeric(pollRate) && Math.floor(pollRate) == +pollRate) {
+      return (pollRate >= 0 && pollRate <= 1000)
+    }
+    else {
+      return false;
+    }
+  }
+
+/*----------------------------------------------------------------------------*/
+/*News*/
+
+//URL
+//HEADER
 
 /*----------------------------------------------------------------------------*/
 /*Query*/
@@ -508,7 +642,7 @@ $(document).ready(function() {
   function sendQuery(query) {
     $.ajax({
       url: "../Client/dialogflow.php",
-      data: {user_query:query},
+      data: {user_query: query},
       method: "POST",
       timeout: timeout,
       error: function(xhr, ajaxOptions, thrownError) {
@@ -518,7 +652,6 @@ $(document).ready(function() {
       },
       success: function(data) {
         hideLoading(); //Hides the rotating loading animation.
-        alert(data); //debug method prints dialog json to screen
         parseResponse(data);
       }
     });
@@ -560,8 +693,9 @@ $(document).ready(function() {
 
   //TODO
   function parseResponse(data) {
-    console.log("parse response layer"); //###
-    displayResponse("response recieved"); //###
+    console.log("Parsing Response"); //###
+    var currentTime = new Date();
+    displayResponse(currentTime.toUTCString(), data);
   }
 
   /*[SharePrice] => PointChange, PercentChange, Bid, Offer, Open, Close, High, Low

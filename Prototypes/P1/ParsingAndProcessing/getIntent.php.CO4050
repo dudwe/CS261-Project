@@ -70,89 +70,104 @@ function getIntent($jsonData){
     
     switch ($intent) {
     case "get_share_price":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
         $dataArray=filterSummary($dataArray);
         break;
     case "get_point_change":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
         $dataArray=filterSummary($dataArray);
         break;
     case "percent_change":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
         $dataArray=filterSummary($dataArray);
         break;  
     case "get_bid":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
         $dataArray=filterSummary($dataArray);
         break;
     case "get_offer":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
         $dataArray=filterSummary($dataArray);
         break;
    case "get_close":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
         $dataArray=filterSummary($dataArray);
         break;  
     case "get_high":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
         $dataArray=filterSummary($dataArray);
         break;          
     case "get_low":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
         $dataArray=filterSummary($dataArray);
         break;
-    case "get_revenue":
+    case "get_rev":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
-        $tmp=filterSummary($dataArray);
-        $tmp['Revenue']=$dataArray['Revenue'];
-        $tmp['MarketCap']=$dataArray['MarketCap'];
-        $dataArray=$tmp;
+        $dataArray=filterSummary($dataArray);
         break;         
     case "get_open":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
         $dataArray=filterSummary($dataArray);
         break;     
     case "get_eps":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
-        //var_dump($dataArray);
-        $dataArray=array('DivYield'=>$dataArray['DivYield'],'PERatio'=>$dataArray['PERatio']);
         break;         
     case "get_volume":
+        //echo "call getCurrentForCompany";
+        
         $dataArray=getCurrentForCompany($stockId);
+        print_r($dataArray);
         $tmp=filterSummary($dataArray);
         $tmp['Volume']=$dataArray['Volume'];
-        $tmp['AverageVol']=$dataArray['AverageVol'];
         $dataArray=$tmp;
         break;            
    case "get_market_cap":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('SharePrice'=>$dataArray['SharePrice'],'SharesInIssue'=>$dataArray['SharesInIssue'],'Volume'=>$dataArray['Volume']);
         break;    
    case "get_div_yield":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('EPS'=>$dataArray['EPS'],'PERatio'=>$dataArray['PERatio'],'Volume'=>$dataArray['Volume']);
         break; 
    case "get_average_vol":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('Volume'=>$dataArray['Volume'],'AverageVol'=>$dataArray['AverageVol']);
         break;         
    case "get_pe_ratio":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('DivYield'=>$dataArray['DivYield'],'EPS'=>$dataArray['EPS'],'Volume'=>$dataArray['Volume']);
         break;                  
    case "get_shares_in_issue":
+        //echo "call getCurrentForCompany";
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('MarketCap'=>$dataArray['MarketCap'],'Volume'=>$dataArray['Volume'],'SharePrice'=>$dataArray['SharePrice']);
         break;                 
+  
+        
+        
+        
+        
     case "get_stock_news":
+        //echo "call stock news";
         $dataArray=getRSS($stockId,False);
         break;
     case "get_stock_performance":
+        //echo "get stock performance";
+        //var_dump($jsonData);
         $objOutput->timeframe=$timeframe;
         $dataArray=getTimeframe($stockId,$timeframe);
-        if($timeframe=="" or $timeframe=='Today'){
+        if($timeframe=="" or stripos($timeframe,'today')!== false){
             $dataArray2=getCurrentForCompany($stockId);
-            $dataArray2=filterSummary($dataArray2);
             $objOutput->auxillary=$dataArray2;
         }
         break;
@@ -160,32 +175,40 @@ function getIntent($jsonData){
         $dataArray=getRSS($stockId,False);
         break;
     case "get_sector_performance":
+        //echo "get sector performance";
         $dataArray=getSector350($stockId);
         break;
     case "get_buy_or_sell":
+        //echo "get sector performance";
         $dataArray=getBuyOrSell($stockId,$buyorsell);
         $objOutput->buyOrSell=$buyorsell;
         break;    
-    default:
+    case "Default Fallback Intent":
         echo "error";
         $error=1;
+        /*Suggest a query to try*/
         $stockId="Error";
         break;
     }
+    
     if($error==0){
         /*insert query into database*/
         $conn=db_connection();
         insert_query($conn, $queryString, $intent, $stockId);
     }
+    
     $objOutput->stocks=$stockId;
     $objOutput->dataset=$dataArray;
+    //$jsonOutput=json_encode($objOutput);
     $jsonOutput = json_encode($objOutput, JSON_PRETTY_PRINT);
     echo $jsonOutput;
     return $jsonOutput;
+
+
 }
 
 function filterSummary($array){
-    return array('Date'=>$array['Date'],'SharePrice'=>$array['SharePrice'],'PointChange'=>$array['PointChange'],'PercentChange'=>$array['PercentChange'],'Bid'=>$array['Bid'],'Offer'=>$array['Offer'],'Open'=>$array['Open'],'Close'=>$array['Close'],'High'=>$array['High'],'Low'=>$array['Low'],'Low'=>$array['Low']);
+    return array('SharePrice'=>$array['SharePrice'],'PointChange'=>$array['PointChange'],'PercentChange'=>$array['PercentChange'],'Bid'=>$array['Bid'],'Offer'=>$array['Offer'],'Open'=>$array['Open'],'Close'=>$array['Close'],'High'=>$array['High'],'Low'=>$array['Low'],'Low'=>$array['Low']);
 }
 
 

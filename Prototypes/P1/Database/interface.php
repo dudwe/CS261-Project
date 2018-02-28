@@ -194,7 +194,9 @@ function populate_sectors($conn) {
         ('Software & Computer Services',        '/indices/software---comp-services'),
         ('Support services',                    '/indices/support-services'),
         ('Tobacco',                             '/indices/tobacco'),
-        ('Travel & Leisure',                    '/indices/travel---leisure')";
+        ('Travel & Leisure',                    '/indices/travel---leisure'),
+        ('FTSE100',                    '/indices/uk-100')
+        ";
 
     if ($conn->query($sql) === TRUE) {
         echo "Sectors added successfully <br>";
@@ -228,7 +230,7 @@ function populate_stocks($conn) {
         ('Burberry',                            'BRBY',	30,	'/equities/burberry'),
         ('Carnival Corporation & plc',          'CCL',	38,	'/equities/carnival-corporation'),
         ('Centrica',                            'CNA',	15,	'/equities/centrica'),
-        ('Coca-Cola',                           'HBC',	4,	'/equities/cocacola-hb'),
+        ('Coca-Cola',                           'CCH',	4,	'/equities/cocacola-hb'),
         ('Compass Group',                       'CPG',	38,	'/equities/compass-group'),
         ('CRH plc',                             'CRH',	6,	'/equities/crh'),
         ('Croda International',                 'CRDA',	5,	'/equites/croda'),
@@ -271,7 +273,7 @@ function populate_stocks($conn) {
         ('NMC Health',                          'NMC',	18,	'/equities/nmc-health'),
         ('Old Mutual',                          'OML',	21,	'/equities/old-mutual'),
         ('Paddy Power Betfair',                 'PPB',	38,	'/equities/paddy-power'),
-        ('Pearson',                             'PLC',	24,	'/equities/pearson'),
+        ('Pearson',                             'PSON',	24,	'/equities/pearson'),
         ('Persimmon plc',                       'PSN',	19,	'/equities/persimmon'),
         ('Prudential plc',                      'PRU',	21,	'/equities/prudential'),
         ('Randgold Resources',                  'RRS',	25,	'/equities/randgold-resources'),
@@ -348,7 +350,7 @@ function drop_tables($conn) {
 
 function drop_database($conn) {
 
-    $sql = "DROP DATABASE " . $database;
+    $sql = "DROP DATABASE traderbot_db";
 
     if ($conn->query($sql) === TRUE) {
         return 1;
