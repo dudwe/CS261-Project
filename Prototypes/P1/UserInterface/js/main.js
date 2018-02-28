@@ -15,6 +15,7 @@ $(document).ready(function() {
 /* Initialisation*/
 
   function initialisation() {
+
     //Testing chat queries and commands.
     displayQuery("12/02/18 13:13:09", "What is the spot price of Apple?");
     displayResponse("12/02/18 13:13:24", "The spot price of Apple is £2.30");
@@ -65,7 +66,6 @@ $(document).ready(function() {
     var response2 = getStockDisplay("Apple Industries", 291.87, 32.45, 1.98);
     var responseFinal = [response1, response2];
     displayResponseList("TIMESTAMP", responseFinal);
-
 
   }
 
@@ -774,12 +774,12 @@ $(document).ready(function() {
 
     console.log(speech);
     say(speech); //Outputs the response using voice synthesis.
+    scrollToChatBottom(); //Scrolls to bottom of the chat window.
 
-    //TODO displayResponse(timestamp, data);
+  }
 
-
-
-
+  //TODO
+  function createStockDiagram(date, sharePrice, pointChange, percentChange, bid, offer, open, close, high, low) {
 
   }
 
