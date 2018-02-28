@@ -17,12 +17,7 @@ $(document).ready(function() {
   function initialisation() {
 
     //Testing chat queries and commands.
-    displayQuery("12/02/18 13:13:09", "What is the spot price of Apple?");
-    displayResponse("12/02/18 13:13:24", "The spot price of Apple is £2.30");
     displayQuery("02/12/18 14:45:59", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
-
-    //CHOICE HERE
-    displayResponse("02/12/18 14:46:08", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
     displayResponseList("02/12/18 14:46:08", ["A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines."]);
 
     /*-//TODO-REMOVE--*/
@@ -57,15 +52,6 @@ $(document).ready(function() {
 
     displayErrorResponse("2018", "ERROR");
     displayGraphResponse("2019", "GRAPH");
-
-    $(".chat-response:last").append(getStockDisplay("Apple Industries", 291.87, 32.45, 1.98));
-
-
-    //TODO
-    var response1 = "hello";
-    var response2 = getStockDisplay("Apple Industries", 291.87, 32.45, 1.98);
-    var responseFinal = [response1, response2];
-    displayResponseList("TIMESTAMP", responseFinal);
 
   }
 
@@ -178,42 +164,41 @@ $(document).ready(function() {
   //Adds a new text query to the chat window.
   function displayQuery(timestamp, query) {
     displayChatTemplate(timestamp, "left-border", "timestamp--left", "chat-query", "<p></p>");
-    $(".chat-query:last p").text(query);
+    $(".chat-query:last > p").text(query);
   }
 
   //Adds a new text reponse to the chat window.
   function displayResponse(timestamp, response) {
     displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p>");
-    $(".chat-response:last p").text(response);
+    $(".chat-response:last > p").text(response);
   }
 
   //Displays an error in a red-themed chat response.
   function displayErrorResponse(timestamp, response) {
     displayChatTemplate(timestamp, "right-border-error", "timestamp--right", "chat-response-error", "<p></p>");
-    $(".chat-response-error:last p").text(response);
+    $(".chat-response-error:last > p").text(response);
   }
 
   //Adds a new text reponse to the chat window.
   function displayGraphResponse(timestamp, response) {
     displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p><canvas class='response-graph'></canvas>");
-    $(".chat-response:last p").text(response);
+    $(".chat-response:last > p").text(response);
     createLineGraph(); //Displays a graph in the response.
   }
 
   //TODO
   //Gets a jQuery object for displaying information on a company stock.
-  function getStockDisplay(stockName, stock1, stock2, stock3) {
+  function getStockDisplay(stockName, sharePrice, pointChange, percentageChange) {
     var stockTable = $("<table class='centered table-no-format'><tbody><tr>"
       + "<td><p class='stock-name'></p></td><td>"
       + "<p class='stock-performance'><i class='stock-icon material-icons'></i>"
-      + "<span class='stock-info-1'></span><span class='stock-currency'>GBP</span>"
-      + "<span class='stock-info-2'></span><span class='stock-info-3'></span></p></td></tr>");
+      + "<span class='stock-info-shareprice'></span><span class='stock-currency'>GBP</span>"
+      + "<span class='stock-info-pointchange'></span><span class='stock-info-percentagechange'></span></p></td></tr>");
 
-    var valToDetermineRiseFallFlat = -3; //TODO
-    if (valToDetermineRiseFallFlat > 0) { //Stock is rising.
+    if (pointChange > 0) { //Stock is rising.
       stockTable.find(".stock-performance").addClass("stock-rise").find(".stock-icon").text("keyboard_arrow_up");
     }
-    else if (valToDetermineRiseFallFlat < 0) { //Stock is falling.
+    else if (pointChange < 0) { //Stock is falling.
       stockTable.find(".stock-performance").addClass("stock-fall").find(".stock-icon").text("keyboard_arrow_down");
     }
     else { //Stock is neutral.
@@ -222,9 +207,9 @@ $(document).ready(function() {
 
     //Includes stock information.
     stockTable.find(".stock-name").text(stockName); //Include stock name.
-    stockTable.find(".stock-info-1").text(stock1);
-    stockTable.find(".stock-info-2").text(stock2);
-    stockTable.find(".stock-info-3").text(" (" + stock3 + "%)");
+    stockTable.find(".stock-info-shareprice").text(sharePrice);
+    stockTable.find(".stock-info-pointchange").text(pointChange);
+    stockTable.find(".stock-info-percentagechange").text(" (" + percentageChange + ")");
 
     return stockTable; //Return the jQuery object to be included in the chat window.
   }
@@ -234,7 +219,7 @@ $(document).ready(function() {
     displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p>");
     for (var i = 0; i < response.length; i++) {
       var responseRow = $("<div></div>").addClass("row chat-response-row").append(response[i]);
-      $(".chat-response:last p").append(responseRow);
+      $(".chat-response:last > p").append(responseRow);
     }
   }
 
@@ -708,39 +693,48 @@ $(document).ready(function() {
     switch (intent) {
       case "get_share_price":
         speech += dataset["SharePrice"];
-        displayResponseList(timestamp, [speech, data]);
+        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        displayResponseList(timestamp, [speech, stockTable, data]);
         break;
       case "get_point_change":
         speech += dataset["PointChange"];
-        displayResponseList(timestamp, [speech, data]);
+        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        displayResponseList(timestamp, [speech, stockTable, data]);
         break;
       case "percent_change":
         speech += dataset["PercentChange"];
-        displayResponseList(timestamp, [speech, data]);
+        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        displayResponseList(timestamp, [speech, stockTable, data]);
         break;
       case "get_bid":
         speech += dataset["Bid"];
-        displayResponseList(timestamp, [speech, data]);
+        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        displayResponseList(timestamp, [speech, stockTable, data]);
         break;
       case "get_offer":
         speech += dataset["Offer"];
-        displayResponseList(timestamp, [speech, data]);
+        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        displayResponseList(timestamp, [speech, stockTable, data]);
         break;
       case "get_open":
         speech += dataset["Open"];
-        displayResponseList(timestamp, [speech, data]);
+        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        displayResponseList(timestamp, [speech, stockTable, data]);
         break;
       case "get_close":
         speech += dataset["Close"];
-        displayResponseList(timestamp, [speech, data]);
+        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        displayResponseList(timestamp, [speech, stockTable, data]);
         break;
       case "get_high":
         speech += dataset["High"];
-        displayResponseList(timestamp, [speech, data]);
+        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        displayResponseList(timestamp, [speech, stockTable, data]);
         break;
       case "get_low":
         speech += dataset["Low"];
-        displayResponseList(timestamp, [speech, data]);
+        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        displayResponseList(timestamp, [speech, stockTable, data]);
         break;
       case "get_revenue":
         break;
@@ -769,6 +763,7 @@ $(document).ready(function() {
       case "get_buy_or_sell":
         break;
       default:
+        displayErrorResponse(timestamp, "ERROR");
         break;
     }
 
@@ -778,9 +773,13 @@ $(document).ready(function() {
 
   }
 
-  //TODO
+  //TODOcd
   function createStockDiagram(date, sharePrice, pointChange, percentChange, bid, offer, open, close, high, low) {
-
+    //HIGH AND LOW IN BULLET POINTS
+    //OPEN AND CLOSE IN BULLET POINTS
+    //SHARE PRICE//POINT CHANGE //PERCENTAGE CHANGE what is already programmed.
+    //BID
+    //OFFER
   }
 
   /*[SharePrice] => PointChange, PercentChange, Bid, Offer, Open, Close, High, Low
