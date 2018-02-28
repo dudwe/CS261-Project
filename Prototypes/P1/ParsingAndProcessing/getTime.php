@@ -43,7 +43,10 @@ function getTimeframe($stockId,$queryString){
 //60Y6DZZMGNX55LH2
 
 function getIntraDay($stockId){
-    $stockId=str_replace(".","",$stockId);
+    if(strpos($stockId,".")!== false & strlen($stockId)!=4){
+        $stockId=str_replace(".","",$stockId);
+    }
+    
     $url='https://finance.google.com/finance/getprices?q='.$stockId.'&x=LON&i=60&p=1=d,c,h,l,o,v';
     ///echo $url;
     
