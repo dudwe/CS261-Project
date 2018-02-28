@@ -549,7 +549,7 @@ function suggest_query($conn) {
             $test_fav = "SELECT * FROM fav_stocks NATURAL JOIN (SELECT * FROM stocks INNER JOIN (SELECT * FROM queries) AS t0 ON ticker_symbol = entity) AS t1";
             $fav_res = $conn->query($test_fav);
 
-            if ($res->num_rows > 0) {
+            if ($fav_res->num_rows > 0) {
                 $tracked = "tracked ";
             } else {
                 $tracked = "";
