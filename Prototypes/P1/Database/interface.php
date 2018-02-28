@@ -195,7 +195,9 @@ function populate_sectors($conn) {
         ('Software & Computer Services',        '/indices/software---comp-services'),
         ('Support services',                    '/indices/support-services'),
         ('Tobacco',                             '/indices/tobacco'),
-        ('Travel & Leisure',                    '/indices/travel---leisure')";
+        ('Travel & Leisure',                    '/indices/travel---leisure'),
+        ('FTSE100',                    '/indices/uk-100')
+        ";
 
     if ($conn->query($sql) === TRUE) {
         echo "Sectors added successfully <br>";
@@ -349,7 +351,7 @@ function drop_tables($conn) {
 
 function drop_database($conn) {
 
-    $sql = "DROP DATABASE " . $database;
+    $sql = "DROP DATABASE traderbot_db";
 
     if ($conn->query($sql) === TRUE) {
         return 1;
