@@ -56,6 +56,8 @@ $(document).ready(function() {
     displayGraphResponse("2019", "GRAPH");
 
 
+    $(".chat-response:last").append(displayStockData("Apple Industries", 291.87, 32.45, 1.98));
+
   }
 
 /*----------------------------------------------------------------------------*/
@@ -152,12 +154,13 @@ $(document).ready(function() {
   //timestampType :: timestamp--left || timestamp--right
   //responseType :: chat-query || chat-response | chat-response-error
   function displayChatTemplate(timestamp, borderType, timestampType, responseType, body) {
-    $("#chat-window").append(
-      "<div class='" + borderType + "'><div class='row timestamp-row'>" +
-      "<p class='" + timestampType + "'>Received: " + timestamp + "</p></div>" +
-      "<div class='row'><div class='chat " + responseType + "'>" + body +
-      "</div></div></div><div class='response-divider'></div>"
-     );
+    var template = $("<div class='chat-border'><div class='row timestamp-row'><p></p></div>"
+      + "<div class='row'><div class='chat'></div></div></div>"
+      + "<div class='response-divider'></div>");
+    template.find(".chat-border").addClass(borderType);
+    template.find("p").addClass(timestampType).text("Received: " + timestamp);
+    template.find(".chat").addClass(responseType).append(body);
+    $("#chat-window").append(template);
   }
 
   //Adds a new text query to the chat window.
@@ -173,9 +176,10 @@ $(document).ready(function() {
     say(response);
   }
 
+  //Displays an error in a red-themed chat response.
   function displayErrorResponse(timestamp, response) {
     displayChatTemplate(timestamp, "right-border-error", "timestamp--right", "chat-response-error", "<p></p>");
-    $(".chat-response-error:last p").text("Error: " + response);
+    $(".chat-response-error:last p").text(response);
     say("Error. " + response);
   }
 
@@ -190,6 +194,35 @@ $(document).ready(function() {
   //TODO
   function displayHighlightedResponse(timestamp, response) {
 
+  }
+
+  //TODO
+  //Gets a jQuery object for displaying information on a company stock.
+  function displayStockData(stockName, stock1, stock2, stock3) {
+    var stockTable = $("<table class='centered table-no-format'><tbody><tr>"
+      + "<td><p class='stock-name'></p></td><td>"
+      + "<p class='stock-performance'><i class='stock-icon material-icons'></i>"
+      + "<span class='stock-info-1'></span><span class='stock-currency'>GBP</span>"
+      + "<span class='stock-info-2'></span><span class='stock-info-3'></span></p></td></tr>");
+
+    var valToDetermineRiseFallFlat = -3; //TODO
+    if (valToDetermineRiseFallFlat > 0) { //Stock is rising.
+      stockTable.find(".stock-performance").addClass("stock-rise").find(".stock-icon").text("keyboard_arrow_up");
+    }
+    else if (valToDetermineRiseFallFlat < 0) { //Stock is falling.
+      stockTable.find(".stock-performance").addClass("stock-fall").find(".stock-icon").text("keyboard_arrow_down");
+    }
+    else { //Stock is neutral.
+      stockTable.find(".stock-performance").addClass("stock-flat").find(".stock-icon").text("remove");
+    }
+
+    //Includes stock information.
+    stockTable.find(".stock-name").text(stockName); //Include stock name.
+    stockTable.find(".stock-info-1").text(stock1);
+    stockTable.find(".stock-info-2").text(stock2);
+    stockTable.find(".stock-info-3").text(" (" + stock3 + "%)");
+
+    return stockTable; //Return the jQuery object to be included in the chat window.
   }
 
   //Shows the loading icon.
@@ -452,7 +485,7 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /*Notifications*/
 
-  var poll = window.setInterval(pollNotifications, 1000 * 5); //Set pollNotifications to execute every minute.
+  var poll = window.setInterval(pollNotifications, 1000 * 60); //Set pollNotifications to execute every minute.
   var pollCount = 0; //Number of notification polls checked.
 
   //TODO
