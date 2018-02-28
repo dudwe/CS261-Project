@@ -33,7 +33,12 @@ function getIntent($jsonData){
     if(array_key_exists('buy-sell-time-frame',$arrayparam)){
         $buyorsell=$array['result']['parameters']['buy-sell-time-frame'];
     }
-    $intent = $array['result']['metadata']['intentName'];
+    
+    if($stockId!=""){
+        $intent = $array['result']['metadata']['intentName'];
+    }else{
+        $intent="Defualt Fallback Intent";
+    }
     $speech = $array['result']['fulfillment']['speech'];
 
     /*store query into database if no error*/
@@ -151,8 +156,13 @@ function getIntent($jsonData){
         $objOutput->timeframe=$timeframe;
         $dataArray=getTimeframe($stockId,$timeframe);
         if($timeframe=="" or $timeframe=='Today'){
-            $dataArray2=getCurrentForCompany($stockId);
-            $dataArray2=filterSummary($dataArray2);
+            if($stockId=="FTSE100"){
+                $dataArray2=getSector350($stockId);
+            }
+            else{
+                $dataArray2=getCurrentForCompany($stockId);
+                $dataArray2=filterSummary($dataArray2);
+            }
             $objOutput->auxillary=$dataArray2;
         }
         break;

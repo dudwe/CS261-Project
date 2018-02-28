@@ -12,9 +12,11 @@ include_once('../Database/interface.php');
 /*current price, point change, percent change,Prev Close, day low, day high,open,*/
 function getSector350($stock){
     /*read into the database to get the relevant url from investing.com*/
+    echo "Stock :".$stock;
     $conn= db_connection();
     $url = get_scrape_url($conn,$stock);
-    //echo 'https://uk.investing.com'.$url;
+    echo $url;
+    echo 'https://uk.investing.com'.$url;
     $html = str_get_html(file_get_contents('https://uk.investing.com'.$url));
     /*place data into array*/
     $returnData = array();
