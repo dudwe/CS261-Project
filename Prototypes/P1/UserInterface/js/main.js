@@ -66,12 +66,13 @@ $(document).ready(function() {
     var responseFinal = [response1, response2];
     displayResponseList("TIMESTAMP", responseFinal);
 
+
   }
 
 /*----------------------------------------------------------------------------*/
 /*Speech API*/
 
-  var artyom = new Artyom();
+  const artyom = new Artyom();
   var support_speech = artyom.speechSupported();
   var support_recogn = artyom.recognizingSupported();
   console.log("Speech Synthesis Supported: " + support_speech);
@@ -112,6 +113,7 @@ $(document).ready(function() {
   function say(speech) {
     if (speechEnabled) {
       artyom.say(speech);
+      console.log("VOICE OUTPUT: " + speech);
     }
   }
 
@@ -183,14 +185,12 @@ $(document).ready(function() {
   function displayResponse(timestamp, response) {
     displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p>");
     $(".chat-response:last p").text(response);
-    say(response);
   }
 
   //Displays an error in a red-themed chat response.
   function displayErrorResponse(timestamp, response) {
     displayChatTemplate(timestamp, "right-border-error", "timestamp--right", "chat-response-error", "<p></p>");
     $(".chat-response-error:last p").text(response);
-    say("Error. " + response);
   }
 
   //Adds a new text reponse to the chat window.
@@ -198,7 +198,6 @@ $(document).ready(function() {
     displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p><canvas class='response-graph'></canvas>");
     $(".chat-response:last p").text(response);
     createLineGraph(); //Displays a graph in the response.
-    say(response); //Says the response using speech synthesis.
   }
 
   //TODO
@@ -642,7 +641,7 @@ $(document).ready(function() {
   function sendQuery(query) {
     $.ajax({
       url: "../Client/dialogflow.php",
-      data: {user_query: query},
+      data: {"user_query": query},
       method: "POST",
       timeout: timeout,
       error: function(xhr, ajaxOptions, thrownError) {
@@ -693,9 +692,95 @@ $(document).ready(function() {
 
   //TODO
   function parseResponse(data) {
-    console.log("Parsing Response"); //###
-    var currentTime = new Date();
-    displayResponse(currentTime.toUTCString(), data);
+    console.log("Parsing Response");
+    var timestamp = new Date().toUTCString();
+
+    var json = JSON.parse(data);
+
+    var resolvedQuery = json["resolvedQuery"];
+    var intent = json["intentName"];
+    var speech = json["speech"] + " ";
+    var stock = json["stocks"];
+    var dataset = json["dataset"];
+
+    /*SHARE PRICE // POINT CHANGE // PERCENT CHANGE // BID // OFFER //OPEN //CLOSE //HIGH // LOW*/
+
+    switch (intent) {
+      case "get_share_price":
+        speech += dataset["SharePrice"];
+        displayResponseList(timestamp, [speech, data]);
+        break;
+      case "get_point_change":
+        speech += dataset["PointChange"];
+        displayResponseList(timestamp, [speech, data]);
+        break;
+      case "percent_change":
+        speech += dataset["PercentChange"];
+        displayResponseList(timestamp, [speech, data]);
+        break;
+      case "get_bid":
+        speech += dataset["Bid"];
+        displayResponseList(timestamp, [speech, data]);
+        break;
+      case "get_offer":
+        speech += dataset["Offer"];
+        displayResponseList(timestamp, [speech, data]);
+        break;
+      case "get_open":
+        speech += dataset["Open"];
+        displayResponseList(timestamp, [speech, data]);
+        break;
+      case "get_close":
+        speech += dataset["Close"];
+        displayResponseList(timestamp, [speech, data]);
+        break;
+      case "get_high":
+        speech += dataset["High"];
+        displayResponseList(timestamp, [speech, data]);
+        break;
+      case "get_low":
+        speech += dataset["Low"];
+        displayResponseList(timestamp, [speech, data]);
+        break;
+      case "get_revenue":
+        break;
+      case "get_eps":
+        break;
+      case "get_volume":
+        break;
+      case "get_market_cap":
+        break;
+      case "get_div_yield":
+        break;
+      case "get_average_vol":
+        break;
+      case "get_pe_ratio":
+        break;
+      case "get_shares_in_issue":
+        break;
+      case "get_stock_news":
+        break;
+      case "get_stock_performance":
+        break;
+      case "get_sector_news":
+        break;
+      case "get_sector_performance":
+        break;
+      case "get_buy_or_sell":
+        break;
+      default:
+        break;
+    }
+
+    console.log(speech);
+    say(speech); //Outputs the response using voice synthesis.
+
+    //TODO displayResponse(timestamp, data);
+
+
+
+
+
   }
 
   /*[SharePrice] => PointChange, PercentChange, Bid, Offer, Open, Close, High, Low

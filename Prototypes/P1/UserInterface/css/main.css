@@ -200,6 +200,7 @@ body { font-family: 'News Cycle', sans-serif; }
   border-radius: 2px;
   padding: 1em 2em 6em 2em!important;
   background-color: #fdfdfd;
+  margin-top: 2px;
 }
 
 /*Div container for query input field*/
