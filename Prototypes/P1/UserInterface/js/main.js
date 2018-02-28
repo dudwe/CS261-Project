@@ -167,7 +167,7 @@ $(document).ready(function() {
     var template = $("<div class='chat-border'><div class='row timestamp-row'><p></p></div>"
       + "<div class='row'><div class='chat'></div></div></div>"
       + "<div class='response-divider'></div>");
-    template.find(".chat-border").addClass(borderType);
+    template.addClass(borderType);
     template.find("p").addClass(timestampType).text("Received: " + timestamp);
     template.find(".chat").addClass(responseType).append(body);
     $("#chat-window").append(template);
