@@ -151,6 +151,7 @@ function getIntent($jsonData){
         $dataArray=getTimeframe($stockId,$timeframe);
         if($timeframe=="" or stripos($timeframe,'today')!== false){
             $dataArray2=getCurrentForCompany($stockId);
+            $dataArray2=filterSummary($dataArray2);
             $objOutput->auxillary=$dataArray2;
         }
         break;
