@@ -548,17 +548,19 @@ function suggest_query($conn) {
             $test_fav = "SELECT * FROM fav_stocks NATURAL JOIN (SELECT * FROM stocks INNER JOIN (SELECT * FROM queries) AS t0 ON ticker_symbol = entity) AS t1";
             $fav_res = $conn->query($test_fav);
 
-            if ($fav_res->num_rows > 0) {
-                $tracked = "tracked ";
-            } else {
-                $tracked = "";
-            }
+            $suggestion = array(
+                "intent" => $row["intent"],
+                "entity" => $row["entity"],
+                "tracked" => ($fav_res->num_rows > 0) ? "tracked" : "untracked"
+            );
 
-            $suggestion = "Would you like to " . $row["intent"] . " for " . $tracked . $row["entity"] . "?";
+            array_push($suggested, $suggestion);
 
         }
 
     }
+
+    return $suggested;
 
 }
 

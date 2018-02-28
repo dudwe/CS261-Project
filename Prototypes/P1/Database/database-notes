@@ -1,4 +1,7 @@
 Made using PHP v7.2.2, MySQLi, and MySQLv15.1 (10.1.31-MariaDB)
 
-To view the database, login using `mysql -u root`, then `use database traderbot_db;` at the prompt.
-Use `show tables` to see the tables in the database, and `select * from <table>` to see the stuff in a table.
+To view the database, login using `mysql -u root`. IF you haven't got a user 'bank' with password
+'password', create one by entering `GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost' IDENTIFIED BY 'password'`
+at the mysql prompt. Then exit using `quit`, and log into the new account with `mysql -u bank -p` and enter
+the password 'password' when prompted. To then view the database once it has been created by the php functions,
+view its entry by first typing `use traderbot_db;` and then `show tables;` or by writing a `SELECT...` statement.
