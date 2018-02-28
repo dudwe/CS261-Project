@@ -1,8 +1,8 @@
 <?php
 
 	$server = "localhost";
-	$user = "root";
-	$password = "root";
+	$user = "bank";
+	$password = "password";
   $database = "traderbot_db";
 
 ?>
