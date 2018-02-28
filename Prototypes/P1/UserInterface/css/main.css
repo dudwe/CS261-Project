@@ -58,22 +58,28 @@ nav {
   color: #116466;
 }
 
-/*TODO*/
-/*container {
-  margin: 0 auto;
-  max-width: 1280px;
-  width: 90%;
+
+.container {
+  margin: 0 auto!important;
+  max-width: 1350px!important;
+  width: 100%!important;
 }
-@media #{$medium-and-up} {
+@media only screen and (min-width : 601px) {
   .container {
-    width: 85%;
+    width: 100%!important;
   }
 }
-@media #{$large-and-up} {
+@media only screen and (min-width : 993px) {
   .container {
-    width: 70%;
+    width: 80%!important;
   }
-}*/
+}
+
+.chat-response-row {
+  margin-left: 0!important;
+  margin-right: 0!important;
+  margin-bottom: 0!important;
+}
 
 /*----------------------------------------------------------------------------*/
 /*Stocks*/
@@ -127,6 +133,20 @@ nav {
   padding: 0!important;
 }
 /*TODO*/
+
+/*----------------------------------------------------------------------------*/
+/*News*/
+
+.link-preview img {
+  max-height: 120px;
+  max-width: 100%;
+}
+.link-preview h4 {
+  margin-top: 0;
+}
+.link-preview .alert {
+  margin-bottom: 0;
+}
 
 /*----------------------------------------------------------------------------*/
 /*Colour Scheme*/
@@ -184,7 +204,7 @@ body { font-family: 'News Cycle', sans-serif; }
 
 /*Div container for query input field*/
 #query-input, #search-input {
-  border-radius: 1em;
+  border-radius: 2em;
   padding: 0 2em 0 2em!important;
   border: 2px solid #116466;
   box-shadow: 0 2px 0 0 #116466;
@@ -406,7 +426,7 @@ input.poll-rate-selector {
 
 .response-graph {
   width: 800px;
-  height: 450px; /*600*/
+  height: 400px; /*600*/
 }
 
 /*----------------------------------------------------------------------------*/
