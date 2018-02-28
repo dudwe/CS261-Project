@@ -2,10 +2,9 @@
 
 include "globalvars.php";
 
-/* ==================================================================
- * =                       INITIALIZATION                           =
- * ==================================================================
- */
+// ==================================================================
+// =                       INITIALIZATION                           =
+// ==================================================================
 
 /* Get database connection, or initialise it */
 function  db_connection() {
@@ -461,7 +460,7 @@ function get_fav_stocks($conn) {
         return 0;
     }
 
-    $arr;
+    $arr = array();
 
     while ($row = $res->fetch_assoc()) {
 
@@ -528,7 +527,39 @@ function update_faves($conn, $json_obj) {
 
 }
 
+/* Suggest queries for the top five entities in the database */
+function suggest_query($conn) {
 
+    // Weight function w: F x D -> N ; w(f,d) = f / (1 + CURDATE() - d)
+    // Higher weight is better
+
+    $sql = "SELECT query_id, intent, entity FROM queries AS t1 NATURAL JOIN (SELECT query_id, (frequency / (1 + CURDATE() - last_asked)) AS weight FROM history) as t2 ORDER BY t2.weight DESC LIMIT 5";
+
+    $suggested = array();
+
+    $res = $conn->query($sql);
+
+    if ($res->num_rows > 0) {
+
+        while ($row = $res->fetch_assoc()) {
+
+            // Test for favouriteness
+            $test_fav = "SELECT * FROM fav_stocks NATURAL JOIN (SELECT * FROM stocks INNER JOIN (SELECT * FROM queries) AS t0 ON ticker_symbol = entity) AS t1";
+            $fav_res = $conn->query($test_fav);
+
+            if ($res->num_rows > 0) {
+                $tracked = "tracked ";
+            } else {
+                $tracked = "";
+            }
+
+            $suggestion = "Would you like to " . $row["intent"] . " for " . $tracked . $row["entity"] . "?";
+
+        }
+
+    }
+
+}
 
 function get_notifications() {
 
