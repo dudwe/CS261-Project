@@ -13,8 +13,6 @@ ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 //echo "hello this is dog";
 //echo date_default_timezone_get();
 include_once('simple_html_dom.php');
-print_r(getTimeframe("FTSE100","Week"));
-
 function getTimeframe($stockId,$timeframe){
         $date = date("M-d-Y",mktime(0, 0, 0, date("m"), date("d"),   date("Y")));
         $dateArray=explode('-',$date); 
@@ -35,12 +33,12 @@ function getTimeframe($stockId,$timeframe){
         default:
                 $dataset=getIntraDay($stockId);
         }
-    if(isset($lastDate) & $stockId!="FTSE100"){
-        $dataset=getHistorical($stockId,$ldateArray,$dateArray);
-    }
-    else if (isset($lastDate) & $stockId=="FTSE100" ){
-        echo "scraping historical ftse";
-        $dataset=getHistoricalFTSE($stockId,$ldateArray,$dateArray);
+    if(isset($lastDate)){
+        if($stockId!="FTSE100"){
+            $dataset=getHistorical($stockId,$ldateArray,$dateArray);
+        }else{
+             $dataset=getHistoricalFTSE($ldateArray,$dateArray);
+        }
     }
     return $dataset;
 }
@@ -90,11 +88,13 @@ function getIntraDay($stockId){
     return $csv;
 }
 
-function getHistoricalFTSE($startdate,$endDate){
-
+function getHistoricalFTSE($startDate,$endDate){
+    //print_r($startDate);
     $url="http://finance.google.com/finance/historical?q=INDEXFTSE:UKX&startdate=".$startDate[0]."+"."$startDate[1]"."%2c+".   $startDate[2]."&enddate=".$endDate[0]."+"."$endDate[1]"."%2c+".$endDate[2];
+    //echo $url;
      $html = str_get_html(file_get_contents($url));
      $table=$html->find('table[class="gf-table historical_price"]',0);
+     
     $dataArray=array();
     
      foreach($table->find('tr') as $tr){
