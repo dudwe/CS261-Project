@@ -798,6 +798,7 @@ $(document).ready(function() {
   function parseResponse(data) {
     console.log("Parsing Response");
     console.log(data);
+
     var timestamp = new Date().toUTCString();
     var json;
 
@@ -872,7 +873,14 @@ $(document).ready(function() {
         var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
-      case "get_revenue": //TODO
+      case "get_revenue": //TODO TEST
+        speech += dataset["Revenue"];
+        var speechRow = getSpeechDisplay(speech);
+        var infoRow = getInfoListDisplay([
+          {info: "Market Cap", value: dataset["MarketCap"]}
+        ]);
+        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_eps": //EPS, DivYield, PERatio
         speech += dataset["EPS"];
@@ -883,23 +891,62 @@ $(document).ready(function() {
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_volume": //TODO
+      case "get_volume": //TODO TEST
         speech += dataset["Volume"];
         var speechRow = getSpeechDisplay(speech);
-        displayResponseList(timestamp, [speechRow]);
+        var infoRow = getInfoListDisplay([
+          {info: "Average Volume", value: dataset["AverageVol"]}
+        ]);
+        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
-      case "get_market_cap": //TODO
+      case "get_market_cap": //TODO DOESNT HAVE MARKET CAP IN JSON
+        //speech += dataset[""] //TODO
+        var speechRow = getSpeechDisplay(speech);
+        var infoRow = getInfoListDisplay([
+          {info: "Share Price", value: dataset["SharePrice"]},
+          {info: "Shares in Issue", value: dataset["SharesInIssue"]},
+          {info: "Volume", value: dataset["Volume"]}
+        ]);
+        displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_div_yield": //TODO
+      case "get_div_yield": //TODO DOESNT HAVE DIV YIELD IN JSON
         //speech += dataset["divyield###"];
-        //var speechRow = getSpeechDisplay(speech);
-        //displayResponseList(timestamp, [speechRow]);
+        var speechRow = getSpeechDisplay(speech);
+        var infoRow = getInfoListDisplay([
+          {info: "Earnings per Share" , value: dataset["EPS"]},
+          {info: "Price-Earnings Ratio", value: dataset["PERatio"]},
+          {info: "Volume", value: dataset["Volume"]}
+        ]);
+        displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_average_vol": //TODO
+      case "get_average_vol": //TODO TEST
+        speech += dataset["AverageVol"];
+        var speechRow = getSpeechDisplay(speech);
+        var infoRow = getInfoListDisplay([
+          {info: "Volume" , value: dataset["Volume"]}
+        ]);
+        displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_pe_ratio": //TODO
+      case "get_pe_ratio": //TODO TEST NO PE RATIO
+        //speech += dataset[""];
+        var speechRow = getSpeechDisplay(speech);
+        var infoRow = getInfoListDisplay([
+          {info: "Dividend Yield", value: dataset["DivYield"]},
+          {info: "Earnings per Share", value: dataset["EPS"]},
+          {info: "Volume", value: dataset["Volume"]}
+        ]);
+        displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_shares_in_issue": //TODO
+      case "get_shares_in_issue": //TODO DOESNT INCLUDE SHARES IN ISSUE
+        //speech += dataset[""];
+        var speechRow = getSpeechDisplay(speech);
+        var infoRow = getInfoListDisplay([
+          {info: "Market Cap", value: dataset["MarketCap"]},
+          {info: "Volume", value: dataset["Volume"]},
+          {info: "Share Price", value: dataset["SharePrice"]}
+        ]);
+        displayResponseList(timestamp, [speechRow, infoRow]);
         break;
       case "get_stock_news": //TODO
         break;
@@ -936,43 +983,6 @@ $(document).ready(function() {
     say(error); //Outputs the response using voice synthesis.
     scrollToChatBottom(); //Scrolls to bottom of the chat window.
   }
-
-  //TODOcd
-  function createStockDiagram(date, sharePrice, pointChange, percentChange, bid, offer, open, close, high, low) {
-    //HIGH AND LOW IN BULLET POINTS
-    //OPEN AND CLOSE IN BULLET POINTS
-    //SHARE PRICE//POINT CHANGE //PERCENTAGE CHANGE what is already programmed.
-    //BID
-    //OFFER
-  }
-
-  /*
-  ##[SharePrice] => PointChange, PercentChange, Bid, Offer, Open, Close, High, Low
-  ##[PointChange] => SharePrice, PercentChange, Bid, Offer, Open, Close, High, Low
-  ##[PercentChange] => SharePrice, PointChange, Bid, Offer, Open, Close, High, Low
-  ##[Bid] => SharePrice, PointChange, PercentChange, Offer, Open, Close, High, Low
-  ##[Offer] => SharePrice, PointChange, PercentChange, Bid, Open, Close, High, Low
-  ##[High] => SharePrice, PointChange, PercentChange, Bid, Offer, Open, Close, Low
-  ##[Low] => SharePrice, PointChange, PercentChange, Bid, Offer, Open, Close, High
-  ##[Open] => SharePrice, PointChange, PercentChange, Bid, Offer, Close, High, Low
-  ##[Close] => SharePrice, PointChange, PercentChange, Bid, Offer, Open, High, Low
-  [VolTotal] => TradePrice, TradeVol, SharesInIssue, SharePrice
-  [TradePrice] => PointChange, PercentChange, Bid, Offer, Open, Close, High, Low
-  [TradeVol] => PointChange, PercentChange, Bid, Offer, Open, Close, High, Low, TradePrice
-  [PreviousSharePrice ] =>  PointChange, PercentChange, TradePrice
-  [SharesInIssue] =>  MarketCap, VolTotal, SharePrice
-  [MarketCap] => SharePrice, SharesInIssue, VolTotal, SharePrice
-  [PERatio] =>  DivPerShare, DivYield, DivCover, EPS, TradePrice
-  [DivPerShare] => DivYield, DivCover, EPS, PERatio, TradePrice
-  [DivYield] => DivPerShare, DivCover, EPS, PERatio, TradePrice
-  [DivCover] => DivPerShare, DivYield, EPS, PERatio, TradePrice
-  [EPS] => DivPerShare, DivYield, DivCover, PERatio, TradePrice
-
-  volume -> ALL -> volume, average volume
-  div yield -> eps, peratio, volume
-  PERatio -> DivYield, EPS, Volume
-  EPS -> DivYield, PERatio
-  */
 
 /*----------------------------------------------------------------------------*/
 
