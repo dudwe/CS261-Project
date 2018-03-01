@@ -1,5 +1,14 @@
 "use strict"; //Strict Mode.
 
+  //TODO LIMIT Favourites
+  //TODO News
+  //TODO REGULAR OUTPUT
+  //TODO GRAPH OUTPUT
+  //TODO LINK FAVOURITE WITH DB LAYER
+  //TODO LINK POLL WITH PARSING LAYER
+  //TODO ADD SHORT EXPLAINATION IN FAV MODAL OF WHAT POLING DOES AND WHAT FAVOURITING DOES.
+
+
 $(document).ready(function() {
   $(".button-collapse").sideNav();
   $('.modal').modal();
@@ -52,6 +61,35 @@ $(document).ready(function() {
 
     displayErrorResponse("2018", "ERROR");
     displayGraphResponse("2019", "GRAPH");
+
+    //TODO REMOVE
+    var newsRow = getNewsDisplay([
+      {
+        headline: "Sky brings Netflix on board",
+        url: "http://www.bbc.co.uk/news/business-43242057",
+        description: "Sky will make Netflix available through its latest box in an attempt to tackle the threat posed by the popular streaming service."
+      },
+      {
+        headline: "Business Live: US shares down ahead of Powell testimony",
+        url: "http://www.bbc.co.uk/news/live/business-43198926",
+        description: "US stocks were trading lower on Thursday as investors awaited fresh testimony from Federal Reserve chairman Jerome Powell. The Dow Jones and Nasdaq indexes were down about 0.5%, while the S&P 500 dipped 0.3%."
+      },
+      {
+        headline: "Sky brings Netflix on board",
+        url: "http://www.bbc.co.uk/news/business-43242057",
+        description: "Sky will make Netflix available through its latest box in an attempt to tackle the threat posed by the popular streaming service."
+      },
+      {
+        headline: "Business Live: US shares down ahead of Powell testimony",
+        url: "http://www.bbc.co.uk/news/live/business-43198926",
+        description: "US stocks were trading lower on Thursday as investors awaited fresh testimony from Federal Reserve chairman Jerome Powell. The Dow Jones and Nasdaq indexes were down about 0.5%, while the S&P 500 dipped 0.3%."
+      }]);
+
+    displayResponseList("AAA", [newsRow]);
+    scrollToChatBottom();
+
+
+    displayResponseList("BBB", [newsRow]);
 
   }
 
@@ -223,14 +261,17 @@ $(document).ready(function() {
     return speechRow;
   }
 
-
   //TODO
+  var x = false;
   function displayResponseList(timestamp, response) {
-    displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p>");
+    alert(x);
+    if (x === true) { return null; } //TODO REMOVE
+    displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p class='chat-pad'></p>");
     for (var i = 0; i < response.length; i++) {
       var responseRow = $("<div></div>").addClass("row chat-response-row").append(response[i]);
-      $(".chat-response:last > p").append(responseRow);
+      $(".chat-response:last > .chat-pad").append(responseRow);
     }
+    x = true;
   }
 
   //Shows the loading icon.
@@ -569,6 +610,65 @@ $(document).ready(function() {
 
 //URL
 //HEADER
+
+  //TODO
+  //newsArray :: [headline: String, url: String, description: String]
+  function getNewsDisplay(newsArray) {
+    var maxShownHeadlines = 1; //Number of headlines initially shown.
+    var headlineCount = newsArray.length;
+    var newsDisplay = $("<div class='news-table'></div>");
+
+
+    for (var i = 0; i < newsArray.length; i++) {
+      var article = newsArray[i];
+      var headline = article["headline"];
+      var url = article["url"];
+      var description = article["description"];
+      var articleRow = $("<div class='news-row'><a class='headline tooltipped' data-position='top' ata-delay='50'></a><p class='headline-desc'></p></div>");
+      console.log("HEADLINE: " + headline + " :: " + "URL: " + url);
+      articleRow.find(".headline").text(headline);
+      articleRow.find(".headline").attr("href", url);
+      articleRow.find(".headline").attr("data-tooltip", url);
+      articleRow.find(".headline-desc").text(description);
+      articleRow.find(".tooltipped").tooltip({delay: 50});
+      newsDisplay.append(articleRow);
+    }
+
+    //If number of news headlines more than maximum allowed to show then show more button.
+    /*if (headlineCount > maxShownHeadlines) {
+      var showMoreBtn = $("<button class='showMore' data-showmore='more'></button>");
+      var moreCount = headlineCount - maxShownHeadlines;
+      showMoreBtn.text("Show " + moreCount + " more...");
+      newsDisplay.append(showMoreBtn); //Adds the show more button to the news display.
+    }*/
+
+    /*$(newsDisplay).find("div").each(function(index) {
+      if (index + 1 > maxShownHeadlines) {
+        $(this).fadeOut();
+      }
+    });*/
+
+    /*newsDisplay.find(".showMore").click(function() {
+      var op = $(this).attr("data-showmore");
+
+      if (op === "more") { //Show All
+        $(this).attr("data-showmore", "less");
+        $(this).text("Show less...");
+        $(this).parent().find("div").fadeIn();
+      }
+      else if (op === "less") { //Hide Overflow
+        $(this).attr("data-showmore", "more");
+        $(this).text("Show " + moreCount + " more...");
+        $(this).parent().find("div").each(function(index) {
+          if (index + 1 > maxShownHeadlines) {
+            $(this).fadeOut();
+          }
+        });
+      }
+    });*/
+    x = true; //TODO REMOVE
+    return newsDisplay;
+  }
 
 /*----------------------------------------------------------------------------*/
 /*Query*/

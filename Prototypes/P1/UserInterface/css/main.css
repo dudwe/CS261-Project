@@ -91,6 +91,9 @@ nav {
   border-bottom: none!important;
 }
 
+/*----------------------------------------------------------------------------*/
+/*Reponse Particulars*/
+
 .quote {
   color: black;
   font-size: 1.5rem;
@@ -98,6 +101,26 @@ nav {
 
 .speech {
   font-size: 1.2rem;
+}
+
+.headline {
+  font-size: 1.5rem;
+  color: black;
+}
+
+.headline-desc {}
+
+.showMore {
+  width: 100%;
+  background-color: transparent!important;
+  border: none;
+  border: 1px solid rgba(255, 195, 0, 0.5);
+  padding: 8px 4px 8px 4px!important;
+  border-bottom-left-radius: 1em;
+  border-bottom-right-radius: 1em;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: black;
 }
 
 /*----------------------------------------------------------------------------*/
