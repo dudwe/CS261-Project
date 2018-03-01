@@ -63,7 +63,7 @@ $(document).ready(function() {
     displayGraphResponse("2019", "GRAPH");
 
     //TODO REMOVE
-    var newsRow = getNewsDisplay([
+    var news = [
       {
         headline: "Sky brings Netflix on board",
         url: "http://www.bbc.co.uk/news/business-43242057",
@@ -83,13 +83,15 @@ $(document).ready(function() {
         headline: "Business Live: US shares down ahead of Powell testimony",
         url: "http://www.bbc.co.uk/news/live/business-43198926",
         description: "US stocks were trading lower on Thursday as investors awaited fresh testimony from Federal Reserve chairman Jerome Powell. The Dow Jones and Nasdaq indexes were down about 0.5%, while the S&P 500 dipped 0.3%."
-      }]);
+      }];
+    var newsRow1 = getNewsDisplay(news);
+    var newsRow2 = getNewsDisplay(news);
 
-    displayResponseList("AAA", [newsRow]);
+    displayResponseList("AAA", [newsRow1]);
     scrollToChatBottom();
 
 
-    displayResponseList("BBB", [newsRow]);
+    displayResponseList("BBB", [newsRow2]);
 
   }
 
@@ -262,16 +264,12 @@ $(document).ready(function() {
   }
 
   //TODO
-  var x = false;
   function displayResponseList(timestamp, response) {
-    alert(x);
-    if (x === true) { return null; } //TODO REMOVE
     displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p class='chat-pad'></p>");
     for (var i = 0; i < response.length; i++) {
       var responseRow = $("<div></div>").addClass("row chat-response-row").append(response[i]);
       $(".chat-response:last > .chat-pad").append(responseRow);
     }
-    x = true;
   }
 
   //Shows the loading icon.
@@ -635,20 +633,21 @@ $(document).ready(function() {
     }
 
     //If number of news headlines more than maximum allowed to show then show more button.
-    /*if (headlineCount > maxShownHeadlines) {
+    if (headlineCount > maxShownHeadlines) {
       var showMoreBtn = $("<button class='showMore' data-showmore='more'></button>");
       var moreCount = headlineCount - maxShownHeadlines;
       showMoreBtn.text("Show " + moreCount + " more...");
       newsDisplay.append(showMoreBtn); //Adds the show more button to the news display.
-    }*/
+    }
 
-    /*$(newsDisplay).find("div").each(function(index) {
+    //Hide overflow headlines.
+    $(newsDisplay).find("div").each(function(index) {
       if (index + 1 > maxShownHeadlines) {
         $(this).fadeOut();
       }
-    });*/
+    });
 
-    /*newsDisplay.find(".showMore").click(function() {
+    newsDisplay.find(".showMore").click(function() {
       var op = $(this).attr("data-showmore");
 
       if (op === "more") { //Show All
@@ -665,8 +664,8 @@ $(document).ready(function() {
           }
         });
       }
-    });*/
-    x = true; //TODO REMOVE
+    });
+
     return newsDisplay;
   }
 
@@ -791,7 +790,19 @@ $(document).ready(function() {
     console.log(data);
     var timestamp = new Date().toUTCString();
 
-    var json = JSON.parse(data);
+    var json;
+
+    try {
+      json = JSON.parse(data);
+    }
+    catch(e) {
+      var error = "Could not understand response.";
+      displayErrorResponse(timestamp, error);
+      console.log(error);
+      say(error); //Outputs the response using voice synthesis.
+      scrollToChatBottom(); //Scrolls to bottom of the chat window.
+      return;
+    }
 
     var resolvedQuery = json["resolvedQuery"];
     var intent = json["intentName"];
