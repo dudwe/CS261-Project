@@ -789,28 +789,23 @@ $(document).ready(function() {
     console.log("Parsing Response");
     console.log(data);
     var timestamp = new Date().toUTCString();
-
     var json;
 
+    //Attempt to parse JSON response.
     try {
       json = JSON.parse(data);
     }
     catch(e) {
-      var error = "Could not understand response.";
-      displayErrorResponse(timestamp, error);
-      console.log(error);
-      say(error); //Outputs the response using voice synthesis.
-      scrollToChatBottom(); //Scrolls to bottom of the chat window.
+      fallBackError(timestamp);
       return;
     }
 
+    //Response Properties
     var resolvedQuery = json["resolvedQuery"];
     var intent = json["intentName"];
     var speech = json["speech"] + " ";
     var stock = json["stocks"];
     var dataset = json["dataset"];
-
-    /*SHARE PRICE // POINT CHANGE // PERCENT CHANGE // BID // OFFER //OPEN //CLOSE //HIGH // LOW*/
 
     switch (intent) {
       case "get_share_price":
@@ -867,41 +862,65 @@ $(document).ready(function() {
         var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
-      case "get_revenue":
+      case "get_revenue": //TODO
         break;
-      case "get_eps":
+      case "get_eps": //TODO
+        //speech += dataset["eps"];
+        //var speechRow = getSpeechDisplay(speech);
+        //displayResponseList(timestamp, [speechRow]);
         break;
-      case "get_volume":
+      case "get_volume": //TODO
+        speech += dataset["Volume"];
+        var speechRow = getSpeechDisplay(speech);
+        displayResponseList(timestamp, [speechRow]);
         break;
-      case "get_market_cap":
+      case "get_market_cap": //TODO
         break;
-      case "get_div_yield":
+      case "get_div_yield": //TODO
+        //speech += dataset["divyield###"];
+        //var speechRow = getSpeechDisplay(speech);
+        //displayResponseList(timestamp, [speechRow]);
         break;
-      case "get_average_vol":
+      case "get_average_vol": //TODO
         break;
-      case "get_pe_ratio":
+      case "get_pe_ratio": //TODO
         break;
-      case "get_shares_in_issue":
+      case "get_shares_in_issue": //TODO
         break;
-      case "get_stock_news":
+      case "get_stock_news": //TODO
         break;
-      case "get_stock_performance":
+      case "get_stock_performance": //TODO
         break;
-      case "get_sector_news":
+      case "get_sector_news": //TODO
         break;
-      case "get_sector_performance":
+      case "get_sector_performance": //TODO
         break;
-      case "get_buy_or_sell":
+      case "get_buy_or_sell": //TODO
+        var movingAverages = dataset["movingAverages"];
+        var technicalIndicators = dataset["technicalIndicators"];
+        var summary = dataset["Summary"];
+        speech = "Recommended: " + summary;
+        var speechRow = getSpeechDisplay(speech);
+        displayResponseList(timestamp, [speechRow]);
         break;
       default:
-        displayErrorResponse(timestamp, "ERROR");
-        break;
+        fallBackError(timestamp);
+        return;
     }
 
     console.log(speech);
     say(speech); //Outputs the response using voice synthesis.
     scrollToChatBottom(); //Scrolls to bottom of the chat window.
 
+  }
+
+  //Error called if JSON is malformed or cannot identify intent.
+  function fallBackError(timestamp) {
+    var error = "Could not understand response.";
+    displayErrorResponse(timestamp, error);
+    console.log(error);
+    say(error); //Outputs the response using voice synthesis.
+    scrollToChatBottom(); //Scrolls to bottom of the chat window.
   }
 
   //TODOcd
@@ -913,15 +932,16 @@ $(document).ready(function() {
     //OFFER
   }
 
-  /*[SharePrice] => PointChange, PercentChange, Bid, Offer, Open, Close, High, Low
-  [PointChange] => SharePrice, PercentChange, Bid, Offer, Open, Close, High, Low
-  [PercentChange] => SharePrice, PointChange, Bid, Offer, Open, Close, High, Low
-  [Bid] => SharePrice, PointChange, PercentChange, Offer, Open, Close, High, Low
-  [Offer] => SharePrice, PointChange, PercentChange, Bid, Open, Close, High, Low
-  [High] => SharePrice, PointChange, PercentChange, Bid, Offer, Open, Close, Low
-  [Low] => SharePrice, PointChange, PercentChange, Bid, Offer, Open, Close, High
-  [Open] => SharePrice, PointChange, PercentChange, Bid, Offer, Close, High, Low
-  [Close] => SharePrice, PointChange, PercentChange, Bid, Offer, Open, High, Low
+  /*
+  ##[SharePrice] => PointChange, PercentChange, Bid, Offer, Open, Close, High, Low
+  ##[PointChange] => SharePrice, PercentChange, Bid, Offer, Open, Close, High, Low
+  ##[PercentChange] => SharePrice, PointChange, Bid, Offer, Open, Close, High, Low
+  ##[Bid] => SharePrice, PointChange, PercentChange, Offer, Open, Close, High, Low
+  ##[Offer] => SharePrice, PointChange, PercentChange, Bid, Open, Close, High, Low
+  ##[High] => SharePrice, PointChange, PercentChange, Bid, Offer, Open, Close, Low
+  ##[Low] => SharePrice, PointChange, PercentChange, Bid, Offer, Open, Close, High
+  ##[Open] => SharePrice, PointChange, PercentChange, Bid, Offer, Close, High, Low
+  ##[Close] => SharePrice, PointChange, PercentChange, Bid, Offer, Open, High, Low
   [VolTotal] => TradePrice, TradeVol, SharesInIssue, SharePrice
   [TradePrice] => PointChange, PercentChange, Bid, Offer, Open, Close, High, Low
   [TradeVol] => PointChange, PercentChange, Bid, Offer, Open, Close, High, Low, TradePrice
@@ -932,7 +952,13 @@ $(document).ready(function() {
   [DivPerShare] => DivYield, DivCover, EPS, PERatio, TradePrice
   [DivYield] => DivPerShare, DivCover, EPS, PERatio, TradePrice
   [DivCover] => DivPerShare, DivYield, EPS, PERatio, TradePrice
-  [EPS] => DivPerShare, DivYield, DivCover, PERatio, TradePrice*/
+  [EPS] => DivPerShare, DivYield, DivCover, PERatio, TradePrice
+
+  volume -> ALL -> volume, average volume
+  div yield -> eps, peratio, volume
+  PERatio -> DivYield, EPS, Volume
+  EPS -> DivYield, PERatio
+  */
 
 /*----------------------------------------------------------------------------*/
 
