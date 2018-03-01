@@ -17,7 +17,7 @@ function getIntent($jsonData){
     $jsonData=json_encode($jsonData);
     $array = json_decode($jsonData, true);
     $arrayparam=$array['result']['parameters'];
-
+    $stockId="";
     $queryString = $array['result']['resolvedQuery'];
     if(!empty($arrayparam)){
         if(array_key_exists('stocks',$arrayparam)){
@@ -27,18 +27,26 @@ function getIntent($jsonData){
             $stockId = $array['result']['parameters']['sectors'];
         }
     }
+    
     if(array_key_exists('time-frame',$arrayparam)){
         $timeframe=$array['result']['parameters']['time-frame'];
     }
     if(array_key_exists('buy-sell-time-frame',$arrayparam)){
         $buyorsell=$array['result']['parameters']['buy-sell-time-frame'];
     }
+    $intent = $array['result']['metadata']['intentName'];
     
-    if($stockId!=""){
-        $intent = $array['result']['metadata']['intentName'];
-    }else{
-        $intent="Defualt Fallback Intent";
+    /*Error Checking*/
+    /*Fallback Intent error*/
+    if($stockId=="" & $intent=="Default Fallback Intent"){
+        $intent="Input Error";
     }
+    /*StockId not detected*/
+    elseif($stockId=="" ){
+        echo "Stock Code Not detected";
+        $intent="StockCodeError: ".$intent;
+    }
+    
     $speech = $array['result']['fulfillment']['speech'];
 
     /*store query into database if no error*/
