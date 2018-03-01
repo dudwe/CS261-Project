@@ -208,12 +208,6 @@ $(document).ready(function() {
     $(".chat-query:last > p").text(query);
   }
 
-  //Adds a new text reponse to the chat window.
-  function displayResponse(timestamp, response) {
-    displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p>");
-    $(".chat-response:last > p").text(response);
-  }
-
   //Displays an error in a red-themed chat response.
   function displayErrorResponse(timestamp, response) {
     displayChatTemplate(timestamp, "right-border-error", "timestamp--right", "chat-response-error", "<p></p>");
@@ -270,6 +264,22 @@ $(document).ready(function() {
       var responseRow = $("<div></div>").addClass("row chat-response-row").append(response[i]);
       $(".chat-response:last > .chat-pad").append(responseRow);
     }
+  }
+
+
+  //TODO
+  //infoList :: [{info: String, value: String}]
+  function getInfoListDisplay(infoList) {
+    console.log(infoList);
+    var infoTable = $("<table class='info-table bordered'></table>")
+    for (var i = 0; i < infoList.length; i++) {
+      var infoRow = $("<tr><td class='info-table-name'></td><td class='info-table-value'></td></tr>");
+      infoRow.find(".info-table-name").text(infoList[i].info + ": ");
+      infoRow.find(".info-table-value").text(infoList[i].value);
+      console.log(infoRow);
+      infoTable.append(infoRow);
+    }
+    return infoTable;
   }
 
   //Shows the loading icon.
@@ -864,10 +874,14 @@ $(document).ready(function() {
         break;
       case "get_revenue": //TODO
         break;
-      case "get_eps": //TODO
-        //speech += dataset["eps"];
-        //var speechRow = getSpeechDisplay(speech);
-        //displayResponseList(timestamp, [speechRow]);
+      case "get_eps": //EPS, DivYield, PERatio
+        speech += dataset["EPS"];
+        var speechRow = getSpeechDisplay(speech);
+        var infoRow = getInfoListDisplay([
+          {info: "Dividend Yield", value: dataset["DivYield"]},
+          {info: "Price-Earnings Ratio", value: dataset["PERatio"]}
+        ]);
+        displayResponseList(timestamp, [speechRow, infoRow]);
         break;
       case "get_volume": //TODO
         speech += dataset["Volume"];

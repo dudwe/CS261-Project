@@ -123,6 +123,23 @@ nav {
   color: black;
 }
 
+.info-table tr {
+  border: none!important;
+  background-color: transparent!important;
+}
+
+.info-table td {
+  padding: 5px!important;
+}
+
+.info-table tr td:first-child {
+  font-weight: bold;
+}
+
+.info-table tr td:last-child {
+  color: #187ccc;
+}
+
 /*----------------------------------------------------------------------------*/
 /*Stocks*/
 
