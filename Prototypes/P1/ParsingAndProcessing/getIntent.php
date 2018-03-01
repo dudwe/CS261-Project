@@ -47,6 +47,7 @@ function getIntent($jsonData){
         $intent="StockCodeError: ".$intent;
     }
     
+    
     $speech = $array['result']['fulfillment']['speech'];
 
     /*store query into database if no error*/
@@ -128,7 +129,7 @@ function getIntent($jsonData){
     case "get_eps":
         $dataArray=getCurrentForCompany($stockId);
         //var_dump($dataArray);
-        $dataArray=array('DivYield'=>$dataArray['DivYield'],'PERatio'=>$dataArray['PERatio']);
+        $dataArray=array('EPS'=>$dataArray['EPS'],'DivYield'=>$dataArray['DivYield'],'PERatio'=>$dataArray['PERatio']);
         break;         
     case "get_volume":
         $dataArray=getCurrentForCompany($stockId);
