@@ -153,9 +153,10 @@ $(document).ready(function() {
   //body :: jQuery Object || HTML || String
   function displayChatTemplate(timestamp, borderType, timestampType, responseType, body) {
     var template = $("<div class='chat-border'><div class='row timestamp-row'><p></p></div>"
-      + "<div class='row'><div class='chat'></div></div></div>"
-      + "<div class='response-divider'></div>");
+      + "<div class='row'><div class='chat'></div></div></div>");
+    var divider = $("<div class='response-divider'></div>");
     template.addClass(borderType);
+    template.after(divider);
     template.find("p").addClass(timestampType).text("Received: " + timestamp);
     template.find(".chat").addClass(responseType).append(body);
     $("#chat-window").append(template);

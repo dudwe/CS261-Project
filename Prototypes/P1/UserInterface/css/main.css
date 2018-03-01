@@ -219,7 +219,7 @@ body { font-family: 'News Cycle', sans-serif; }
   height: 70vh;
   box-shadow: 0 2px 0 0 #c1c1c1!important;
   border-radius: 2px;
-  padding: 1em 2em 6em 2em!important;
+  padding: 1em 2em 1em 2em!important;
   background-color: #fdfdfd;
   margin-top: 2px;
 }
@@ -342,8 +342,19 @@ input.valid[type="text"]:not(.browser-default) {
   margin: 2em;
 }
 
+.chat-border {
+  margin-bottom: 3em;
+}
+
+.chat-border:last-child {
+  margin-bottom: 8em;
+}
+
 /*Spinning loader container div*/
-#loader-div { padding: 1em; }
+#loader-div {
+  padding: 1em;
+  margin-bottom: 5em;
+}
 
 /*Spinning loader*/
 .loader {
