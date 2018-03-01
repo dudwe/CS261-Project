@@ -4,6 +4,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 include_once('../Database/interface.php');
+include_once('dlPage.php');
+
 
 function getCurrentForCompany($stock){
     $conn= db_connection();
@@ -11,7 +13,8 @@ function getCurrentForCompany($stock){
     //echo $url;
     /*read into the database to get the relevant url from investing.com*/
     //echo 'https://www.investing.com'.$url;
-    $html = str_get_html(file_get_contents('https://www.investing.com'.$url));
+    //$html = str_get_html(file_get_contents('https://www.investing.com'.$url));
+    $html = (dlPage('https://uk.investing.com'.$url));
     /*place data into array*/
     $returnData = array();
     $currentprice = $html->find('div[class="top bold inlineblock"]', 0);

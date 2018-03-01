@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 include_once('../Database/interface.php');
-
+include_once('dlPage.php');
 
 /*Moving Averages Technical Indicators Summary*/
 
@@ -28,8 +28,10 @@ function getBuyOrSell($stockId,$time){
     else{
         $columnNumbers = 1;
     }
-    $html = str_get_html(file_get_contents('https://www.investing.com'.$url));
+    //$html = str_get_html(file_get_contents('https://www.investing.com'.$url));
     /*place data into array*/
+    
+    $html = (dlPage('https://uk.investing.com'.$url));
     $alt= array();
     
     $alt['MovingAverages']=$html->find('table[class="genTbl closedTbl technicalSummaryTbl"]',0)->find('tr',1)->find('td',$columnNumbers)->plaintext;

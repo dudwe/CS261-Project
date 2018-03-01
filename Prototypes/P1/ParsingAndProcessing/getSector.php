@@ -2,6 +2,7 @@
 <?php
 
 include_once('simple_html_dom.php');
+include_once('dlPage.php');
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
@@ -15,9 +16,11 @@ function getSector350($stock){
     echo "Stock :".$stock;
     $conn= db_connection();
     $url = get_scrape_url($conn,$stock);
-    echo $url;
+    //echo $url;
     echo 'https://uk.investing.com'.$url;
-    $html = str_get_html(file_get_contents('https://uk.investing.com'.$url));
+    //$html = str_get_html(file_get_contents('https://uk.investing.com'.$url));
+    $html = (dlPage('https://uk.investing.com'.$url));
+    //dlPage(
     /*place data into array*/
     $returnData = array();
     $currentprice = $html->find('div[class="top bold inlineblock"]', 0);
@@ -33,8 +36,6 @@ function getSector350($stock){
     $returnData['SharePrice']=$tempArr[0];
     $returnData['PointChange']=$tempArr[1];
     $returnData['PercentChange']=$tempArr[2];
-    //$returnData['Bid']=$html->find('div[class=bottomText float_lang_base_1]',0)->find('li',1)->find('span',1)->find('span',0)->innertext;
-    //$returnData['Offer']=$html->find('div[class=bottomText float_lang_base_1]',0)->find('li',1)->find('span',1)->find('span',1)->innertext;
     
     $table= $html->find('div[class=clear overviewDataTable"]',0);
 

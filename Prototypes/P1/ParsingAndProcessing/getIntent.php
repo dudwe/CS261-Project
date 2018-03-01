@@ -8,7 +8,7 @@ include_once('getSector.php');
 include_once('rss.php');
 include_once('getBuyOrSell.php');
 include_once('../Database/interface.php');
-
+include_once('dlPage.php');
 
 function getIntent($jsonData){
 
