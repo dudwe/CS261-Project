@@ -193,7 +193,7 @@ $(document).ready(function() {
       + "<td><p class='stock-name'></p></td><td>"
       + "<p class='stock-performance'><i class='stock-icon material-icons'></i>"
       + "<span class='stock-info-shareprice'></span><span class='stock-currency'>GBP</span>"
-      + "<span class='stock-info-pointchange'></span><span class='stock-info-percentagechange'></span></p></td></tr>");
+      + "<span class='stock-info-pointchange'></span><span class='stock-info-percentagechange'></span></p></td></tr></tbody></table>");
 
     if (pointChange > 0) { //Stock is rising.
       stockTable.find(".stock-performance").addClass("stock-rise").find(".stock-icon").text("keyboard_arrow_up");
@@ -213,6 +213,15 @@ $(document).ready(function() {
 
     return stockTable; //Return the jQuery object to be included in the chat window.
   }
+
+  //TODO
+  function getSpeechDisplay(speech) {
+    var speechRow = $("<div class='m-0 p-0'><span class='quote'></span><span class='speech'></span><span class='quote'></span><div>");
+    speechRow.find(".quote").text('"');
+    speechRow.find(".speech").text(speech);
+    return speechRow;
+  }
+
 
   //TODO
   function displayResponseList(timestamp, response) {
@@ -678,6 +687,7 @@ $(document).ready(function() {
   //TODO
   function parseResponse(data) {
     console.log("Parsing Response");
+    console.log(data);
     var timestamp = new Date().toUTCString();
 
     var json = JSON.parse(data);
@@ -693,48 +703,57 @@ $(document).ready(function() {
     switch (intent) {
       case "get_share_price":
         speech += dataset["SharePrice"];
+        var speechRow = getSpeechDisplay(speech);
         var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
-        displayResponseList(timestamp, [speech, stockTable, data]);
+        displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_point_change":
         speech += dataset["PointChange"];
+        var speechRow = getSpeechDisplay(speech);
         var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
-        displayResponseList(timestamp, [speech, stockTable, data]);
+        displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "percent_change":
         speech += dataset["PercentChange"];
+        var speechRow = getSpeechDisplay(speech);
         var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
-        displayResponseList(timestamp, [speech, stockTable, data]);
+        displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_bid":
         speech += dataset["Bid"];
+        var speechRow = getSpeechDisplay(speech);
         var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
-        displayResponseList(timestamp, [speech, stockTable, data]);
+        displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_offer":
         speech += dataset["Offer"];
+        var speechRow = getSpeechDisplay(speech);
         var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
-        displayResponseList(timestamp, [speech, stockTable, data]);
+        displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_open":
         speech += dataset["Open"];
+        var speechRow = getSpeechDisplay(speech);
         var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
-        displayResponseList(timestamp, [speech, stockTable, data]);
+        displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_close":
         speech += dataset["Close"];
+        var speechRow = getSpeechDisplay(speech);
         var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
-        displayResponseList(timestamp, [speech, stockTable, data]);
+        displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_high":
         speech += dataset["High"];
+        var speechRow = getSpeechDisplay(speech);
         var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
-        displayResponseList(timestamp, [speech, stockTable, data]);
+        displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_low":
         speech += dataset["Low"];
+        var speechRow = getSpeechDisplay(speech);
         var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
-        displayResponseList(timestamp, [speech, stockTable, data]);
+        displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_revenue":
         break;

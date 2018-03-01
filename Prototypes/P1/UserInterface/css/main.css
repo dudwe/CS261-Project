@@ -91,6 +91,15 @@ nav {
   border-bottom: none!important;
 }
 
+.quote {
+  color: black;
+  font-size: 1.5rem;
+}
+
+.speech {
+  font-size: 1.2rem;
+}
+
 /*----------------------------------------------------------------------------*/
 /*Stocks*/
 
@@ -110,27 +119,29 @@ nav {
   vertical-align: middle !important;
   padding-bottom: 10px;
 }
-.stock-info-1 {
-  font-size: 1.8rem;
+p.stock-performance {
+  margin: 15px 0 0 0!important;
+
+}
+.stock-info-shareprice {
+  font-size: 2rem;
   padding-right: 5px;
 }
-.stock-info-2 {
-  font-size: 1.2rem;
+.stock-info-pointchange {
+  font-size: 1.5rem;
 }
-.stock-info-3 {
-  font-size: 1.2rem;
-}
-.stock-info-4 {
-  font-size: 1.8rem;
+.stock-info-percentagechange {
+  font-size: 1.5rem;
 }
 .stock-currency {
   color: #212121;
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: bold;
   padding-right: 20px;
+  padding-left: 5px;
 }
 .stock-name {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   color: #212121!important;
   font-weight: bold;
   padding-right: 2em;
@@ -288,13 +299,13 @@ input.valid[type="text"]:not(.browser-default) {
 }
 
 .chat {
-  border-radius: 1em;
+  border-radius: 0.5em;
   border: 2px solid black;
   max-width: 85%;
   display: inline-block;
 }
 
-.chat p {
+.chat p:not(.stock-performance) {
   margin: 0.75em 1.25em 0.75em 1.25em!important;
   color: #004d40!important;
   word-wrap: break-word;
@@ -303,7 +314,7 @@ input.valid[type="text"]:not(.browser-default) {
 
 .chat-query {
   float: left;
-  background-color: #b3e5fc;
+  background-color: #b3e5fc;``
   box-shadow: 0 2px 0 0 #e3f2fd!important;
   border-color: #81d4fa;
 }
