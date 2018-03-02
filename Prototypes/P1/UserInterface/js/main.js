@@ -376,7 +376,7 @@ $(document).ready(function() {
   //Gets a JSON object of all companies and sector and corresponding information.
   function getFavourites() {
     $.ajax({
-      url: "../Database/get_favourites.php",
+      url: "../Database/scripts/get_favourites.php",
       data: null,
       dataType: "json",
       method: "POST",
@@ -429,7 +429,7 @@ $(document).ready(function() {
     console.log(sendData);
 
     $.ajax({
-      url: "save_favourites.php",
+      url: "../Database/scripts/save_favourites.php",
       data: sendData,
       method: "POST",
       timeout: timeout,

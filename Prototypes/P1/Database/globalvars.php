@@ -3,6 +3,6 @@
 	$server = "localhost";
 	$user = "bank";
 	$password = "password";
-  $database = "traderbot_db";
+    $database = "traderbot_db";
 
 ?>

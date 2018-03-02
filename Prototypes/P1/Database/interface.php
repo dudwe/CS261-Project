@@ -509,7 +509,6 @@ function insert_fav_sector_id($conn, $sector_id, $freq) {
 /* Return JSON object of all favourite stocks and sectors */
 function get_faves($conn) {
 
-    // TODO: Test that this returns the right structure
     // Array to hold all stocks and sectors
     $fav_list = array();
 
@@ -644,7 +643,7 @@ function suggest_query($conn) {
 }
 
 /* Return top 3 sectors that the user is interested in, based on what they track */
-function learn_sector($conn) {
+function learn_sectors($conn) {
 
     // Looks at all stocks tracked by user and learns which sectors they are focusing on
     $sql = "SELECT sector_id, COUNT(sector_id) FROM stocks WHERE sector_id IN (SELECT sector_id FROM fav_sectors) GROUP BY sector_id ORDER BY COUNT(sector_id) DESC LIMIT 3";
@@ -669,13 +668,14 @@ function learn_sector($conn) {
 }
 
 /* Suggest stocks to track based on the sectors learned */
-function suggest_stock_track() {
+function suggest_stock_track($conn) {
+
 
 }
 
 // TODO: this
 /* Return 3 stocks they do not currently track based on which sectors they track */
-function learn_stock($conn) {
+function learn_stocks($conn) {
 
     $sql = "";
 
