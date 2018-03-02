@@ -26,42 +26,12 @@ $(document).ready(function() {
 /* Initialisation*/
 
   function initialisation() {
-
-    //Testing chat queries and commands.
-    displayQuery("02/12/18 14:45:59", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
-    displayResponseList("02/12/18 14:46:08", ["A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines."]);
-
     getFavourites();
-
     $("#fav-save").click(saveFavourites);
     $("#btn-send").click(submitQuery); //Redirect button click and ENTER to submitQuery function.
 
-    //TODO REMOVE
-    displayErrorResponse("2018", "ERROR");
+    //TODO REMOVE    
     displayGraphResponse("2019", "GRAPH");
-    var news = [
-      {
-        headline: "Sky brings Netflix on board",
-        url: "http://www.bbc.co.uk/news/business-43242057",
-        description: "Sky will make Netflix available through its latest box in an attempt to tackle the threat posed by the popular streaming service."
-      },
-      {
-        headline: "Business Live: US shares down ahead of Powell testimony",
-        url: "http://www.bbc.co.uk/news/live/business-43198926",
-        description: "US stocks were trading lower on Thursday as investors awaited fresh testimony from Federal Reserve chairman Jerome Powell. The Dow Jones and Nasdaq indexes were down about 0.5%, while the S&P 500 dipped 0.3%."
-      },
-      {
-        headline: "Sky brings Netflix on board",
-        url: "http://www.bbc.co.uk/news/business-43242057",
-        description: "Sky will make Netflix available through its latest box in an attempt to tackle the threat posed by the popular streaming service."
-      },
-      {
-        headline: "Business Live: US shares down ahead of Powell testimony",
-        url: "http://www.bbc.co.uk/news/live/business-43198926",
-        description: "US stocks were trading lower on Thursday as investors awaited fresh testimony from Federal Reserve chairman Jerome Powell. The Dow Jones and Nasdaq indexes were down about 0.5%, while the S&P 500 dipped 0.3%."
-      }];
-    var newsRow1 = getNewsDisplay(news);
-    displayResponseList("AAA", [newsRow1]);
     scrollToChatBottom();
     //TODO REMOVE
   }

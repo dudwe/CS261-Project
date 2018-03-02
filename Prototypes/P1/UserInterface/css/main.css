@@ -108,7 +108,13 @@ nav {
   color: black;
 }
 
-.headline-desc {}
+.headline-desc {
+  padding-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 500px;
+}
 
 .showMore {
   width: 100%;
