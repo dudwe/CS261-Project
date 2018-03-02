@@ -597,9 +597,9 @@ $(document).ready(function() {
 
     for (var i = 0; i < newsArray.length; i++) {
       var article = newsArray[i];
-      var headline = article.headline;
-      var url = article.url;
-      var description = article.description;
+      var headline = article.title;
+      var url = article.link;
+      var description = article.desc;
       var articleRow = $("<div class='news-row'><a class='headline tooltipped' data-position='top' ata-delay='50'></a><p class='headline-desc'></p></div>");
       console.log("HEADLINE: " + headline + " :: " + "URL: " + url);
       articleRow.find(".headline").text(headline);
@@ -768,7 +768,7 @@ $(document).ready(function() {
     console.log(data);
 
     var timestamp = new Date().toUTCString();
-    var json, speechRow, stockTable, infoRow;
+    var json, speechRow, stockTable, infoRow, newsRow, graphRow;
 
     //Attempt to parse JSON response.
     try {
@@ -916,18 +916,18 @@ $(document).ready(function() {
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_stock_news": //TODO
+      case "get_news": //TODO
         speechRow = getSpeechDisplay(speech);
         //GET NEWS ROW
         displayResponseList(timestamp, [speechRow]);
+        newsRow = getNewsDisplay(dataset);
+        displayResponseList(timestamp, [speechRow, newsRow]);
         break;
       case "get_stock_performance": //TODO
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, json.auxillary.SharePrice, json.auxillary.PointChange, json.auxillary.PercentChange);
         //GRAPH TODO
         displayResponseList(timestamp, [speechRow, stockTable]);
-        break;
-      case "get_sector_news": //TODO
         break;
       case "get_sector_performance": //TODO
         break;
