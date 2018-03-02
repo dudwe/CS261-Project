@@ -468,7 +468,7 @@ function insert_fav_sector($conn, $sector_name, $freq) {
 function insert_fav_sector_id($conn, $sector_id, $freq) {
 
     $date = date("Y-m-d");
-    $sql = "INSERT INTO fav_sectors (sector_id, date_added, notif_freq) VALUES (" . $sector_id . ",'" . $date . "',", $freq . ")";
+    $sql = "INSERT INTO fav_sectors (sector_id, date_added, notif_freq) VALUES (" . $sector_id . ",'" . $date . "'," . $freq . ")";
 
     if ($conn->query($sql) === TRUE) {
         return 1;
@@ -668,6 +668,11 @@ function learn_sector($conn) {
 
 }
 
+/* Suggest stocks to track based on the sectors learned */
+function suggest_stock_track() {
+
+}
+
 // TODO: this
 /* Return 3 stocks they do not currently track based on which sectors they track */
 function learn_stock($conn) {
@@ -680,8 +685,15 @@ function learn_stock($conn) {
 
 function resolve_invalid_intent($conn, $intent) {
 
+
+
 }
 
 function resolve_invalid_entity($conn, $entity) {
 
 }
+
+// TODO
+//      write up notes of final report for database
+//      finish error correction
+//      finish learning 
