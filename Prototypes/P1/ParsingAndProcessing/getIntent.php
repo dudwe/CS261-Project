@@ -154,7 +154,7 @@ function getIntent($jsonData){
         break;         
    case "get_pe_ratio":
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('DivYield'=>$dataArray['DivYield'],'EPS'=>$dataArray['EPS'],'Volume'=>$dataArray['Volume']);
+        $dataArray=array('PERatio'=>$dataArray['PERatio'],'DivYield'=>$dataArray['DivYield'],'EPS'=>$dataArray['EPS'],'Volume'=>$dataArray['Volume']);
         break;                  
    case "get_shares_in_issue":
         $dataArray=getCurrentForCompany($stockId);
