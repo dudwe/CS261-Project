@@ -10,7 +10,7 @@ $conn = db_connection();
 $suggested = suggest_query($conn);
 
 foreach ($suggested as $s) {
-    echo "Would you like to " . $s["intent"] . " for the " . $s["tracked"] . " " . $s["entity"] . "\n";
+    echo "Would you like to " . $s["intent"] . " for the " . $s["tracked"] . " " . $s["entity"] . "<br>";
 }
 
 ?>

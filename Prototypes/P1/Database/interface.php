@@ -418,6 +418,7 @@ function insert_history($conn, $inserted_id) {
         return 0;
     }*/
     
+}
 
 /* Insert data into FAV_STOCKS table */
 function insert_fav_stock($conn, $stock_name, $freq) {
@@ -431,6 +432,20 @@ function insert_fav_stock($conn, $stock_name, $freq) {
         echo $sql . "<br>Error executing query: " . $conn->error . "<br>";
         return 0;
     }
+}
+
+function insert_fav_stock_id($conn, $stock_id, $freq) {
+
+    $date = date("Y-m-d");
+    $sql = "INSERT INTO fav_stocks (stock_id, date_added, notif_freq) VALUES (" . $stock_id . ",'" . $date . "',", $freq . ")";
+
+    if ($conn->query($sql) === TRUE) {
+        return 1;
+    } else {
+        echo $sql . "<br>Error executing query: " . $conn->error . "<br>";
+        return 0;
+    }
+
 }
 
 /* Insert data into FAV_SECTORS table */
@@ -477,23 +492,27 @@ function get_fav_stocks($conn) {
 /* Return JSON object of all favourite sectors */
 function get_fav_sectors($conn) {
 
-    $sql = "SELECT sector_id,sector_name FROM stocks WHERE sector_id IN (SELECT sector_id FROM fav_sectors)";
+    // TODO: Test that this returns the right structure
+    // Array to hold all stocks and sectors
+    $fav_list = array();
 
-    if (($res = $conn->query($sql)) !== TRUE) {
-        echo $sql . "<br>Error: " . $conn->error . "<br>";
-        return 0;
-    }
+    // Returns all stocks, with a 1 in column 'fav' if stock is in fav_stocks, 0 otherwise
+    $sql = "SELECT stock_id, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav FROM stocks";
 
-    $arr;
-
+    $res = $conn->query($sql);
     while ($row = $res->fetch_assoc()) {
-
-        $arr[] = ['id' => $row["sector_id"], 'name' => $row["sector_name"]];
-
+        $fav_list[] = array("id" => $row["stock_id"], "ticker_symbol" => $row["ticker_symbol"], "fav" => $row["fav"]);
     }
 
-    $fav_stocks = json_encode($arr);
-    return $fav_stocks;
+    $sql = "SELECT sector_id, IF (sector_id IN (SELECT sector_id FROM fav_sectors), 1, 0) AS fav FROM sectors";
+
+    $res = $conn->query($sql);
+    while ($row = $res->fetch_assoc()) {
+        $fav_list[] = array("id" => $row["sector_id"], "fav" => $row["fav"]);
+    }
+
+    $faves = json_encode($fav_list);
+    return $faves;
 
 }
 
@@ -515,20 +534,62 @@ function get_scrape_url($conn, $entity) {
 
 }
 
-// TODO: Make sure this runs all right, then fill in with INSERT/DELETEs
-function update_faves($conn, $json_obj) {
+/* Update entries in fav_stocks and fav_sectors */
+function update_fav_tables($conn, $json_obj) {
 
     $fav_list = json_decode($json_obj, TRUE);
 
-    foreach ($fav_list as $item) {
-        foreach ($item as $entity) {
-            echo $entity["id"] . ": " . $entity["fav"] . "\n";
+    $stock_list = $fav_list["companyList"];
+    $sector_list = $fav_list["sectorList"];
+
+    // ID, FAV, POLLRATE
+    foreach ($stock_list as $row) {
+        // First test existence
+        $exists = "SELECT stock_id FROM fav_stocks WHERE stock_id = " . $row["id"];
+
+        $res = $conn->query($exists);
+
+        if ($res->num_rows > 0) {
+
+            // stock is in fav_stocks
+            $update_poll = "UPDATE fav_stocks SET notif_freq = " . $row["pollRate"] . " WHERE stock_id = " . $row["id"];
+            $conn->query($update_poll);
+
+        } else {
+
+            // stock not yet in fav_stocks
+            insert_fav_stock_id($conn, $row["id"], $row["pollRate"]);
+
         }
+
+    }
+
+    foreach ($sector_list as $row) {
+
+        // Test existence
+        $exists = "SELECT sector_id FROM fav_sectors WHERE sector_id = " . $row["id"];
+
+        $res = $conn->query($exists);
+
+        if ($res->num_rows > 0) {
+
+            // sector is in fav_sectors
+            $update_poll = "UPDATE fav_sectors SET notif_freq = " . $row["pollRate"] . " WHERE sector_id = " . $row["id"];
+            $conn->query($update_poll);
+
+        } else {
+
+            // sector not yet in fav_stock
+            insert_fav_sector_id($conn, $row["id"], $row["pollRate"]);
+
+        }
+
     }
 
 }
 
 /* Suggest queries for the top five entities in the database */
+/*  Returns array of suggestions: intent, entity, and tracked status */
 function suggest_query($conn) {
 
     // Weight function w: F x D -> N ; w(f,d) = f / (1 + CURDATE() - d)
@@ -564,6 +625,14 @@ function suggest_query($conn) {
 
 }
 
-function get_notifications() {
+function suggest_action($conn) {
+
+}
+
+function resolve_invalid_intent($conn) {
+
+}
+
+function resolve_invalid_entity($conn) {
 
 }

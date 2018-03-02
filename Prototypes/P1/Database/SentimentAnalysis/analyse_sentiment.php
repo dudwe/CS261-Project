@@ -41,4 +41,5 @@ function analyse_article_sentiment($article) {
     return $analysis;
 
 }
+
 ?>
