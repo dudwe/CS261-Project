@@ -1,8 +1,5 @@
 "use strict"; //Strict Mode.
 
-  //TODO LIMIT Favourites
-  //TODO News
-  //TODO LIMIT CHARS ON NEWS DESCRIPTION
   //TODO GRAPH OUTPUT
   //TODO LINK FAVOURITE WITH DB LAYER
   //TODO LINK POLL WITH PARSING LAYER
@@ -29,11 +26,7 @@ $(document).ready(function() {
     getFavourites();
     $("#fav-save").click(saveFavourites);
     $("#btn-send").click(submitQuery); //Redirect button click and ENTER to submitQuery function.
-
-    //TODO REMOVE
-    displayGraphResponse("2019", "GRAPH");
     scrollToChatBottom();
-    //TODO REMOVE
   }
 
 /*----------------------------------------------------------------------------*/
@@ -710,30 +703,71 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /*Graph*/
 
+  //Creates the canvas object to add to the chat window.
+  function getGraphDisplay(dataset) {
+    return $("<canvas class='response-graph'></canvas>");
+  }
+
   //TODO
-  //Creates the graph object to add to the chat window.
-  function createLineGraph() {
+  function createLineGraph(dataset) {
     var ctx = $(".response-graph").get(-1).getContext("2d"); //Get context of the last canvas object.
+
+    var dateList = [];
+    var closeList = [];
+    var highList = [];
+    var lowList = [];
+    var openList = [];
+
+    for (var i = 0; i < dataset.length; i++) {
+      dateList.push(dataset[i][0]);
+      closeList.push(dataset[i][1]);
+      highList.push(dataset[i][2]);
+      lowList.push(dataset[i][3]);
+      openList.push(dataset[i][4]);
+    }
+
     var lineGraph = new Chart(ctx, {
       type: 'line',
       data: {
-          labels: ["2013", "2014", "2015", "2016", "2017", "2018"], //x-axis labels.
+          labels: ["2015", "2016", "2017", "2018"], //x-axis labels.
           datasets: [{
-              label: "# of Votes", //Dataset label.
-              data: [12, 19, 3, 5, 2, 14], //Data.
+              label: "Close",
+              data: closeList,
               borderColor: ["rgba(255, 0, 0, 0.8)"], //Line colour.
               borderWidth: 2, //Line width.
               fill: false, //Doesn't fill under the line.
               pointBorderWidth: 2
-          }]
+            },
+            {
+              label: "High",
+              data: highList,
+              borderColor: ["rgba(0, 255, 0, 0.8)"], //Line colour.
+              borderWidth: 2, //Line width.
+              fill: false, //Doesn't fill under the line.
+              pointBorderWidth: 2
+            },
+            {
+              label: "Low",
+              data: lowList,
+              borderColor: ["rgba(0, 0, 255, 0.8)"], //Line colour.
+              borderWidth: 2, //Line width.
+              fill: false, //Doesn't fill under the line.
+              pointBorderWidth: 2
+            },
+            {
+              label: "Open",
+              data: openList,
+              borderColor: ["rgba(0, 255, 255, 0.8)"], //Line colour.
+              borderWidth: 2, //Line width.
+              fill: false, //Doesn't fill under the line.
+              pointBorderWidth: 2
+            }]
       },
       options: {
         scales: { yAxes: [{
-          ticks: { beginAtZero: true },
+          ticks: { beginAtZero: false },
           scaleLabel : { display: true, labelString: "Y-Axis Label" }
-        }]},
-        title: { display: true, text: "Hello World!"},
-        legend: { display: false }
+        }]}
       }
     });
   }
@@ -900,11 +934,12 @@ $(document).ready(function() {
         newsRow = getNewsDisplay(dataset);
         displayResponseList(timestamp, [speechRow, newsRow]);
         break;
-      case "get_stock_performance": //TODO
+      case "get_stock_performance": //TODO DATE CLOSE HIGH LOW OPEN VOLUME
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, json.auxillary.SharePrice, json.auxillary.PointChange, json.auxillary.PercentChange);
-        //GRAPH TODO
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        graphRow = getGraphDisplay();
+        displayResponseList(timestamp, [speechRow, stockTable, graphRow]);
+        createLineGraph(dataset);
         break;
       case "get_sector_performance": //TODO
         break;
