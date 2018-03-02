@@ -30,7 +30,7 @@ $(document).ready(function() {
     $("#fav-save").click(saveFavourites);
     $("#btn-send").click(submitQuery); //Redirect button click and ENTER to submitQuery function.
 
-    //TODO REMOVE    
+    //TODO REMOVE
     displayGraphResponse("2019", "GRAPH");
     scrollToChatBottom();
     //TODO REMOVE
@@ -161,7 +161,6 @@ $(document).ready(function() {
     createLineGraph(); //Displays a graph in the response.
   }
 
-  //TODO
   //Gets a jQuery object for displaying information on a company stock.
   function getStockDisplay(stockName, sharePrice, pointChange, percentageChange) {
     var stockTable = $("<table class='centered table-no-format'><tbody><tr>" +
@@ -189,7 +188,7 @@ $(document).ready(function() {
     return stockTable; //Return the jQuery object to be included in the chat window.
   }
 
-  //TODO
+  //Gets a jQuery object for a highlighted speech response row.
   function getSpeechDisplay(speech) {
     var speechRow = $("<div class='m-0 p-0'><span class='quote'></span><span class='speech'></span><span class='quote'></span><div>");
     speechRow.find(".quote").text('"');
@@ -197,7 +196,7 @@ $(document).ready(function() {
     return speechRow;
   }
 
-  //TODO
+  //Displays a list of response rows into the chat template.
   function displayResponseList(timestamp, response) {
     displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p class='chat-pad'></p>");
     for (var i = 0; i < response.length; i++) {
@@ -206,7 +205,7 @@ $(document).ready(function() {
     }
   }
 
-  //TODO
+  //Displays additional information in key-value pairs.
   //infoList :: [{info: String, value: String}]
   function getInfoListDisplay(infoList) {
     console.log(infoList);
@@ -350,8 +349,8 @@ $(document).ready(function() {
         for (var i = 0; i < data.companyList.length; i++) {
           companyLog.add(data.companyList[i]);
         }
-        for (var i = 0; i < data.sectorList.length; i++) {
-          sectorLog.add(data.sectorList[i]);
+        for (var j = 0; j < data.sectorList.length; j++) {
+          sectorLog.add(data.sectorList[j]);
         }
       }
     });
@@ -556,7 +555,6 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /*News*/
 
-  //TODO
   //Generates a jQuery object to display news stories.
   //newsArray :: [headline: String, url: String, description: String]
   function getNewsDisplay(newsArray) {
@@ -811,7 +809,7 @@ $(document).ready(function() {
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
-      case "get_revenue": //TODO TEST
+      case "get_revenue":
         speech += dataset.Revenue;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
@@ -821,7 +819,7 @@ $(document).ready(function() {
         displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_eps": //EPS, DivYield, PERatio
-        speech += dataset["EPS"];
+        speech += dataset.EPS;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
           {info: "Dividend Yield", value: dataset.DivYield},
@@ -829,7 +827,7 @@ $(document).ready(function() {
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_volume": //TODO TEST
+      case "get_volume": //TODO ERROR MESSAGE RETURNED BEFORE JSON (UNDEFINED INDEX AVERAGEVOL
         speech += dataset.Volume;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
@@ -838,8 +836,8 @@ $(document).ready(function() {
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
-      case "get_market_cap": //TODO DOESNT HAVE MARKET CAP IN JSON
-        //speech += dataset[""] //TODO
+      case "get_market_cap":
+        speech += dataset.MarketCap;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
           {info: "Share Price", value: dataset.SharePrice},
@@ -848,17 +846,17 @@ $(document).ready(function() {
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_div_yield": //TODO DOESNT HAVE DIV YIELD IN JSON
-        //speech += dataset["divyield###"];
+      case "get_div_yield":
+        speech += dataset.DivYield;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
-          {info: "Earnings per Share" , value: dataset["EPS"]},
+          {info: "Earnings per Share" , value: dataset.EPS},
           {info: "Price-Earnings Ratio", value: dataset.PERatio},
           {info: "Volume", value: dataset.Volume}
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_average_vol": //TODO TEST
+      case "get_average_vol": //TODO ERROR MESSAGE RETURNED BEFORE JSON (UNDEFINED INDEX AVERAGE
         speech += dataset.AverageVol;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
@@ -871,13 +869,13 @@ $(document).ready(function() {
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
           {info: "Dividend Yield", value: dataset.DivYield},
-          {info: "Earnings per Share", value: dataset["EPS"]},
+          {info: "Earnings per Share", value: dataset.EPS},
           {info: "Volume", value: dataset.Volume}
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_shares_in_issue": //TODO DOESNT INCLUDE SHARES IN ISSUE
-        //speech += dataset[""];
+      case "get_shares_in_issue":
+        speech += dataset.SharesInIssue;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
           {info: "Market Cap", value: dataset.MarketCap},
@@ -886,10 +884,8 @@ $(document).ready(function() {
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_news": //TODO
+      case "get_news":
         speechRow = getSpeechDisplay(speech);
-        //GET NEWS ROW
-        displayResponseList(timestamp, [speechRow]);
         newsRow = getNewsDisplay(dataset);
         displayResponseList(timestamp, [speechRow, newsRow]);
         break;
@@ -907,11 +903,16 @@ $(document).ready(function() {
         var summary = dataset.Summary;
         speech = "Recommended: " + summary;
         speechRow = getSpeechDisplay(speech);
-        displayResponseList(timestamp, [speechRow]);
+        infoRow = getInfoListDisplay([
+          {info: "Moving Averages", value: dataset.MovingAverages},
+          {info: "Technical Indicators", value: dataset.TechnicalIndicators},
+          {info: "Summary", value: dataset.Summary}
+        ]);
+        displayResponseList(timestamp, [speechRow, infoRow]);
         break;
       case "Input Error": //TODO
         displayErrorResponse(speech);
-        break
+        break;
       default:
         fallBackError(timestamp);
         return;
