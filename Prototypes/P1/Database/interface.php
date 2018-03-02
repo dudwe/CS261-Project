@@ -9,7 +9,7 @@ include "globalvars.php";
 /* Get database connection, or initialise it */
 function  db_connection() {
     static $conn;
-    if ($conn === NULL){ 
+    if ($conn === NULL){
 
         // Use the global variables as defined in gloabalvars.php
         global $server, $user, $password, $database;
@@ -417,7 +417,7 @@ function insert_history($conn, $inserted_id) {
         echo $existence. "<br>Error executing query: " . $conn->error . "<br>";
         return 0;
     }*/
-    
+
 
 
 /* Insert into fav_stocks using stock_name */
@@ -485,25 +485,25 @@ function insert_fav_sector_id($conn, $sector_id, $freq) {
 
 /* Return JSON object of all favourite stocks */
 // function get_fav_stocks($conn) {
-// 
+//
 //     $sql = "SELECT stock_id,ticker_symbol,stock_name FROM stocks WHERE stock_id IN (SELECT stock_id FROM fav_stocks)";
-// 
+//
 //     if (($res = $conn->query($sql)) !== TRUE) {
 //         echo $sql . "<br>Error: " . $conn->error . "<br>";
 //         return 0;
 //     }
-// 
+//
 //     $arr = array();
-// 
+//
 //     while ($row = $res->fetch_assoc()) {
-// 
+//
 //         $arr[] = ['id' => $row["stock_id"], 'ticker' => $row["ticker_symbol"], 'name' => $row["stock_name"]];
-// 
+//
 //     }
-// 
+//
 //     $fav_stocks = json_encode($arr);
 //     return $fav_stocks;
-// 
+//
 // }
 
 /* Return JSON object of all favourite stocks and sectors */
@@ -515,9 +515,10 @@ function get_faves($conn) {
     // Returns all stocks, with a 1 in column 'fav' if stock is in fav_stocks, 0 otherwise
     $sql = "SELECT stock_id, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav FROM stocks";
 
+
     $res = $conn->query($sql);
     while ($row = $res->fetch_assoc()) {
-        $fav_list[] = array("id" => $row["stock_id"], "ticker_symbol" => $row["ticker_symbol"], "fav" => $row["fav"]);
+        $fav_list["companyList"] = array("id" => $row["stock_id"], "ticker" => $row["ticker_symbol"], "fav" => $row["fav"]);
     }
 
     // Returns all sectors, with a 1 in column 'fav' if sector is in fav_sectors, 0 otherwise
@@ -525,7 +526,7 @@ function get_faves($conn) {
 
     $res = $conn->query($sql);
     while ($row = $res->fetch_assoc()) {
-        $fav_list[] = array("id" => $row["sector_id"], "fav" => $row["fav"]);
+        $fav_list["sectorList"] = array("id" => $row["sector_id"], "fav" => $row["fav"]);
     }
 
     $faves = json_encode($fav_list);
@@ -696,4 +697,4 @@ function resolve_invalid_entity($conn, $entity) {
 // TODO
 //      write up notes of final report for database
 //      finish error correction
-//      finish learning 
+//      finish learning
