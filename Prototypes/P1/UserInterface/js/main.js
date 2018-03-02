@@ -20,7 +20,7 @@ $(document).ready(function() {
   var waiting = false; //Flag for if the chatbot is waiting for a response.
   var speechEnabled = false; //Flag for if speech synthesis is enabled.
   var pollLoop = 1000 * 60; //Milliseconds between each notification poll.
-  var maxFavourites = 15;
+  var maxFavourites = 10; //Maximum number of favourites.
 
 /*----------------------------------------------------------------------------*/
 /* Initialisation*/
@@ -359,6 +359,17 @@ $(document).ready(function() {
   //TODO
   //Sends a JSON object to the server of all companies and sectors which favourite value has been changed.
   function saveFavourites() {
+    //Check Favourite Limit has not been reached.
+    var companyFavCount = $(".fav-company-switch:checked").length;
+    var sectorFavCount = $(".fav-sector-switch:checked").length;
+
+    if (companyFavCount + sectorFavCount > maxFavourites) {
+      Materialize.Toast.removeAll(); //Remove all current toast notifications.
+      Materialize.toast("Failed to save favourites, cannot have more than " + maxFavourites + " favourites selected.", 4000, "rounded");
+      console.log("(ERROR) Favourite limit reached.");
+      return;
+    }
+
     companyLog.clearChanges();
     sectorLog.clearChanges();
     changePollRates(); //Validates all poll rates, resets to original if invalid.
@@ -818,7 +829,7 @@ $(document).ready(function() {
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
-      case "get_eps": //EPS, DivYield, PERatio
+      case "get_eps":
         speech += dataset.EPS;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
