@@ -30,14 +30,7 @@ $(document).ready(function() {
     //Testing chat queries and commands.
     displayQuery("02/12/18 14:45:59", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
     displayResponseList("02/12/18 14:46:08", ["A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines."]);
-
-    /*-//TODO-REMOVE--*/
-    companyLog.add({id: "CHEF", ticker: "CHEF", name: "My name is chef", pollRate: "2", fav: false});
-    companyLog.add({id: "SPAG", ticker: "SPAG", name: "Somebody toucha my spaghet", pollRate: "15", fav: true});
-    sectorLog.add({id: "1", name: "Banks", fav: false});
-    sectorLog.add({id: "2", name: "Financial Services", fav: true});
-    /*-//TODO-REMOVE--*/
-
+  
     getFavourites();
 
     $("#fav-save").click(saveFavourites);
@@ -371,7 +364,6 @@ $(document).ready(function() {
     this.clearChanges();
   };
 
-  //TODO
   //Gets a JSON object of all companies and sector and corresponding information.
   function getFavourites() {
     $.ajax({
@@ -385,12 +377,12 @@ $(document).ready(function() {
       },
       success: function(data) {
         console.log(data);
-        data.companyList.forEach(function(d) { //Adds the list of companies to the log.
-          companyLog.add(data);
-        });
-        data.sectorList.forEach(function(d) { //Adds the list of sectors to the log.
-          companyLog.add(data);
-        });
+        for (var i = 0; i < data.companyList.length; i++) {
+          companyLog.add(data.companyList[i]);
+        }
+        for (var i = 0; i < data.sectorList.length; i++) {
+          sectorLog.add(data.companyList[i]);
+        }
       }
     });
   }

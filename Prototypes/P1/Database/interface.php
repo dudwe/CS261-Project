@@ -511,6 +511,8 @@ function get_faves($conn) {
 
     // Array to hold all stocks and sectors
     $fav_list = array();
+    $company_list = array();
+    $sector_list = array();
 
     // Returns all stocks, with a 1 in column 'fav' if stock is in fav_stocks, 0 otherwise
     $sql = "SELECT stock_id, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav FROM stocks";
@@ -518,7 +520,7 @@ function get_faves($conn) {
 
     $res = $conn->query($sql);
     while ($row = $res->fetch_assoc()) {
-        $fav_list["companyList"] = array("id" => $row["stock_id"], "ticker" => $row["ticker_symbol"], "fav" => $row["fav"]);
+        $company_list[] = array("id" => $row["stock_id"], "ticker" => $row["ticker_symbol"], "name" => $row["stock_name"], "fav" => $row["fav"]);
     }
 
     // Returns all sectors, with a 1 in column 'fav' if sector is in fav_sectors, 0 otherwise
@@ -526,9 +528,11 @@ function get_faves($conn) {
 
     $res = $conn->query($sql);
     while ($row = $res->fetch_assoc()) {
-        $fav_list["sectorList"] = array("id" => $row["sector_id"], "fav" => $row["fav"]);
+        $sector_list[] = array("id" => $row["sector_id"], "fav" => $row["fav"]);
     }
 
+    $fav_list["companyList"] = $company_list;
+    $fav_list["sectorList"] = $sector_list;
     $faves = json_encode($fav_list);
     return $faves;
 
