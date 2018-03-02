@@ -2,7 +2,7 @@
 
   //TODO LIMIT Favourites
   //TODO News
-  //TODO REGULAR OUTPUT
+  //TODO LIMIT CHARS ON NEWS DESCRIPTION
   //TODO GRAPH OUTPUT
   //TODO LINK FAVOURITE WITH DB LAYER
   //TODO LINK POLL WITH PARSING LAYER
@@ -19,6 +19,8 @@ $(document).ready(function() {
   var timeout = 10000; //10 second timeout to AJAX responses.
   var waiting = false; //Flag for if the chatbot is waiting for a response.
   var speechEnabled = false; //Flag for if speech synthesis is enabled.
+  var pollLoop = 1000 * 60; //Milliseconds between each notification poll.
+  var maxFavourites = 15;
 
 /*----------------------------------------------------------------------------*/
 /* Initialisation*/
@@ -30,39 +32,20 @@ $(document).ready(function() {
     displayResponseList("02/12/18 14:46:08", ["A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines."]);
 
     /*-//TODO-REMOVE--*/
-    companyLog.add({id: "CHEF", ticker: "CHEF", name: "My name is chef", pollRate: 2, fav: false});
-    companyLog.add({id: "SPAG", ticker: "SPAG", name: "Somebody toucha my spaghet", pollRate: 15, fav: true});
+    companyLog.add({id: "CHEF", ticker: "CHEF", name: "My name is chef", pollRate: "2", fav: false});
+    companyLog.add({id: "SPAG", ticker: "SPAG", name: "Somebody toucha my spaghet", pollRate: "15", fav: true});
     sectorLog.add({id: "1", name: "Banks", fav: false});
     sectorLog.add({id: "2", name: "Financial Services", fav: true});
     /*-//TODO-REMOVE--*/
 
     getFavourites();
 
-    //TODO REMOVE AFTER IMPLEMENTATION #########################################
-    //Add company favourite changes to the corresponding array when detected.
-    $(".fav-company-switch").click(function() {
-      var companyID = $(this).attr("data-id"); //Gets the ID attribute of the company.
-      var fav = $(this).prop("checked");
-      companyLog.addChange({id: companyID, fav: fav}); //Creates a new object for the change.
-      console.log("COMPANY CHANGE: " + companyID + " : " + fav);
-      setPollChangeAvailability(companyID, fav);
-    });
-    //Add sector favourite changes to the corresponding array when detected.
-    $(".fav-sector-switch").click(function() {
-      var sectorID = $(this).attr("data-id"); //Gets the ID attribute of the sector.
-      var fav = $(this).prop("checked");
-      sectorLog.addChange({id: sectorID, fav: fav}); //Creates a new object for the change.
-      console.log("SECTOR CHANGE: " + sectorID + " : " + fav);
-    });
-    //TODO REMOVE ##############################################################
-
     $("#fav-save").click(saveFavourites);
     $("#btn-send").click(submitQuery); //Redirect button click and ENTER to submitQuery function.
 
+    //TODO REMOVE
     displayErrorResponse("2018", "ERROR");
     displayGraphResponse("2019", "GRAPH");
-
-    //TODO REMOVE
     var news = [
       {
         headline: "Sky brings Netflix on board",
@@ -85,14 +68,9 @@ $(document).ready(function() {
         description: "US stocks were trading lower on Thursday as investors awaited fresh testimony from Federal Reserve chairman Jerome Powell. The Dow Jones and Nasdaq indexes were down about 0.5%, while the S&P 500 dipped 0.3%."
       }];
     var newsRow1 = getNewsDisplay(news);
-    var newsRow2 = getNewsDisplay(news);
-
     displayResponseList("AAA", [newsRow1]);
     scrollToChatBottom();
-
-
-    displayResponseList("BBB", [newsRow2]);
-
+    //TODO REMOVE
   }
 
 /*----------------------------------------------------------------------------*/
@@ -192,8 +170,7 @@ $(document).ready(function() {
   //responseType :: chat-query || chat-response | chat-response-error
   //body :: jQuery Object || HTML || String
   function displayChatTemplate(timestamp, borderType, timestampType, responseType, body) {
-    var template = $("<div class='chat-border'><div class='row timestamp-row'><p></p></div>"
-      + "<div class='row'><div class='chat'></div></div></div>");
+    var template = $("<div class='chat-border'><div class='row timestamp-row'><p></p></div><div class='row'><div class='chat'></div></div></div>");
     var divider = $("<div class='response-divider'></div>");
     template.addClass(borderType);
     template.after(divider);
@@ -224,11 +201,11 @@ $(document).ready(function() {
   //TODO
   //Gets a jQuery object for displaying information on a company stock.
   function getStockDisplay(stockName, sharePrice, pointChange, percentageChange) {
-    var stockTable = $("<table class='centered table-no-format'><tbody><tr>"
-      + "<td><p class='stock-name'></p></td><td>"
-      + "<p class='stock-performance'><i class='stock-icon material-icons'></i>"
-      + "<span class='stock-info-shareprice'></span><span class='stock-currency'>GBP</span>"
-      + "<span class='stock-info-pointchange'></span><span class='stock-info-percentagechange'></span></p></td></tr></tbody></table>");
+    var stockTable = $("<table class='centered table-no-format'><tbody><tr>" +
+      "<td><p class='stock-name'></p></td><td>" +
+      "<p class='stock-performance'><i class='stock-icon material-icons'></i>" +
+      "<span class='stock-info-shareprice'></span><span class='stock-currency'>GBP</span>" +
+      "<span class='stock-info-pointchange'></span><span class='stock-info-percentagechange'></span></p></td></tr></tbody></table>");
 
     if (pointChange > 0) { //Stock is rising.
       stockTable.find(".stock-performance").addClass("stock-rise").find(".stock-icon").text("keyboard_arrow_up");
@@ -266,12 +243,11 @@ $(document).ready(function() {
     }
   }
 
-
   //TODO
   //infoList :: [{info: String, value: String}]
   function getInfoListDisplay(infoList) {
     console.log(infoList);
-    var infoTable = $("<table class='info-table bordered'></table>")
+    var infoTable = $("<table class='info-table bordered'></table>");
     for (var i = 0; i < infoList.length; i++) {
       var infoRow = $("<tr><td class='info-table-name'></td><td class='info-table-value'></td></tr>");
       infoRow.find(".info-table-name").text(infoList[i].info + ": ");
@@ -305,50 +281,40 @@ $(document).ready(function() {
     this.list = []; //Original list of companies. list => [{id: String, ticker: String, name: String, fav: Bool, poll: Int, lastRec: Bool}]
     this.changeLog = []; //List of favourite changes. changeLog => [{id: String, fav: Bool}]
     this.addChange = function(newChange) { //newChange => {id: String, fav: Bool}
-      var index = this.changeLog.findIndex(function(e) { //Find a previous occurence of a change for the company.
-        return e.id === newChange.id;
-      });
-      if (index !== -1) { //If a previous occurence is found remove the previous occurence from the changelog.
-        this.changeLog.splice(index, 1);
-      }
       this.changeLog.push(newChange); //Adds the new change to the list.
     };
     this.clearChanges = function() { //Removes all changes in the changelog.
       this.changeLog = [];
     };
-    this.compareChanges = function() {
-      var finalChangeLog = []; //List of all changes that differ from the stored list.
-      for (var i = 0; i < this.changeLog.length; i++) {
-        var index = this.list.findIndex(e => (e.id === this.changeLog[i].id) && (e.fav !== this.changeLog[i].fav)); //Finds index where company occurs and favourite is different.
-        if (index !== -1) { //If the favourite is different add it to the finalised list.
-          finalChangeLog.push(this.changeLog[i]);
-        }
-      }
-      return finalChangeLog;
-    };
-    this.commitChanges = function() {
-      for (var i = 0; i < this.changeLog.length; i++) {
-        var index = this.list.findIndex(e => e.id === this.changeLog[i].id);  //Finds the index where the ID matches.
-        if (index !== -1) { //If a matching ID is found, then update the favourite value.
-          this.list[index].fav = this.changeLog[i].fav;
-        }
-      }
-      this.changeLog = []; //Reset changes.
-    };
-    this.toString = function() { //For debugging.
-      var output = "";
-      for (var i = 0; i < this.changeLog.length; i++) {
-        output += "ID: " + this.changeLog[i].id + " // Fav: " + this.changeLog[i].fav + "\n";
-      }
-      return output;
-    };
   }
 
-  //TODO
+  //Adds a company to the data structure and favourite modal.
   //data :: {id: String, ticker: String, name: String, pollRate: Int, fav: Bool}
   companyLog.add = function(data) {
-    this.list.push(data); //TODO
+    this.list.push(data);
     addCompany(data.id, data.ticker, data.name, data.pollRate, data.fav);
+  };
+
+  companyLog.compareChanges = function() {
+    var finalChangeLog = []; //List of all changes that differ from the stored list.
+    for (var i = 0; i < this.changeLog.length; i++) {
+      var index = this.list.findIndex(e => ((e.id === this.changeLog[i].id) && ((e.fav != this.changeLog[i].fav) || (e.pollRate != this.changeLog[i].pollRate)))); //Finds index where company occurs and favourite is different.
+      if (index !== -1) { //If the favourite is different add it to the finalised list.
+        finalChangeLog.push(this.changeLog[i]);
+      }
+    }
+    return finalChangeLog;
+  };
+
+  companyLog.commitChanges = function() {
+    for (var i = 0; i < this.changeLog.length; i++) {
+      var index = this.list.findIndex(e => e.id === this.changeLog[i].id);  //Finds the index where the ID matches.
+      if (index !== -1) { //If a matching ID is found, then update the favourite value.
+        this.list[index].fav = this.changeLog[i].fav;
+        this.list[index].pollRate = this.changeLog[i].pollRate;
+      }
+    }
+    this.clearChanges();
   };
 
   //Gets the poll rate for a specific company.
@@ -365,7 +331,7 @@ $(document).ready(function() {
       console.log("ERR");
       return -1;
     }
-  }
+  };
 
   //Sets the poll rate for a specific company.
   companyLog.setPollRate = function(companyID, pollRate) {
@@ -376,20 +342,41 @@ $(document).ready(function() {
     if (index !== -1) {
       this.list[index].pollRate = pollRate;
     }
-  }
+  };
 
-  //TODO
+  //Adds a sector to the data structure and favourite modal.
   //data :: {id: String, name: String, fav: Bool}
   sectorLog.add = function(data) {
-    this.list.push(data); //TODO
+    this.list.push(data);
     addSector(data.id, data.name, data.fav);
+  };
+
+  sectorLog.compareChanges = function() {
+    var finalChangeLog = []; //List of all changes that differ from the stored list.
+    for (var i = 0; i < this.changeLog.length; i++) {
+      var index = this.list.findIndex(e => (e.id === this.changeLog[i].id) && (e.fav != this.changeLog[i].fav)); //Finds index where sector occurs and favourite is different.
+      if (index !== -1) { //If the favourite is different add it to the finalised list.
+        finalChangeLog.push(this.changeLog[i]);
+      }
+    }
+    return finalChangeLog;
+  };
+
+  sectorLog.commitChanges = function() {
+    for (var i = 0; i < this.changeLog.length; i++) {
+      var index = this.list.findIndex(e => e.id === this.changeLog[i].id);  //Finds the index where the ID matches.
+      if (index !== -1) { //If a matching ID is found, then update the favourite value.
+        this.list[index].fav = this.changeLog[i].fav;
+      }
+    }
+    this.clearChanges();
   };
 
   //TODO
   //Gets a JSON object of all companies and sector and corresponding information.
   function getFavourites() {
     $.ajax({
-      url: "https://www.google.com/fakepage.php", //###change to php file later.
+      url: "../Database/get_favourites.php",
       data: null,
       dataType: "json",
       method: "POST",
@@ -405,21 +392,6 @@ $(document).ready(function() {
         data.sectorList.forEach(function(d) { //Adds the list of sectors to the log.
           companyLog.add(data);
         });
-        //Add company favourite changes to the corresponding array when detected.
-        $(".fav-company-switch").click(function() {
-          var companyID = $(this).attr("data-id"); //Gets the ID attribute of the company.
-          var fav = $(this).prop("checked");
-          companyLog.addChange({id: companyID, fav: fav}); //Creates a new object for the change.
-          console.log("COMPANY CHANGE: " + companyID + " : " + fav);
-          setPollChangeAvailability(companyID, fav);
-        });
-        //Add sector favourite changes to the corresponding array when detected.
-        $(".fav-sector-switch").click(function() {
-          var sectorID = $(this).attr("data-id"); //Gets the ID attribute of the sector.
-          var fav = $(this).prop("checked");
-          sectorLog.addChange({id: sectorID, fav: fav}); //Creates a new object for the change.
-          console.log("SECTOR CHANGE: " + sectorID + " : " + fav);
-        });
       }
     });
   }
@@ -427,10 +399,27 @@ $(document).ready(function() {
   //TODO
   //Sends a JSON object to the server of all companies and sectors which favourite value has been changed.
   function saveFavourites() {
+    companyLog.clearChanges();
+    sectorLog.clearChanges();
+    changePollRates(); //Validates all poll rates, resets to original if invalid.
+
+    $(".fav-table-body-company tr:not(#company-no-result)").each(function() { //For each company row in the modal.
+      var id = $(this).find(".poll-rate-selector").attr("data-id");
+      var pollRate = $(this).find(".poll-rate-selector").val();
+      var fav = $(this).find(".fav-company-switch").prop("checked");
+      console.log("MODAL // COMPANY ID: " + id + " : " + fav + " : " + pollRate);
+      companyLog.addChange({id: id, fav: fav, pollRate: pollRate});
+    });
+    $(".fav-table-body-sector tr:not(#sector-no-result)").each(function() { //For each sector row in the modal.
+      var id = $(this).find(".fav-sector-switch").attr("data-id");
+      var fav = $(this).find(".fav-sector-switch").prop("checked");
+      console.log("MODAL //SECTOR ID: " + id + " : " + fav);
+      sectorLog.addChange({id: id, fav: fav});
+    });
+
     var companyChanges = companyLog.compareChanges(); //List of company changes that are different from the original.
     var sectorChanges = sectorLog.compareChanges(); //List of sector changes that are different from the original.
     var sendData = {companyList: companyChanges, sectorList: sectorChanges};
-    changePollRates(); //TODO
 
     //Debugging
     console.log("COMPANY LOG\n" + companyLog.toString());
@@ -440,7 +429,7 @@ $(document).ready(function() {
     console.log(sendData);
 
     $.ajax({
-      url: "https://www.google.com/fakepage.php", //###TODO change to php file later.
+      url: "save_favourites.php",
       data: sendData,
       method: "POST",
       timeout: timeout,
@@ -472,11 +461,8 @@ $(document).ready(function() {
     else {
       pollRow += "value='-'";
     }
-    if (!fav) {
-      pollRow += " disabled";
-    }
 
-    pollRow += " type='text'></td>"
+    pollRow += "></td>";
     var favRow = "<td><div class='switch'><label><input data-id='";
     favRow += id +  "' class='fav-company-switch' type='checkbox'";
     if (fav) { favRow += " checked"; } //Marks the company as favourited.
@@ -542,13 +528,14 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /*Notifications*/
 
-  var poll = window.setInterval(pollNotifications, 1000 * 60); //Set pollNotifications to execute every minute.
+  var poll = window.setInterval(pollNotifications, pollLoop); //Set pollNotifications to execute every minute.
   var pollCount = 0; //Number of notification polls checked.
 
   //TODO
   //Identifies which favourites need to be polled to the server then sends the AJAX request.
   function pollNotifications() {
-    console.log("Poll Notifications (" + ++pollCount + ")");
+    pollCount++;
+    console.log("Poll Notifications (" + pollCount + ")");
     var notificationObj = []; //List of all companies to send notification polls for.
     for (var i = 0; i < companyLog.list.length; i++) {
       var company = companyLog.list[i];
@@ -580,11 +567,6 @@ $(document).ready(function() {
     });
   }
 
-  //Allows only favourited companies' poll rate to be changed.
-  function setPollChangeAvailability(companyID, fav) {
-    $("*[data-id=" + companyID + "].poll-rate-selector").prop("disabled", !fav);
-  }
-
   //Saves changes to company poll rates.
   function changePollRates() {
     console.log("Change Poll Rates");
@@ -592,10 +574,7 @@ $(document).ready(function() {
       var companyID = $(this).attr("data-id");
       var pollRate = $(this).val();
       var valid = validatePollRate(pollRate);
-      if (valid) { //Sets the valid poll rate in the company log.
-        companyLog.setPollRate(companyID, pollRate);
-      }
-      else { //Replace existing invalid poll rate with valid stored poll rate.
+      if (!valid) { //Replace existing invalid poll rate with valid stored poll rate.
         pollRate = companyLog.getPollRate(companyID);
         $(this).val(pollRate);
       }
@@ -605,8 +584,8 @@ $(document).ready(function() {
 
   //Validates a poll rate to ensure it is an integer between 0 and 1000 inclusive.
   function validatePollRate(pollRate) {
-    if ($.isNumeric(pollRate) && Math.floor(pollRate) == +pollRate) {
-      return (pollRate >= 0 && pollRate <= 1000)
+    if ($.isNumeric(pollRate) && Math.floor(pollRate) == (+pollRate)) {
+      return (pollRate >= 0 && pollRate <= 1000);
     }
     else {
       return false;
@@ -616,10 +595,8 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /*News*/
 
-//URL
-//HEADER
-
   //TODO
+  //Generates a jQuery object to display news stories.
   //newsArray :: [headline: String, url: String, description: String]
   function getNewsDisplay(newsArray) {
     var maxShownHeadlines = 1; //Number of headlines initially shown.
@@ -629,9 +606,9 @@ $(document).ready(function() {
 
     for (var i = 0; i < newsArray.length; i++) {
       var article = newsArray[i];
-      var headline = article["headline"];
-      var url = article["url"];
-      var description = article["description"];
+      var headline = article.headline;
+      var url = article.url;
+      var description = article.description;
       var articleRow = $("<div class='news-row'><a class='headline tooltipped' data-position='top' ata-delay='50'></a><p class='headline-desc'></p></div>");
       console.log("HEADLINE: " + headline + " :: " + "URL: " + url);
       articleRow.find(".headline").text(headline);
@@ -653,7 +630,7 @@ $(document).ready(function() {
     //Hide overflow headlines.
     $(newsDisplay).find("div").each(function(index) {
       if (index + 1 > maxShownHeadlines) {
-        $(this).fadeOut();
+        $(this).hide();
       }
     });
 
