@@ -777,7 +777,7 @@ $(document).ready(function() {
     console.log(data);
 
     var timestamp = new Date().toUTCString();
-    var json;
+    var json, speechRow, stockTable, infoRow;
 
     //Attempt to parse JSON response.
     try {
@@ -789,150 +789,150 @@ $(document).ready(function() {
     }
 
     //Response Properties
-    var resolvedQuery = json["resolvedQuery"];
-    var intent = json["intentName"];
-    var speech = json["speech"] + " ";
-    var stock = json["stocks"];
-    var dataset = json["dataset"];
+    var resolvedQuery = json.resolvedQuery;
+    var intent = json.intentName;
+    var speech = json.speech + " ";
+    var stock = json.stocks;
+    var dataset = json.dataset;
 
     switch (intent) {
       case "get_share_price":
-        speech += dataset["SharePrice"];
-        var speechRow = getSpeechDisplay(speech);
-        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        speech += dataset.SharePrice;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_point_change":
-        speech += dataset["PointChange"];
-        var speechRow = getSpeechDisplay(speech);
-        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        speech += dataset.PointChange;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "percent_change":
-        speech += dataset["PercentChange"];
-        var speechRow = getSpeechDisplay(speech);
-        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        speech += dataset.PercentChange;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_bid":
-        speech += dataset["Bid"];
-        var speechRow = getSpeechDisplay(speech);
-        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        speech += dataset.Bid;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_offer":
-        speech += dataset["Offer"];
-        var speechRow = getSpeechDisplay(speech);
-        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        speech += dataset.Offer;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_open":
-        speech += dataset["Open"];
-        var speechRow = getSpeechDisplay(speech);
-        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        speech += dataset.Open;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_close":
-        speech += dataset["Close"];
-        var speechRow = getSpeechDisplay(speech);
-        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        speech += dataset.Close;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_high":
-        speech += dataset["High"];
-        var speechRow = getSpeechDisplay(speech);
-        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        speech += dataset.High;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_low":
-        speech += dataset["Low"];
-        var speechRow = getSpeechDisplay(speech);
-        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        speech += dataset.Low;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_revenue": //TODO TEST
-        speech += dataset["Revenue"];
-        var speechRow = getSpeechDisplay(speech);
-        var infoRow = getInfoListDisplay([
-          {info: "Market Cap", value: dataset["MarketCap"]}
+        speech += dataset.Revenue;
+        speechRow = getSpeechDisplay(speech);
+        infoRow = getInfoListDisplay([
+          {info: "Market Cap", value: dataset.MarketCap}
         ]);
-        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_eps": //EPS, DivYield, PERatio
         speech += dataset["EPS"];
-        var speechRow = getSpeechDisplay(speech);
-        var infoRow = getInfoListDisplay([
-          {info: "Dividend Yield", value: dataset["DivYield"]},
-          {info: "Price-Earnings Ratio", value: dataset["PERatio"]}
+        speechRow = getSpeechDisplay(speech);
+        infoRow = getInfoListDisplay([
+          {info: "Dividend Yield", value: dataset.DivYield},
+          {info: "Price-Earnings Ratio", value: dataset.PERatio}
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
       case "get_volume": //TODO TEST
-        speech += dataset["Volume"];
-        var speechRow = getSpeechDisplay(speech);
-        var infoRow = getInfoListDisplay([
-          {info: "Average Volume", value: dataset["AverageVol"]}
+        speech += dataset.Volume;
+        speechRow = getSpeechDisplay(speech);
+        infoRow = getInfoListDisplay([
+          {info: "Average Volume", value: dataset.AverageVol}
         ]);
-        var stockTable = getStockDisplay(stock, dataset["SharePrice"], dataset["PointChange"], dataset["PercentChange"]);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_market_cap": //TODO DOESNT HAVE MARKET CAP IN JSON
         //speech += dataset[""] //TODO
-        var speechRow = getSpeechDisplay(speech);
-        var infoRow = getInfoListDisplay([
-          {info: "Share Price", value: dataset["SharePrice"]},
-          {info: "Shares in Issue", value: dataset["SharesInIssue"]},
-          {info: "Volume", value: dataset["Volume"]}
+        speechRow = getSpeechDisplay(speech);
+        infoRow = getInfoListDisplay([
+          {info: "Share Price", value: dataset.SharePrice},
+          {info: "Shares in Issue", value: dataset.SharesInIssue},
+          {info: "Volume", value: dataset.Volume}
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
       case "get_div_yield": //TODO DOESNT HAVE DIV YIELD IN JSON
         //speech += dataset["divyield###"];
-        var speechRow = getSpeechDisplay(speech);
-        var infoRow = getInfoListDisplay([
+        speechRow = getSpeechDisplay(speech);
+        infoRow = getInfoListDisplay([
           {info: "Earnings per Share" , value: dataset["EPS"]},
-          {info: "Price-Earnings Ratio", value: dataset["PERatio"]},
-          {info: "Volume", value: dataset["Volume"]}
+          {info: "Price-Earnings Ratio", value: dataset.PERatio},
+          {info: "Volume", value: dataset.Volume}
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
       case "get_average_vol": //TODO TEST
-        speech += dataset["AverageVol"];
-        var speechRow = getSpeechDisplay(speech);
-        var infoRow = getInfoListDisplay([
-          {info: "Volume" , value: dataset["Volume"]}
+        speech += dataset.AverageVol;
+        speechRow = getSpeechDisplay(speech);
+        infoRow = getInfoListDisplay([
+          {info: "Volume" , value: dataset.Volume}
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
       case "get_pe_ratio": //TODO TEST NO PE RATIO
         //speech += dataset[""];
-        var speechRow = getSpeechDisplay(speech);
-        var infoRow = getInfoListDisplay([
-          {info: "Dividend Yield", value: dataset["DivYield"]},
+        speechRow = getSpeechDisplay(speech);
+        infoRow = getInfoListDisplay([
+          {info: "Dividend Yield", value: dataset.DivYield},
           {info: "Earnings per Share", value: dataset["EPS"]},
-          {info: "Volume", value: dataset["Volume"]}
+          {info: "Volume", value: dataset.Volume}
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
       case "get_shares_in_issue": //TODO DOESNT INCLUDE SHARES IN ISSUE
         //speech += dataset[""];
-        var speechRow = getSpeechDisplay(speech);
-        var infoRow = getInfoListDisplay([
-          {info: "Market Cap", value: dataset["MarketCap"]},
-          {info: "Volume", value: dataset["Volume"]},
-          {info: "Share Price", value: dataset["SharePrice"]}
+        speechRow = getSpeechDisplay(speech);
+        infoRow = getInfoListDisplay([
+          {info: "Market Cap", value: dataset.MarketCap},
+          {info: "Volume", value: dataset.Volume},
+          {info: "Share Price", value: dataset.SharePrice}
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
       case "get_stock_news": //TODO
-        var speechRow = getSpeechDisplay(speech);
+        speechRow = getSpeechDisplay(speech);
         //GET NEWS ROW
         displayResponseList(timestamp, [speechRow]);
         break;
       case "get_stock_performance": //TODO
-        var speechRow = getSpeechDisplay(speech);
-        var stockTable = getStockDisplay(stock, json["auxillary"]["SharePrice"], json["auxillary"]["PointChange"], json["auxillary"]["PercentChange"]);
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, json.auxillary.SharePrice, json.auxillary.PointChange, json.auxillary.PercentChange);
         //GRAPH TODO
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
@@ -941,11 +941,11 @@ $(document).ready(function() {
       case "get_sector_performance": //TODO
         break;
       case "get_buy_or_sell": //TODO
-        var movingAverages = dataset["movingAverages"];
-        var technicalIndicators = dataset["technicalIndicators"];
-        var summary = dataset["Summary"];
+        var movingAverages = dataset.movingAverages;
+        var technicalIndicators = dataset.technicalIndicators;
+        var summary = dataset.Summary;
         speech = "Recommended: " + summary;
-        var speechRow = getSpeechDisplay(speech);
+        speechRow = getSpeechDisplay(speech);
         displayResponseList(timestamp, [speechRow]);
         break;
       default:
