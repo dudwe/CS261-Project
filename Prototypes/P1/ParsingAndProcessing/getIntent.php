@@ -140,11 +140,11 @@ function getIntent($jsonData){
         break;            
    case "get_market_cap":
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('SharePrice'=>$dataArray['SharePrice'],'SharesInIssue'=>$dataArray['SharesInIssue'],'Volume'=>$dataArray['Volume']);
+        $dataArray=array('MarketCap'=>$dataArray['MarketCap'],'SharePrice'=>$dataArray['SharePrice'],'SharesInIssue'=>$dataArray['SharesInIssue'],'Volume'=>$dataArray['Volume']);
         break;    
    case "get_div_yield":
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('EPS'=>$dataArray['EPS'],'PERatio'=>$dataArray['PERatio'],'Volume'=>$dataArray['Volume']);
+        $dataArray=array('DivYield'=>$dataArray['DivYield'],'EPS'=>$dataArray['EPS'],'PERatio'=>$dataArray['PERatio'],'Volume'=>$dataArray['Volume']);
         break; 
    case "get_average_vol":
         $dataArray=getCurrentForCompany($stockId);
@@ -156,7 +156,7 @@ function getIntent($jsonData){
         break;                  
    case "get_shares_in_issue":
         $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('MarketCap'=>$dataArray['MarketCap'],'Volume'=>$dataArray['Volume'],'SharePrice'=>$dataArray['SharePrice']);
+        $dataArray=array('SharesInIssue'=>$dataArray['SharesInIssue'],'MarketCap'=>$dataArray['MarketCap'],'Volume'=>$dataArray['Volume'],'SharePrice'=>$dataArray['SharePrice']);
         break;                 
     case "get_stock_news":
         $dataArray=getRSS($stockId,False);
