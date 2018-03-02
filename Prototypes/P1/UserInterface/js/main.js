@@ -948,6 +948,9 @@ $(document).ready(function() {
         speechRow = getSpeechDisplay(speech);
         displayResponseList(timestamp, [speechRow]);
         break;
+      case "Input Error": //TODO
+        displayErrorResponse(speech);
+        break
       default:
         fallBackError(timestamp);
         return;
