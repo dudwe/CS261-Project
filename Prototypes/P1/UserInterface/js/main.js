@@ -949,8 +949,15 @@ $(document).ready(function() {
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
       case "get_stock_news": //TODO
+        var speechRow = getSpeechDisplay(speech);
+        //GET NEWS ROW
+        displayResponseList(timestamp, [speechRow]);
         break;
       case "get_stock_performance": //TODO
+        var speechRow = getSpeechDisplay(speech);
+        var stockTable = getStockDisplay(stock, json["auxillary"]["SharePrice"], json["auxillary"]["PointChange"], json["auxillary"]["PercentChange"]);
+        //GRAPH TODO
+        displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_sector_news": //TODO
         break;
