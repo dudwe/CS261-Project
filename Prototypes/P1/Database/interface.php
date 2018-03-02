@@ -420,7 +420,7 @@ function insert_history($conn, $inserted_id) {
     
 }
 
-/* Insert data into FAV_STOCKS table */
+/* Insert into fav_stocks using stock_name */
 function insert_fav_stock($conn, $stock_name, $freq) {
 
     $date = date("Y-m-d");
@@ -434,6 +434,7 @@ function insert_fav_stock($conn, $stock_name, $freq) {
     }
 }
 
+/* Insert into fav_stocks using the stock_id */
 function insert_fav_stock_id($conn, $stock_id, $freq) {
 
     $date = date("Y-m-d");
@@ -448,7 +449,7 @@ function insert_fav_stock_id($conn, $stock_id, $freq) {
 
 }
 
-/* Insert data into FAV_SECTORS table */
+/* Insert into fav_sectors using sector_name */
 function insert_fav_sector($conn, $sector_name, $freq) {
 
     $date = date("Y-m-d");
@@ -460,6 +461,22 @@ function insert_fav_sector($conn, $sector_name, $freq) {
         echo $sql . "<br>Error executing query: " . $conn->error . "<br>";
         return 0;
     }
+
+}
+
+/* Insert into fav_sectors using the sector_id */
+function insert_fav_sector_id($conn, $sector_id, $freq) {
+
+    $date = date("Y-m-d");
+    $sql = "INSERT INTO fav_sectors (sector_id, date_added, notif_freq) VALUES (" . $sector_id . ",'" . $date . "',", $freq . ")";
+
+    if ($conn->query($sql) === TRUE) {
+        return 1;
+    } else {
+        echo $sql . "<br>Error executing query: " . $conn->error . "<br>";
+        return 0;
+    }
+
 }
 
 // ==================================================================
@@ -467,30 +484,30 @@ function insert_fav_sector($conn, $sector_name, $freq) {
 // ==================================================================
 
 /* Return JSON object of all favourite stocks */
-function get_fav_stocks($conn) {
+// function get_fav_stocks($conn) {
+// 
+//     $sql = "SELECT stock_id,ticker_symbol,stock_name FROM stocks WHERE stock_id IN (SELECT stock_id FROM fav_stocks)";
+// 
+//     if (($res = $conn->query($sql)) !== TRUE) {
+//         echo $sql . "<br>Error: " . $conn->error . "<br>";
+//         return 0;
+//     }
+// 
+//     $arr = array();
+// 
+//     while ($row = $res->fetch_assoc()) {
+// 
+//         $arr[] = ['id' => $row["stock_id"], 'ticker' => $row["ticker_symbol"], 'name' => $row["stock_name"]];
+// 
+//     }
+// 
+//     $fav_stocks = json_encode($arr);
+//     return $fav_stocks;
+// 
+// }
 
-    $sql = "SELECT stock_id,ticker_symbol,stock_name FROM stocks WHERE stock_id IN (SELECT stock_id FROM fav_stocks)";
-
-    if (($res = $conn->query($sql)) !== TRUE) {
-        echo $sql . "<br>Error: " . $conn->error . "<br>";
-        return 0;
-    }
-
-    $arr = array();
-
-    while ($row = $res->fetch_assoc()) {
-
-        $arr[] = ['id' => $row["stock_id"], 'ticker' => $row["ticker_symbol"], 'name' => $row["stock_name"]];
-
-    }
-
-    $fav_stocks = json_encode($arr);
-    return $fav_stocks;
-
-}
-
-/* Return JSON object of all favourite sectors */
-function get_fav_sectors($conn) {
+/* Return JSON object of all favourite stocks and sectors */
+function get_faves($conn) {
 
     // TODO: Test that this returns the right structure
     // Array to hold all stocks and sectors
@@ -504,6 +521,7 @@ function get_fav_sectors($conn) {
         $fav_list[] = array("id" => $row["stock_id"], "ticker_symbol" => $row["ticker_symbol"], "fav" => $row["fav"]);
     }
 
+    // Returns all sectors, with a 1 in column 'fav' if sector is in fav_sectors, 0 otherwise
     $sql = "SELECT sector_id, IF (sector_id IN (SELECT sector_id FROM fav_sectors), 1, 0) AS fav FROM sectors";
 
     $res = $conn->query($sql);
@@ -625,14 +643,45 @@ function suggest_query($conn) {
 
 }
 
-function suggest_action($conn) {
+/* Return top 3 sectors that the user is interested in, based on what they track */
+function learn_sector($conn) {
+
+    // Looks at all stocks tracked by user and learns which sectors they are focusing on
+    $sql = "SELECT sector_id, COUNT(sector_id) FROM stocks WHERE sector_id IN (SELECT sector_id FROM fav_sectors) GROUP BY sector_id ORDER BY COUNT(sector_id) DESC LIMIT 3";
+
+    $res = $conn->query($sql);      // Returns top three sectors whose stocks are tracked the most
+
+    $top_sectors = array();
+
+    /*
+     * Create array of top three sectors e.g.
+     *      $top_sectors[0] = "Banks"
+     *      $top_sectors[1] = "Tobacco"
+     *      $top_sectors[2] = "Media"
+     */
+
+    while ($row = $res->fetch_assoc()) {
+        $top_sectors[] = $row["sector_id"];
+    }
+
+    return $top_sectors;
 
 }
 
-function resolve_invalid_intent($conn) {
+// TODO: this
+/* Return 3 stocks they do not currently track based on which sectors they track */
+function learn_stock($conn) {
+
+    $sql = "";
 
 }
 
-function resolve_invalid_entity($conn) {
+// TODO: error correction
+
+function resolve_invalid_intent($conn, $intent) {
+
+}
+
+function resolve_invalid_entity($conn, $entity) {
 
 }
