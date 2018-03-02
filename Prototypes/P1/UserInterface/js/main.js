@@ -376,7 +376,6 @@ $(document).ready(function() {
   function getFavourites() {
     $.ajax({
       url: "../Database/scripts/get_favourites.php",
-      data: null,
       dataType: "json",
       method: "POST",
       timeout: timeout,
@@ -385,6 +384,7 @@ $(document).ready(function() {
         Materialize.toast("Failed to retrieve Favourites.", 2000, "rounded"); //Notify that synthesis is not supported.
       },
       success: function(data) {
+        console.log(data);
         data.companyList.forEach(function(d) { //Adds the list of companies to the log.
           companyLog.add(data);
         });
