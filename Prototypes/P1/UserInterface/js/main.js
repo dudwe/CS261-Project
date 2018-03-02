@@ -252,7 +252,6 @@ $(document).ready(function() {
       var infoRow = $("<tr><td class='info-table-name'></td><td class='info-table-value'></td></tr>");
       infoRow.find(".info-table-name").text(infoList[i].info + ": ");
       infoRow.find(".info-table-value").text(infoList[i].value);
-      console.log(infoRow);
       infoTable.append(infoRow);
     }
     return infoTable;
