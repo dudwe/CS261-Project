@@ -418,7 +418,7 @@ function insert_history($conn, $inserted_id) {
         return 0;
     }*/
     
-}
+
 
 /* Insert into fav_stocks using stock_name */
 function insert_fav_stock($conn, $stock_name, $freq) {
@@ -438,7 +438,7 @@ function insert_fav_stock($conn, $stock_name, $freq) {
 function insert_fav_stock_id($conn, $stock_id, $freq) {
 
     $date = date("Y-m-d");
-    $sql = "INSERT INTO fav_stocks (stock_id, date_added, notif_freq) VALUES (" . $stock_id . ",'" . $date . "',", $freq . ")";
+    $sql = "INSERT INTO fav_stocks (stock_id, date_added, notif_freq) VALUES (" . $stock_id . ",'" . $date . "',". $freq . ")";
 
     if ($conn->query($sql) === TRUE) {
         return 1;
