@@ -13,9 +13,9 @@
      $sql="select ticker_symbol from stocks";
      $res=$conn->query($sql);
      foreach($res as $item){
-        $ticker=$item["ticker_symbol"];
+        $ticker=$item["ticker_symbol"]."</br>";
         //$articles=getRSS($ticker,False);
-        //echo $ticker."</br>";
+        echo $ticker;
          if (empty(getRSS($ticker,False))){
             echo "</br>Failed to get any news for ticker symbol: ".$ticker."</br>";
          }

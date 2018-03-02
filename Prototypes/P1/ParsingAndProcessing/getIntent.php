@@ -23,8 +23,10 @@ function getIntent($jsonData){
         if(array_key_exists('stocks',$arrayparam)){
             $stockId = $array['result']['parameters']['stocks'];
         }
-        else{
+        else if (array_key_exists('sectors',$arrayparam)){
             $stockId = $array['result']['parameters']['sectors'];
+        }else{
+            $stockId = $array['result']['parameters']['stocksandsectors'];
         }
     }
     
@@ -158,9 +160,6 @@ function getIntent($jsonData){
         $dataArray=getCurrentForCompany($stockId);
         $dataArray=array('SharesInIssue'=>$dataArray['SharesInIssue'],'MarketCap'=>$dataArray['MarketCap'],'Volume'=>$dataArray['Volume'],'SharePrice'=>$dataArray['SharePrice']);
         break;                 
-    case "get_stock_news":
-        $dataArray=getRSS($stockId,False);
-        break;
     case "get_stock_performance":
         $objOutput->timeframe=$timeframe;
         $dataArray=getTimeframe($stockId,$timeframe);
@@ -175,7 +174,7 @@ function getIntent($jsonData){
             $objOutput->auxillary=$dataArray2;
         }
         break;
-    case "get_sector_news":
+    case "get_news":
         $dataArray=getRSS($stockId,False);
         break;
     case "get_sector_performance":
