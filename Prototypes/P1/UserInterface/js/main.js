@@ -30,7 +30,7 @@ $(document).ready(function() {
     //Testing chat queries and commands.
     displayQuery("02/12/18 14:45:59", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
     displayResponseList("02/12/18 14:46:08", ["A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines."]);
-  
+
     getFavourites();
 
     $("#fav-save").click(saveFavourites);
@@ -381,7 +381,7 @@ $(document).ready(function() {
           companyLog.add(data.companyList[i]);
         }
         for (var i = 0; i < data.sectorList.length; i++) {
-          sectorLog.add(data.companyList[i]);
+          sectorLog.add(data.sectorList[i]);
         }
       }
     });

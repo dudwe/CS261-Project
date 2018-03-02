@@ -524,11 +524,11 @@ function get_faves($conn) {
     }
 
     // Returns all sectors, with a 1 in column 'fav' if sector is in fav_sectors, 0 otherwise
-    $sql = "SELECT sector_id, IF (sector_id IN (SELECT sector_id FROM fav_sectors), 1, 0) AS fav FROM sectors";
+    $sql = "SELECT sector_id, sector_name, IF (sector_id IN (SELECT sector_id FROM fav_sectors), 1, 0) AS fav FROM sectors";
 
     $res = $conn->query($sql);
     while ($row = $res->fetch_assoc()) {
-        $sector_list[] = array("id" => $row["sector_id"], "fav" => $row["fav"]);
+        $sector_list[] = array("id" => $row["sector_id"], "name" => $row["sector_name"], "fav" => $row["fav"]);
     }
 
     $fav_list["companyList"] = $company_list;
