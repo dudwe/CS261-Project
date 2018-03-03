@@ -7,7 +7,7 @@
 <body>
     <h1>TraderBot</h1>
 
-    <form action="reset.php">
+    <form action="../reset.php">
         <input type="submit" value="Initialise/Reset">
     </form>
 

@@ -22,44 +22,6 @@ function  db_connection() {
     return $conn;
 }
 
-function dict_init($conn) {
-
-    static $dict_link;
-
-    if ($dict_link === NULL) {
-
-        $pspell_cfg = pspell_config_create("en");
-        pspell_config_personal($pspell_cfg, "./ErrorCorrection/dict");
-
-        $dict_link = pspell_new_config($pspell_cfg);
-
-        $sql = "SELECT ticker_symbol FROM stocks";
-        $res = $conn->query($sql);
-
-        // TODO: find a way to delimit 'words'
-        // Create the array of possible legal spellings for stock entities
-        while ($row = $res->fetch_assoc()) {
-            $word = $row["ticker_symbol"];
-            $word = str_replace(".", ",", $word);
-            pspell_add_to_personal($dict_link, $word);
-        }
-
-        $sql = "SELECT sector_name FROM sectors";
-        $res = $conn->query($sql);
-
-        // Add the sectors, too
-        while ($row = $res->fetch_assoc()) {
-            pspell_add_to_personal($dict_link, $row["sector_name"]);
-        }
-
-        pspell_save_wordlist($dict_link);
-
-    }
-
-    return $dict_link;
-}
-
-
 function create_tables($conn) {
 
     if (create_sectors($conn) && create_stocks($conn) && create_queries($conn) &&
@@ -818,6 +780,15 @@ function get_corrections($conn, $word) {
         $suggested[$key] = 0;
     }
 
+    $sql = "SELECT sector_name FROM sectors";
+    $res = $conn->query($sql);
+
+    while ($row = $res->fetch_assoc()) {
+        $key = strtolower($row["sector_name"]);
+        $dict[] = $key;
+        $suggested[$key] = 0;
+    }
+
     $known = edit_dist_2($word, $dict);
     foreach ($known as $k) {
         $suggested[$k] = 1;
@@ -826,7 +797,11 @@ function get_corrections($conn, $word) {
     $dinstinct = array();
     foreach ($suggested as $key => $in_dict) {
         if ($in_dict === 1) {
-            $distinct[] = strtoupper($key);
+            if (strlen($key) < 5) {
+                $distinct[] = strtoupper($key);
+            } else {
+                $distinct[] = $key;
+            }
         }
     }
 
