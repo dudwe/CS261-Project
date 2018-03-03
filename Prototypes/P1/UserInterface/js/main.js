@@ -1,8 +1,5 @@
 "use strict"; //Strict Mode.
 
-  //TODO LIMIT Favourites
-  //TODO News
-  //TODO LIMIT CHARS ON NEWS DESCRIPTION
   //TODO GRAPH OUTPUT
   //TODO LINK FAVOURITE WITH DB LAYER
   //TODO LINK POLL WITH PARSING LAYER
@@ -20,50 +17,16 @@ $(document).ready(function() {
   var waiting = false; //Flag for if the chatbot is waiting for a response.
   var speechEnabled = false; //Flag for if speech synthesis is enabled.
   var pollLoop = 1000 * 60; //Milliseconds between each notification poll.
-  var maxFavourites = 15;
+  var maxFavourites = 10; //Maximum number of favourites.
 
 /*----------------------------------------------------------------------------*/
 /* Initialisation*/
 
   function initialisation() {
-
-    //Testing chat queries and commands.
-    displayQuery("02/12/18 14:45:59", "A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines.");
-    displayResponseList("02/12/18 14:46:08", ["A very extremely long query to test how the CSS responds to the long length of a query. It should not exceed 75% of the chatbot width and wrap into multiple lines."]);
-
     getFavourites();
-
     $("#fav-save").click(saveFavourites);
     $("#btn-send").click(submitQuery); //Redirect button click and ENTER to submitQuery function.
-
-    //TODO REMOVE
-    displayErrorResponse("2018", "ERROR");
-    displayGraphResponse("2019", "GRAPH");
-    var news = [
-      {
-        headline: "Sky brings Netflix on board",
-        url: "http://www.bbc.co.uk/news/business-43242057",
-        description: "Sky will make Netflix available through its latest box in an attempt to tackle the threat posed by the popular streaming service."
-      },
-      {
-        headline: "Business Live: US shares down ahead of Powell testimony",
-        url: "http://www.bbc.co.uk/news/live/business-43198926",
-        description: "US stocks were trading lower on Thursday as investors awaited fresh testimony from Federal Reserve chairman Jerome Powell. The Dow Jones and Nasdaq indexes were down about 0.5%, while the S&P 500 dipped 0.3%."
-      },
-      {
-        headline: "Sky brings Netflix on board",
-        url: "http://www.bbc.co.uk/news/business-43242057",
-        description: "Sky will make Netflix available through its latest box in an attempt to tackle the threat posed by the popular streaming service."
-      },
-      {
-        headline: "Business Live: US shares down ahead of Powell testimony",
-        url: "http://www.bbc.co.uk/news/live/business-43198926",
-        description: "US stocks were trading lower on Thursday as investors awaited fresh testimony from Federal Reserve chairman Jerome Powell. The Dow Jones and Nasdaq indexes were down about 0.5%, while the S&P 500 dipped 0.3%."
-      }];
-    var newsRow1 = getNewsDisplay(news);
-    displayResponseList("AAA", [newsRow1]);
     scrollToChatBottom();
-    //TODO REMOVE
   }
 
 /*----------------------------------------------------------------------------*/
@@ -191,7 +154,6 @@ $(document).ready(function() {
     createLineGraph(); //Displays a graph in the response.
   }
 
-  //TODO
   //Gets a jQuery object for displaying information on a company stock.
   function getStockDisplay(stockName, sharePrice, pointChange, percentageChange) {
     var stockTable = $("<table class='centered table-no-format'><tbody><tr>" +
@@ -219,7 +181,7 @@ $(document).ready(function() {
     return stockTable; //Return the jQuery object to be included in the chat window.
   }
 
-  //TODO
+  //Gets a jQuery object for a highlighted speech response row.
   function getSpeechDisplay(speech) {
     var speechRow = $("<div class='m-0 p-0'><span class='quote'></span><span class='speech'></span><span class='quote'></span><div>");
     speechRow.find(".quote").text('"');
@@ -227,7 +189,7 @@ $(document).ready(function() {
     return speechRow;
   }
 
-  //TODO
+  //Displays a list of response rows into the chat template.
   function displayResponseList(timestamp, response) {
     displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p class='chat-pad'></p>");
     for (var i = 0; i < response.length; i++) {
@@ -236,7 +198,7 @@ $(document).ready(function() {
     }
   }
 
-  //TODO
+  //Displays additional information in key-value pairs.
   //infoList :: [{info: String, value: String}]
   function getInfoListDisplay(infoList) {
     console.log(infoList);
@@ -380,8 +342,8 @@ $(document).ready(function() {
         for (var i = 0; i < data.companyList.length; i++) {
           companyLog.add(data.companyList[i]);
         }
-        for (var i = 0; i < data.sectorList.length; i++) {
-          sectorLog.add(data.sectorList[i]);
+        for (var j = 0; j < data.sectorList.length; j++) {
+          sectorLog.add(data.sectorList[j]);
         }
       }
     });
@@ -390,6 +352,17 @@ $(document).ready(function() {
   //TODO
   //Sends a JSON object to the server of all companies and sectors which favourite value has been changed.
   function saveFavourites() {
+    //Check Favourite Limit has not been reached.
+    var companyFavCount = $(".fav-company-switch:checked").length;
+    var sectorFavCount = $(".fav-sector-switch:checked").length;
+
+    if (companyFavCount + sectorFavCount > maxFavourites) {
+      Materialize.Toast.removeAll(); //Remove all current toast notifications.
+      Materialize.toast("Failed to save favourites, cannot have more than " + maxFavourites + " favourites selected.", 4000, "rounded");
+      console.log("(ERROR) Favourite limit reached.");
+      return;
+    }
+
     companyLog.clearChanges();
     sectorLog.clearChanges();
     changePollRates(); //Validates all poll rates, resets to original if invalid.
@@ -586,7 +559,6 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /*News*/
 
-  //TODO
   //Generates a jQuery object to display news stories.
   //newsArray :: [headline: String, url: String, description: String]
   function getNewsDisplay(newsArray) {
@@ -597,9 +569,9 @@ $(document).ready(function() {
 
     for (var i = 0; i < newsArray.length; i++) {
       var article = newsArray[i];
-      var headline = article.headline;
-      var url = article.url;
-      var description = article.description;
+      var headline = article.title;
+      var url = article.link;
+      var description = article.desc;
       var articleRow = $("<div class='news-row'><a class='headline tooltipped' data-position='top' ata-delay='50'></a><p class='headline-desc'></p></div>");
       console.log("HEADLINE: " + headline + " :: " + "URL: " + url);
       articleRow.find(".headline").text(headline);
@@ -731,30 +703,77 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /*Graph*/
 
+  //Creates the canvas object to add to the chat window.
+  function getGraphDisplay() {
+    return $("<canvas class='response-graph'></canvas>");
+  }
+
   //TODO
-  //Creates the graph object to add to the chat window.
-  function createLineGraph() {
+  function getFormattedDate(date) {
+    var newDate = new Date(Date.parse(date));
+    return newDate.getDate() + "/" + newDate.getMonth() + "/" + newDate.getFullYear() + " " + newDate.getHours() + ":" + newDate.getMinutes();
+  }
+
+  //TODO
+  function createLineGraph(dataset) {
     var ctx = $(".response-graph").get(-1).getContext("2d"); //Get context of the last canvas object.
+
+    var dateList = [];
+    var closeList = [];
+    var highList = [];
+    var lowList = [];
+    var openList = [];
+
+    for (var i = 0; i < dataset.length; i++) {
+      dateList.push(getFormattedDate(dataset[i][0]));
+      closeList.push(dataset[i][1]);
+      highList.push(dataset[i][2]);
+      lowList.push(dataset[i][3]);
+      openList.push(dataset[i][4]);
+    }
+
     var lineGraph = new Chart(ctx, {
       type: 'line',
       data: {
-          labels: ["2013", "2014", "2015", "2016", "2017", "2018"], //x-axis labels.
+          labels: dateList, //x-axis labels.
           datasets: [{
-              label: "# of Votes", //Dataset label.
-              data: [12, 19, 3, 5, 2, 14], //Data.
+              label: "Close",
+              data: closeList,
               borderColor: ["rgba(255, 0, 0, 0.8)"], //Line colour.
-              borderWidth: 2, //Line width.
+              borderWidth: 1, //Line width.
               fill: false, //Doesn't fill under the line.
-              pointBorderWidth: 2
-          }]
+              pointBorderWidth: 1
+            },
+            {
+              label: "High",
+              data: highList,
+              borderColor: ["rgba(0, 255, 0, 0.8)"], //Line colour.
+              borderWidth: 1, //Line width.
+              fill: false, //Doesn't fill under the line.
+              pointBorderWidth: 1
+            },
+            {
+              label: "Low",
+              data: lowList,
+              borderColor: ["rgba(0, 0, 255, 0.8)"], //Line colour.
+              borderWidth: 1, //Line width.
+              fill: false, //Doesn't fill under the line.
+              pointBorderWidth: 1
+            },
+            {
+              label: "Open",
+              data: openList,
+              borderColor: ["rgba(0, 255, 255, 0.8)"], //Line colour.
+              borderWidth: 1, //Line width.
+              fill: false, //Doesn't fill under the line.
+              pointBorderWidth: 1
+            }]
       },
       options: {
         scales: { yAxes: [{
-          ticks: { beginAtZero: true },
+          ticks: { beginAtZero: false },
           scaleLabel : { display: true, labelString: "Y-Axis Label" }
-        }]},
-        title: { display: true, text: "Hello World!"},
-        legend: { display: false }
+        }]}
       }
     });
   }
@@ -768,7 +787,7 @@ $(document).ready(function() {
     console.log(data);
 
     var timestamp = new Date().toUTCString();
-    var json, speechRow, stockTable, infoRow;
+    var json, speechRow, stockTable, infoRow, newsRow, graphRow;
 
     //Attempt to parse JSON response.
     try {
@@ -809,39 +828,63 @@ $(document).ready(function() {
         speech += dataset.Bid;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        infoRow = getInfoListDisplay([
+          {info: "Bid", value: dataset.Bid},
+          {info: "Offer", value: dataset.Offer}
+        ]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_offer":
         speech += dataset.Offer;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        infoRow = getInfoListDisplay([
+          {info: "Bid", value: dataset.Bid},
+          {info: "Offer", value: dataset.Offer}
+        ]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_open":
         speech += dataset.Open;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        infoRow = getInfoListDisplay([
+          {info: "Open", value: dataset.Open},
+          {info: "Close", value: dataset.Close}
+        ]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_close":
         speech += dataset.Close;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        infoRow = getInfoListDisplay([
+          {info: "Open", value: dataset.Open},
+          {info: "Close", value: dataset.Close}
+        ]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_high":
         speech += dataset.High;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        infoRow = getInfoListDisplay([
+          {info: "Low", value: dataset.Low},
+          {info: "High", value: dataset.High}
+        ]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_low":
         speech += dataset.Low;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        infoRow = getInfoListDisplay([
+          {info: "Low", value: dataset.Low},
+          {info: "High", value: dataset.High}
+        ]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
-      case "get_revenue": //TODO TEST
+      case "get_revenue":
         speech += dataset.Revenue;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
@@ -850,8 +893,8 @@ $(document).ready(function() {
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
-      case "get_eps": //EPS, DivYield, PERatio
-        speech += dataset["EPS"];
+      case "get_eps":
+        speech += dataset.EPS;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
           {info: "Dividend Yield", value: dataset.DivYield},
@@ -859,7 +902,7 @@ $(document).ready(function() {
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_volume": //TODO TEST
+      case "get_volume": //TODO ERROR MESSAGE RETURNED BEFORE JSON (UNDEFINED INDEX AVERAGEVOL
         speech += dataset.Volume;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
@@ -868,8 +911,8 @@ $(document).ready(function() {
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
-      case "get_market_cap": //TODO DOESNT HAVE MARKET CAP IN JSON
-        //speech += dataset[""] //TODO
+      case "get_market_cap":
+        speech += dataset.MarketCap;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
           {info: "Share Price", value: dataset.SharePrice},
@@ -878,17 +921,17 @@ $(document).ready(function() {
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_div_yield": //TODO DOESNT HAVE DIV YIELD IN JSON
-        //speech += dataset["divyield###"];
+      case "get_div_yield":
+        speech += dataset.DivYield;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
-          {info: "Earnings per Share" , value: dataset["EPS"]},
+          {info: "Earnings per Share" , value: dataset.EPS},
           {info: "Price-Earnings Ratio", value: dataset.PERatio},
           {info: "Volume", value: dataset.Volume}
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_average_vol": //TODO TEST
+      case "get_average_vol": //TODO ERROR MESSAGE RETURNED BEFORE JSON (UNDEFINED INDEX AVERAGE
         speech += dataset.AverageVol;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
@@ -901,13 +944,13 @@ $(document).ready(function() {
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
           {info: "Dividend Yield", value: dataset.DivYield},
-          {info: "Earnings per Share", value: dataset["EPS"]},
+          {info: "Earnings per Share", value: dataset.EPS},
           {info: "Volume", value: dataset.Volume}
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_shares_in_issue": //TODO DOESNT INCLUDE SHARES IN ISSUE
-        //speech += dataset[""];
+      case "get_shares_in_issue":
+        speech += dataset.SharesInIssue;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
           {info: "Market Cap", value: dataset.MarketCap},
@@ -916,18 +959,17 @@ $(document).ready(function() {
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_stock_news": //TODO
+      case "get_news":
         speechRow = getSpeechDisplay(speech);
-        //GET NEWS ROW
-        displayResponseList(timestamp, [speechRow]);
+        newsRow = getNewsDisplay(dataset);
+        displayResponseList(timestamp, [speechRow, newsRow]);
         break;
-      case "get_stock_performance": //TODO
+      case "get_stock_performance": //TODO DATE CLOSE HIGH LOW OPEN VOLUME
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, json.auxillary.SharePrice, json.auxillary.PointChange, json.auxillary.PercentChange);
-        //GRAPH TODO
-        displayResponseList(timestamp, [speechRow, stockTable]);
-        break;
-      case "get_sector_news": //TODO
+        graphRow = getGraphDisplay();
+        displayResponseList(timestamp, [speechRow, stockTable, graphRow]);
+        createLineGraph(dataset);
         break;
       case "get_sector_performance": //TODO
         break;
@@ -937,11 +979,16 @@ $(document).ready(function() {
         var summary = dataset.Summary;
         speech = "Recommended: " + summary;
         speechRow = getSpeechDisplay(speech);
-        displayResponseList(timestamp, [speechRow]);
+        infoRow = getInfoListDisplay([
+          {info: "Moving Averages", value: dataset.MovingAverages},
+          {info: "Technical Indicators", value: dataset.TechnicalIndicators},
+          {info: "Summary", value: dataset.Summary}
+        ]);
+        displayResponseList(timestamp, [speechRow, infoRow]);
         break;
       case "Input Error": //TODO
         displayErrorResponse(speech);
-        break
+        break;
       default:
         fallBackError(timestamp);
         return;

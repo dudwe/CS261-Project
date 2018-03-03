@@ -42,7 +42,7 @@
   <!--Website Content-->
   <div class="container m-t-1 p-b-1">
     <div class="row">
-      <div class="col s12">
+      <div class="col s12 p-0 z-depth-2">
         <div id="chat-window">
           <!--CHAT BOT WINDOW-->
         </div>
@@ -51,9 +51,9 @@
 
     <div id="overlay-container" class="m-t-1 m-b-1">
       <div id="overlay">
-        <a id="btn-speech" class="right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Toggle Audio Output"><i class="material-icons">volume_off</i></a>
-        <a id="btn-mic" class="right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Record Voice Input"><i class="material-icons">mic</i></a>
-        <a id="btn-send" class="right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Submit Query"><i class="material-icons">send</i></a>
+        <a id="btn-speech" class="z-depth-2 right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Toggle Audio Output"><i class="material-icons">volume_off</i></a>
+        <a id="btn-mic" class="z-depth-2 right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Record Voice Input"><i class="material-icons">mic</i></a>
+        <a id="btn-send" class="z-depth-2 right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Submit Query"><i class="material-icons">send</i></a>
       </div>
     </div>
     <div class="row p-t-1 m-t-1 m-b-0 p-b-0">
@@ -152,6 +152,47 @@
 <div id="help" class="modal modal-fixed-footer">
   <div class="modal-content">
     <h4 class="p-b-1">Help</h4>
+
+    <h5 class="m-b-1">Chat Window</h5>
+    <table class="table-first-col-min m-b-2">
+      <tr>
+        <td><a class="z-depth-2 disabled btn-round btn-floating btn-large waves-effect waves-light"><i class="material-icons">send</i></a></td>
+        <td><p><strong>Send Query</strong> - Submits a query. Warning messages may appear if no query has been entered or previous query has not yet received a response.</p></td>
+      </tr>
+      <tr>
+        <td><a class="z-depth-2 disabled btn-round btn-floating btn-large waves-effect waves-light"><i class="material-icons">mic</i></a></td>
+        <td><p><strong>Voice Input</strong> - Press this button to start voice recording. Press again to stop recording.</p></td>
+      </tr>
+      <tr>
+        <td><a class="z-depth-2 disabled btn-round btn-floating btn-large waves-effect waves-light"><i class="material-icons">volume_off</i></a></td>
+        <td><p><strong>Volume Toggle</strong> - All responses output a voice response which can be toggled on or off. Press this to mute or unmute voice synthesis.</p></td>
+      </tr>
+    </table>
+
+    <h5 class="m-b-1 m-t-2">Example Queries:</h5>
+    <table class="table-first-col-min">
+      <tr><td>Share Price</td><td></td></tr>
+      <tr><td>Point Change</td><td></td></tr>
+      <tr><td>Percentage Change</td><td></td></tr>
+      <tr><td>Bid</td><td>What is the current bid for Tesco?</td></tr>
+      <tr><td>Offer</td><td>What is the offer for BP?</td></tr>
+      <tr><td><strong>Open</td><td>What did Sky open at?</td></tr>
+      <tr><td>Close</td><td>What did 3i close at?</td></tr>
+      <tr><td>Low</td><td></td></tr>
+      <tr><td>High</td><td></td></tr>
+      <tr><td>Revenue</td><td></td></tr>
+      <tr><td>EPS</td><td></td></tr>
+      <tr><td>Volume</td><td></td></tr>
+      <tr><td>Average Volume</td><td></td></tr>
+      <tr><td>Market Cap</td><td></td></tr>
+      <tr><td>Dividend Yield</td><td></td></tr>
+      <tr><td>PE Ratio</td><td></td></tr>
+      <tr><td>Shares in Issue</td><td></td></tr>
+      <tr><td>News</td><td></td></tr>
+      <tr><td>Stock Performance</td><td></td></tr>
+      <tr><td>Sector Performance</td><td></td></tr>
+    </table>
+
   </div>
   <div class="modal-footer">
     <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
