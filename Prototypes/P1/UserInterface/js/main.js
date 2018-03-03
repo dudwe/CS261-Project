@@ -710,11 +710,11 @@ $(document).ready(function() {
     return $("<canvas class='response-graph'></canvas>");
   }
 
-  //TODO
+  //Formats a date in the format DD/MM/YYYY HH:MM:SS
   function getFormattedDate(oldDate) {
     var date = new Date(Date.parse(oldDate));
     var newDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + date.getMonth()).slice(-2) + '/' + date.getFullYear();
-    var newTime = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2);
+    var newTime = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getSeconds()).slice(-2);
     return newDate + ' ' + newTime;
   }
 
@@ -789,6 +789,7 @@ $(document).ready(function() {
 /*Reponse Types*/
 
   //TODO
+  //Parse a response and execute display the appropriate data based off of the response intent.
   function parseResponse(data) {
     console.log("Parsing Response");
     console.log(data);
@@ -1005,7 +1006,6 @@ $(document).ready(function() {
     console.log(speech);
     say(speech); //Outputs the response using voice synthesis.
     scrollToChatBottom(); //Scrolls to bottom of the chat window.
-
   }
 
   //Error called if JSON is malformed or cannot identify intent.
