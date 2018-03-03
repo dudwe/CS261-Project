@@ -8,14 +8,17 @@ include "globalvars.php";
 
 /* Get database connection, or initialise it */
 function  db_connection() {
+
     static $conn;
+
     if ($conn === NULL){
 
-        // Use the global variables as defined in gloabalvars.php
+        // Use the global variables as defined in globalvars.php
         global $server, $user, $password, $database;
 
         $conn = mysqli_connect($server, $user, $password, $database);
     }
+
     return $conn;
 }
 
@@ -162,7 +165,7 @@ function populate_sectors($conn) {
         ('Beverages',                           '/indices/beverages'),
         ('Chemicals',                           '/indices/chemicals'),
         ('Construction & Materials',            '/indices/construction---mats'),
-        ('Electricity',                          '/indices/electricity'),
+        ('Electricity',                         '/indices/electricity'),
         ('Electronic & Electrical Equipment',   '/indices/electronic-equipment'),
         ('Equity Investment Instruments',       '/indices/equity-investment-instruments'),
         ('Financial Services',                  '/indices/ftse-350-financial-services'),
@@ -195,7 +198,7 @@ function populate_sectors($conn) {
         ('Tobacco',                             '/indices/tobacco'),
         ('Travel & Leisure',                    '/indices/travel---leisure'),
         ('FTSE100',                    '/indices/uk-100')
-        ";
+";
 
     if ($conn->query($sql) === TRUE) {
         echo "Sectors added successfully <br>";
@@ -396,26 +399,26 @@ function insert_query($conn, $query_str, $intent, $entity) {
 /* Insert data into HISTORY table */
 function insert_history($conn, $inserted_id) {
 
-        // Test if query is in history already
-        $hist_exist = "SELECT * FROM history WHERE query_id = " . $inserted_id;
-        $res = $conn->query($hist_exist);
+    // Test if query is in history already
+    $hist_exist = "SELECT * FROM history WHERE query_id = " . $inserted_id;
+    $res = $conn->query($hist_exist);
 
-        if ($res->num_rows > 0) {
-            $sql = "UPDATE history SET frequency = frequency+1, last_asked = '" . date("Y-m-d") . "' WHERE query_id = '" . $inserted_id . "'";
-        } else {
-            $sql = "INSERT INTO history (query_id,frequency,last_asked) VALUES (" . $inserted_id . ",1,'" . date("Y-m-d") . "')";
-        }
+    if ($res->num_rows > 0) {
+        $sql = "UPDATE history SET frequency = frequency+1, last_asked = '" . date("Y-m-d") . "' WHERE query_id = '" . $inserted_id . "'";
+    } else {
+        $sql = "INSERT INTO history (query_id,frequency,last_asked) VALUES (" . $inserted_id . ",1,'" . date("Y-m-d") . "')";
+    }
 
-        if ($conn->query($sql) === TRUE) {
-            return 1;
-        } else {
-            echo $sql. "<br>Error executing query: " . $conn->error . "<br>";
-            return 0;
-        }
-
-    }/* else {
-        echo $existence. "<br>Error executing query: " . $conn->error . "<br>";
+    if ($conn->query($sql) === TRUE) {
+        return 1;
+    } else {
+        echo $sql. "<br>Error executing query: " . $conn->error . "<br>";
         return 0;
+    }
+
+}/* else {
+echo $existence. "<br>Error executing query: " . $conn->error . "<br>";
+return 0;
     }*/
 
 
@@ -688,13 +691,14 @@ function learn_stocks($conn) {
 
 // TODO: error correction
 
-function resolve_invalid_intent($conn, $intent) {
-
+function resolve_invalid_intent($conn, $intent, $dict_link) {
 
 
 }
 
 function resolve_invalid_entity($conn, $entity) {
+
+    return get_corrections($conn, $entity);
 
 }
 
@@ -702,3 +706,104 @@ function resolve_invalid_entity($conn, $entity) {
 //      write up notes of final report for database
 //      finish error correction
 //      finish learning
+//
+//      How are faves doing
+//      from faves in persons table, get fave and call get buy or sell, return data set
+//          BARC        BUY
+//          MRW         SELL
+//          etc...
+
+function edit_dist_1($word, $dict) {
+
+    $alpha = "abcdefghijklmnopqrstuvwxyz.& ";
+    $alpha = str_split($alpha);
+
+    $n = strlen($word);
+
+    $edits = array();
+
+    for ($i = 0; $i < $n; $i++) {
+
+        // Deleting one char
+        $edits[] = substr($word, 0, $i).substr($word, $i+1);
+
+        // Substituting one char
+        foreach ($alpha as $c) {
+            $edits[] = substr($word, 0, $i) . $c . substr($word, $i+1);
+        }
+
+    }
+
+    for ($i = 0; $i < $n - 1; $i++) {
+
+        // Swapping order of two chars
+        $edits[] = substr($word, 0, $i).$word[$i+1].$word[$i].substr($word, $i+2);
+
+    }
+
+    for ($i = 0; $i < $n + 1; $i++) {
+
+        // Inserting one char
+        foreach ($alpha as $c) {
+            $edits[] = substr($word, 0, $i) . $c . substr($word, $i);
+        }
+
+    }
+
+    return $edits;
+}
+
+function edit_dist_2($word, $dict) {
+    $known = array();
+    foreach (edit_dist_1($word, $dict) as $e1) {
+        foreach (edit_dist_1($e1, $dict) as $e2) {
+            if (in_array($e2, $dict))
+                $known[] = $e2;
+        }
+    }
+    return $known;
+}
+
+function get_corrections($conn, $word) {
+
+    $sql = "SELECT ticker_symbol FROM stocks";
+    $res = $conn->query($sql);
+
+    $dict = array();
+    $suggested = array();
+
+    $word = strtolower($_POST["entity"]);
+
+    while ($row = $res->fetch_assoc()) {
+        $key = strtolower($row["ticker_symbol"]);
+        $dict[] = $key;
+        $suggested[$key] = 0;
+    }
+
+    $sql = "SELECT sector_name FROM sectors";
+    $res = $conn->query($sql);
+
+    while ($row = $res->fetch_assoc()) {
+        $key = strtolower($row["sector_name"]);
+        $dict[] = $key;
+        $suggested[$key] = 0;
+    }
+
+    $known = edit_dist_2($word, $dict);
+    foreach ($known as $k) {
+        $suggested[$k] = 1;
+    }
+
+    $dinstinct = array();
+    foreach ($suggested as $key => $in_dict) {
+        if ($in_dict === 1) {
+            if (strlen($key) < 5) {
+                $distinct[] = strtoupper($key);
+            } else {
+                $distinct[] = $key;
+            }
+        }
+    }
+
+    return $distinct;
+}

@@ -226,6 +226,10 @@ strong {
   font-weight: bold;
 }
 
+.list-bullet-plus li:before {
+  content: "- ";
+}
+
 /*----------------------------------------------------------------------------*/
 /*News*/
 

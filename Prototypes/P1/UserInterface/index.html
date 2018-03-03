@@ -67,12 +67,13 @@
       </div>
     </div>
   </div>
+
 </main>
 
 <footer class="page-footer">
   <div class="container">
     <div class="row">
-      <div class="col s12">
+      <div class="col s10 offset-s1">
         <h5 class="white-text">Team</h5>
         <ul>
           <li><p class="grey-text text-lighten-3">Bhavin Shah <span class="text-lighten-2">- Project Manager/Back-End Developer</span></p></li>
@@ -87,7 +88,11 @@
   </div>
   <div class="footer-copyright">
     <div class="container">
-      <p class="m-0">&copy; 2018</p>
+      <div class="row m-0">
+        <div class="col s10 offset-s1 m-t-0 m-b-0 p-l-0 p-r-0">
+          <p class="m-0">&copy; 2018</p>
+        </div>
+      </div>
     </div>
   </div>
 </footer>
@@ -95,9 +100,9 @@
 <!-- Favourites selection Modal-->
 <div id="favourites" class="modal modal-fixed-footer">
   <div class="modal-content">
-    <h4 class="p-b-1">Favourites Selection</h4>
-
-    <div class="row m-b-1 p-b-1 p-l-1 p-r-1">
+    <h4>Favourites Selection</h4>
+    <div class="row m-b-1 p-t-1 p-b-1 p-l-1 p-r-1">
+      <p class="p-b-0"><strong>Search:</strong></p>
       <div id="search-input" class="input-field col s12">
         <input placeholder="Search..." id="fav-search" type="text" class="validate">
       </div>
@@ -153,7 +158,29 @@
   <div class="modal-content">
     <h4 class="p-b-1">Help</h4>
 
-    <h5 class="m-b-1">Chat Window</h5>
+    <h5 class="m-b-1">Frequently Asked Questions (FAQ)</h5>
+    <p><strong>What won't my query send?</strong></p>
+    <p class="m-b-0">This may be due to one of the following reasons:</p>
+    <ul class="list-bullet-plus m-t-0">
+      <li>A query has been previously submitted and is awaiting a response from the server.</li>
+      <li>The query contains more than 250 characters.</li>
+      <li>The query is empty.</li>
+    </ul>
+    <p><strong>Why am I getting an error as the response?</strong></p>
+    <p class="m-b-0">This may be due to one of the following reasons:</p>
+    <ul class="list-bullet-plus m-t-0">
+      <li>You mistyped your query.</li>
+      <li>You've asked for information on a company/sector not present in the FTSE 100</li>
+      <li>The type of information requested is not available.</li>
+    </ul>
+    <p><strong>What type of information can I request?</strong></p>
+    <p>See Example Queries below.</p>
+    <p><strong>What companies and sectors are present in the FTSE 100?</strong></p>
+    <p>See Favourites modal, by clicking the link at the top of the page in the navigation bar.</p>
+    <p><strong>Why can I not record voice input or hear voice output?</strong></p>
+    <p>Some browsers do not support voice synthesis or voice output. Check if your browser supports speech.</p>
+
+    <h5 class="m-t-2 m-b-1">Chat Buttons</h5>
     <table class="table-first-col-min m-b-2">
       <tr>
         <td><a class="z-depth-2 disabled btn-round btn-floating btn-large waves-effect waves-light"><i class="material-icons">send</i></a></td>
@@ -169,27 +196,27 @@
       </tr>
     </table>
 
-    <h5 class="m-b-1 m-t-2">Example Queries:</h5>
+    <h5 class="m-b-1 m-t-2">Example Queries</h5>
     <table class="table-first-col-min">
-      <tr><td>Share Price</td><td></td></tr>
-      <tr><td>Point Change</td><td></td></tr>
-      <tr><td>Percentage Change</td><td></td></tr>
+      <tr><td>Share Price</td><td>What is the share price of HSBC?</td></tr>
+      <tr><td>Point Change</td><td>Give me the point change of STJ</td></tr>
+      <tr><td>Percentage Change</td><td>Give me the percentage change of Mondi</td></tr>
       <tr><td>Bid</td><td>What is the current bid for Tesco?</td></tr>
       <tr><td>Offer</td><td>What is the offer for BP?</td></tr>
-      <tr><td><strong>Open</td><td>What did Sky open at?</td></tr>
+      <tr><td>Open</td><td>What did Sky open at?</td></tr>
       <tr><td>Close</td><td>What did 3i close at?</td></tr>
-      <tr><td>Low</td><td></td></tr>
-      <tr><td>High</td><td></td></tr>
+      <tr><td>Low</td><td>Current low for Morrisons?</td></tr>
+      <tr><td>High</td><td>What is the high for Legal &amp; General?</td></tr>
       <tr><td>Revenue</td><td></td></tr>
-      <tr><td>EPS</td><td></td></tr>
-      <tr><td>Volume</td><td></td></tr>
-      <tr><td>Average Volume</td><td></td></tr>
-      <tr><td>Market Cap</td><td></td></tr>
-      <tr><td>Dividend Yield</td><td></td></tr>
+      <tr><td>EPS</td><td>What is the EPS for Barclays?</td></tr>
+      <tr><td>Volume</td><td>Volume of Sage Group</td></tr>
+      <tr><td>Average Volume</td><td>What is the average volume of Unilever?</td></tr>
+      <tr><td>Market Cap</td><td>Market cap of Aviva?</td></tr>
+      <tr><td>Dividend Yield</td><td>Give me the dividend yield of BAE Systems</td></tr>
       <tr><td>PE Ratio</td><td></td></tr>
       <tr><td>Shares in Issue</td><td></td></tr>
       <tr><td>News</td><td></td></tr>
-      <tr><td>Stock Performance</td><td></td></tr>
+      <tr><td>Stock Performance</td><td>Give me the performance of PSON</td></tr>
       <tr><td>Sector Performance</td><td></td></tr>
     </table>
 
