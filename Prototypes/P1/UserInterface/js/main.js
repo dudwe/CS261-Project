@@ -203,7 +203,6 @@ $(document).ready(function() {
   //Displays additional information in key-value pairs.
   //infoList :: [{info: String, value: String}]
   function getInfoListDisplay(infoList) {
-    console.log(infoList);
     var infoTable = $("<table class='info-table bordered'></table>");
     for (var i = 0; i < infoList.length; i++) {
       var infoRow = $("<tr><td class='info-table-name'></td><td class='info-table-value'></td></tr>");
