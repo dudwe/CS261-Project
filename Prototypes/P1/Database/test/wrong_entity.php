@@ -7,7 +7,7 @@ include "../interface.php";
 
 $conn = db_connection();
 
-$suggs = get_corrections($conn, $_POST["entity"]);
+$suggs = get_corrections($conn, $_POST["entity"], "entity");
 
 echo "Did you mean:<br>";
 

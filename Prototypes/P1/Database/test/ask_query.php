@@ -3,7 +3,7 @@
 error_reporting(E_ALL);
 ini_set("display_errors", E_ALL);
 
-include "./interface.php";
+include "../interface.php";
 
 $conn = db_connection();
 

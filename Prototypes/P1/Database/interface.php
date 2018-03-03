@@ -691,8 +691,7 @@ function learn_stocks($conn) {
 
 // TODO: error correction
 
-function resolve_invalid_intent($conn, $intent, $dict_link) {
-
+function resolve_invalid_intent($conn, $intent) {
 
 }
 
@@ -704,7 +703,6 @@ function resolve_invalid_entity($conn, $entity) {
 
 // TODO
 //      write up notes of final report for database
-//      finish error correction
 //      finish learning
 //
 //      How are faves doing
@@ -713,11 +711,22 @@ function resolve_invalid_entity($conn, $entity) {
 //          MRW         SELL
 //          etc...
 
-function edit_dist_1($word, $dict) {
+/**
+ * @param: string $word - intent/entity to correct
+ * @param: array $dict - dictionary of legal words
+ * @param: string $type - either "entity" or "intent"
+ */
+function edit_1($word, $dict, $type) {
 
-    $alpha = "abcdefghijklmnopqrstuvwxyz.& ";
+    $word = strtolower($word);
+
+    if (strcmp(strtolower($type), "entity") == 0) {
+        $alpha = "abcdefghijklmnopqrstuvwxyz.& ";
+    } else {
+        $alpha = "abcdefghijklmnopqrstuvwxyz_";
+    }
+
     $alpha = str_split($alpha);
-
     $n = strlen($word);
 
     $edits = array();
@@ -753,10 +762,11 @@ function edit_dist_1($word, $dict) {
     return $edits;
 }
 
-function edit_dist_2($word, $dict) {
+function edit_2($word, $dict, $type) {
     $known = array();
-    foreach (edit_dist_1($word, $dict) as $e1) {
-        foreach (edit_dist_1($e1, $dict) as $e2) {
+
+    foreach (edit_1($word, $dict, $type) as $e1) {
+        foreach (edit_1($e1, $dict, $type) as $e2) {
             if (in_array($e2, $dict))
                 $known[] = $e2;
         }
@@ -764,32 +774,55 @@ function edit_dist_2($word, $dict) {
     return $known;
 }
 
-function get_corrections($conn, $word) {
+function get_corrections($conn, $word, $type) {
 
-    $sql = "SELECT ticker_symbol FROM stocks";
-    $res = $conn->query($sql);
+    if (strcmp(strtolower($type), "entity") == 0) {
 
-    $dict = array();
-    $suggested = array();
+        $sql = "SELECT stock_name, ticker_symbol FROM stocks";
+        $res = $conn->query($sql);
 
-    $word = strtolower($_POST["entity"]);
+        $dict = array();
+        $suggested = array();
 
-    while ($row = $res->fetch_assoc()) {
-        $key = strtolower($row["ticker_symbol"]);
-        $dict[] = $key;
-        $suggested[$key] = 0;
+        while ($row = $res->fetch_assoc()) {
+            $key1 = strtolower($row["stock_name"]);
+            $key2 = strtolower($row["ticker_symbol"]);
+            $dict[] = $key1;
+            $suggested[$key1] = 0;
+            $dict[] = $key2;
+            $suggested[$key2] = 0;
+        }
+
+        $sql = "SELECT sector_name FROM sectors";
+        $res = $conn->query($sql);
+
+        while ($row = $res->fetch_assoc()) {
+            $key = strtolower($row["sector_name"]);
+            $dict[] = $key;
+            $suggested[$key] = 0;
+        }
+
+    } else {
+
+        // TODO: find a way for invalid intents
+        $sql = "SELECT intent FROM queries";
+        $res = $conn->query($sql);
+
+        $dict = array();
+        $suggested = array();
+
+        // Fill dict with all prev intents
+        while ($row = $res->fetch_assoc()) {
+            $key1 = strtolower($row["intent"]);
+            $dict[] = $key1;
+            $suggested[$key1] = 0;
+        }
+
+
     }
 
-    $sql = "SELECT sector_name FROM sectors";
-    $res = $conn->query($sql);
-
-    while ($row = $res->fetch_assoc()) {
-        $key = strtolower($row["sector_name"]);
-        $dict[] = $key;
-        $suggested[$key] = 0;
-    }
-
-    $known = edit_dist_2($word, $dict);
+    // Work out all words that are legal
+    $known = edit_2($word, $dict, $type);
     foreach ($known as $k) {
         $suggested[$k] = 1;
     }
