@@ -704,8 +704,14 @@ $(document).ready(function() {
 /*Graph*/
 
   //Creates the canvas object to add to the chat window.
-  function getGraphDisplay(dataset) {
+  function getGraphDisplay() {
     return $("<canvas class='response-graph'></canvas>");
+  }
+
+  //TODO
+  function getFormattedDate(date) {
+    var newDate = new Date(Date.parse(date));
+    return newDate.getDate() + "/" + newDate.getMonth() + "/" + newDate.getFullYear() + " " + newDate.getHours() + ":" + newDate.getMinutes();
   }
 
   //TODO
@@ -719,7 +725,7 @@ $(document).ready(function() {
     var openList = [];
 
     for (var i = 0; i < dataset.length; i++) {
-      dateList.push(dataset[i][0]);
+      dateList.push(getFormattedDate(dataset[i][0]));
       closeList.push(dataset[i][1]);
       highList.push(dataset[i][2]);
       lowList.push(dataset[i][3]);
@@ -729,38 +735,38 @@ $(document).ready(function() {
     var lineGraph = new Chart(ctx, {
       type: 'line',
       data: {
-          labels: ["2015", "2016", "2017", "2018"], //x-axis labels.
+          labels: dateList, //x-axis labels.
           datasets: [{
               label: "Close",
               data: closeList,
               borderColor: ["rgba(255, 0, 0, 0.8)"], //Line colour.
-              borderWidth: 2, //Line width.
+              borderWidth: 1, //Line width.
               fill: false, //Doesn't fill under the line.
-              pointBorderWidth: 2
+              pointBorderWidth: 1
             },
             {
               label: "High",
               data: highList,
               borderColor: ["rgba(0, 255, 0, 0.8)"], //Line colour.
-              borderWidth: 2, //Line width.
+              borderWidth: 1, //Line width.
               fill: false, //Doesn't fill under the line.
-              pointBorderWidth: 2
+              pointBorderWidth: 1
             },
             {
               label: "Low",
               data: lowList,
               borderColor: ["rgba(0, 0, 255, 0.8)"], //Line colour.
-              borderWidth: 2, //Line width.
+              borderWidth: 1, //Line width.
               fill: false, //Doesn't fill under the line.
-              pointBorderWidth: 2
+              pointBorderWidth: 1
             },
             {
               label: "Open",
               data: openList,
               borderColor: ["rgba(0, 255, 255, 0.8)"], //Line colour.
-              borderWidth: 2, //Line width.
+              borderWidth: 1, //Line width.
               fill: false, //Doesn't fill under the line.
-              pointBorderWidth: 2
+              pointBorderWidth: 1
             }]
       },
       options: {
@@ -822,37 +828,61 @@ $(document).ready(function() {
         speech += dataset.Bid;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        infoRow = getInfoListDisplay([
+          {info: "Bid", value: dataset.Bid},
+          {info: "Offer", value: dataset.Offer}
+        ]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_offer":
         speech += dataset.Offer;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        infoRow = getInfoListDisplay([
+          {info: "Bid", value: dataset.Bid},
+          {info: "Offer", value: dataset.Offer}
+        ]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_open":
         speech += dataset.Open;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        infoRow = getInfoListDisplay([
+          {info: "Open", value: dataset.Open},
+          {info: "Close", value: dataset.Close}
+        ]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_close":
         speech += dataset.Close;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        infoRow = getInfoListDisplay([
+          {info: "Open", value: dataset.Open},
+          {info: "Close", value: dataset.Close}
+        ]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_high":
         speech += dataset.High;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        infoRow = getInfoListDisplay([
+          {info: "Low", value: dataset.Low},
+          {info: "High", value: dataset.High}
+        ]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_low":
         speech += dataset.Low;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        infoRow = getInfoListDisplay([
+          {info: "Low", value: dataset.Low},
+          {info: "High", value: dataset.High}
+        ]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_revenue":
         speech += dataset.Revenue;
