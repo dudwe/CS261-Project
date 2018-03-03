@@ -26,7 +26,9 @@ $(document).ready(function() {
     getFavourites();
     $("#fav-save").click(saveFavourites);
     $("#btn-send").click(submitQuery); //Redirect button click and ENTER to submitQuery function.
-    scrollToChatBottom();
+    var timestamp = new Date().toUTCString();
+    displayQuery(getFormattedDate(timestamp), "Trader ChatBot Prototype P1");
+    displayResponseList(getFormattedDate(timestamp), ["Hello!"]);
   }
 
 /*----------------------------------------------------------------------------*/
@@ -125,31 +127,31 @@ $(document).ready(function() {
   //timestampType :: timestamp--left || timestamp--right
   //responseType :: chat-query || chat-response | chat-response-error
   //body :: jQuery Object || HTML || String
-  function displayChatTemplate(timestamp, borderType, timestampType, responseType, body) {
+  function displayChatTemplate(timestamp, borderType, timestampType, responseType, body, timestampPrefix) {
     var template = $("<div class='chat-border'><div class='row timestamp-row'><p></p></div><div class='row'><div class='chat'></div></div></div>");
     var divider = $("<div class='response-divider'></div>");
     template.addClass(borderType);
     template.after(divider);
-    template.find("p").addClass(timestampType).text("Received: " + timestamp);
+    template.find("p").addClass(timestampType).text(timestampPrefix + timestamp);
     template.find(".chat").addClass(responseType).append(body);
     $("#chat-window").append(template);
   }
 
   //Adds a new text query to the chat window.
   function displayQuery(timestamp, query) {
-    displayChatTemplate(timestamp, "left-border", "timestamp--left", "chat-query", "<p></p>");
+    displayChatTemplate(timestamp, "left-border", "timestamp--left", "chat-query", "<p></p>", "Sent: ");
     $(".chat-query:last > p").text(query);
   }
 
   //Displays an error in a red-themed chat response.
   function displayErrorResponse(timestamp, response) {
-    displayChatTemplate(timestamp, "right-border-error", "timestamp--right", "chat-response-error", "<p></p>");
+    displayChatTemplate(timestamp, "right-border-error", "timestamp--right", "chat-response-error", "<p></p>", "Received: ");
     $(".chat-response-error:last > p").text(response);
   }
 
   //Adds a new text reponse to the chat window.
   function displayGraphResponse(timestamp, response) {
-    displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p><canvas class='response-graph'></canvas>");
+    displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p><canvas class='response-graph'></canvas>", "Received: ");
     $(".chat-response:last > p").text(response);
     createLineGraph(); //Displays a graph in the response.
   }
@@ -191,7 +193,7 @@ $(document).ready(function() {
 
   //Displays a list of response rows into the chat template.
   function displayResponseList(timestamp, response) {
-    displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p class='chat-pad'></p>");
+    displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p class='chat-pad'></p>", "Received: ");
     for (var i = 0; i < response.length; i++) {
       var responseRow = $("<div></div>").addClass("row chat-response-row").append(response[i]);
       $(".chat-response:last > .chat-pad").append(responseRow);
@@ -665,7 +667,7 @@ $(document).ready(function() {
       }
       else { //Valid query.
         var currentTime = new Date();
-        displayQuery(currentTime.toUTCString(), query);
+        displayQuery(getFormattedDate(currentTime.toUTCString()), query);
         $("#query").val("");
         showLoading();
         scrollToChatBottom();
@@ -691,7 +693,7 @@ $(document).ready(function() {
       error: function(xhr, ajaxOptions, thrownError) {
         var currentTime = new Date();
         hideLoading(); //Hides the rotating loading animation.
-        displayErrorResponse(currentTime.toUTCString(), "No response from server.");
+        displayErrorResponse(getFormattedDate(currentTime.toUTCString()), "No response from server.");
       },
       success: function(data) {
         hideLoading(); //Hides the rotating loading animation.
@@ -709,9 +711,11 @@ $(document).ready(function() {
   }
 
   //TODO
-  function getFormattedDate(date) {
-    var newDate = new Date(Date.parse(date));
-    return newDate.getDate() + "/" + newDate.getMonth() + "/" + newDate.getFullYear() + " " + newDate.getHours() + ":" + newDate.getMinutes();
+  function getFormattedDate(oldDate) {
+    var date = new Date(Date.parse(oldDate));
+    var newDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + date.getMonth()).slice(-2) + '/' + date.getFullYear();
+    var newTime = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2);
+    return newDate + ' ' + newTime;
   }
 
   //TODO
@@ -731,6 +735,8 @@ $(document).ready(function() {
       lowList.push(dataset[i][3]);
       openList.push(dataset[i][4]);
     }
+
+    var graphTitle = dateList[0] + " to " + dateList[dataset.length - 1];
 
     var lineGraph = new Chart(ctx, {
       type: 'line',
@@ -772,8 +778,9 @@ $(document).ready(function() {
       options: {
         scales: { yAxes: [{
           ticks: { beginAtZero: false },
-          scaleLabel : { display: true, labelString: "Y-Axis Label" }
-        }]}
+          scaleLabel : { display: true, labelString: "Price" }
+        }]},
+        title: { display: true, text: graphTitle}
       }
     });
   }
@@ -786,7 +793,8 @@ $(document).ready(function() {
     console.log("Parsing Response");
     console.log(data);
 
-    var timestamp = new Date().toUTCString();
+    var date = new Date();
+    var timestamp = getFormattedDate(date.toUTCString());
     var json, speechRow, stockTable, infoRow, newsRow, graphRow;
 
     //Attempt to parse JSON response.
@@ -987,7 +995,7 @@ $(document).ready(function() {
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
       case "Input Error": //TODO
-        displayErrorResponse(speech);
+        displayErrorResponse(timestamp, speech);
         break;
       default:
         fallBackError(timestamp);
