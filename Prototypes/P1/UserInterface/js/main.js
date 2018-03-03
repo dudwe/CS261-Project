@@ -3,6 +3,7 @@
   //TODO GRAPH OUTPUT
   //TODO LINK FAVOURITE WITH DB LAYER
   //TODO LINK POLL WITH PARSING LAYER
+  //TODO TEST VOICE INPUT
 
 $(document).ready(function() {
   $(".button-collapse").sideNav();
@@ -159,8 +160,9 @@ $(document).ready(function() {
     var stockTable = $("<table class='centered table-no-format'><tbody><tr>" +
       "<td><p class='stock-name'></p></td><td>" +
       "<p class='stock-performance'><i class='stock-icon material-icons'></i>" +
-      "<span class='stock-info-shareprice'></span><span class='stock-currency'>GBP</span>" +
-      "<span class='stock-info-pointchange'></span><span class='stock-info-percentagechange'></span></p></td></tr></tbody></table>");
+      "<span class='stock-info-shareprice tooltipped' data-position='bottom' data-delay='50'></span><span class='stock-currency'>GBP</span>" +
+      "<span class='stock-info-pointchange tooltipped' data-position='bottom' data-delay='50'></span>" +
+      "<span class='stock-info-percentagechange tooltipped' data-position='bottom' data-delay='50'></span></p></td></tr></tbody></table>");
 
     if (pointChange > 0) { //Stock is rising.
       stockTable.find(".stock-performance").addClass("stock-rise").find(".stock-icon").text("keyboard_arrow_up");
@@ -174,10 +176,10 @@ $(document).ready(function() {
 
     //Includes stock information.
     stockTable.find(".stock-name").text(stockName); //Include stock name.
-    stockTable.find(".stock-info-shareprice").text(sharePrice);
-    stockTable.find(".stock-info-pointchange").text(pointChange);
-    stockTable.find(".stock-info-percentagechange").text(" (" + percentageChange + ")");
-
+    stockTable.find(".stock-info-shareprice").text(sharePrice).attr("data-tooltip", "Share Price");
+    stockTable.find(".stock-info-pointchange").text(pointChange).attr("data-tooltip", "Point Change");
+    stockTable.find(".stock-info-percentagechange").text(" (" + percentageChange + ")").attr("data-tooltip", "Percentage Change");
+    stockTable.find(".tooltipped").tooltip({delay: 50});
     return stockTable; //Return the jQuery object to be included in the chat window.
   }
 
