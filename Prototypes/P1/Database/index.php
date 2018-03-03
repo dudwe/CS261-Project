@@ -18,6 +18,11 @@
         <input type="submit" value="Submit query">
     </form>
 
+    <form action="wrong_entity.php" method="post">
+        <input type="text" name="entity" placeholder="Invalid entity">
+        <input type="submit" value="Submit invalid entity">
+    </form>
+
     <form action="get_suggestion.php">
         <input type="submit" value="Suggest me a query!">
     </form>
