@@ -9,7 +9,8 @@ include_once('rss.php');
 include_once('getBuyOrSell.php');
 include_once('../Database/interface.php');
 include_once('dlPage.php');
-
+include_once('genericstock.php');
+include_once('currconvert.php');
 function getIntent($jsonData){
 
     /*Parse Json*/
@@ -25,9 +26,20 @@ function getIntent($jsonData){
         }
         else if (array_key_exists('sectors',$arrayparam)){
             $stockId = $array['result']['parameters']['sectors'];
-        }else{
+        }else if (array_key_exists('sectors',$arrayparam)){
             $stockId = $array['result']['parameters']['stocksandsectors'];
+        }else{
+            $stockId = $array['result']['parameters']['currency'];
         }
+    }
+    if(array_key_exists('currency',$arrayparam)){
+        $currency=$array['result']['parameters']['currency'];
+    }
+    if(array_key_exists('currency1',$arrayparam)){
+        $currency1=$array['result']['parameters']['currency1'];
+    }
+    if(array_key_exists('intent_convert',$arrayparam)){
+        $intentConvert=$array['result']['parameters']['intent_convert'];
     }
     
     if(array_key_exists('time-frame',$arrayparam)){
@@ -45,11 +57,10 @@ function getIntent($jsonData){
     }
     /*StockId not detected*/
     elseif($stockId=="" ){
-        echo "Stock Code Not detected";
+        //echo "Stock Code Not detected";
         $intent="StockCodeError: ".$intent;
     }
-    
-    
+
     $speech = $array['result']['fulfillment']['speech'];
 
     /*store query into database if no error*/
@@ -63,138 +74,64 @@ function getIntent($jsonData){
     $dataArray=array();
     $error=0;
     
-    /*
-        [Date] => 16:39:50
-    [SharePrice] => 208.50
-    [PointChange] => -1.30
-    [PercentChange] => -0.62%
-    [Bid] => 208.00
-    [Offer] => 211.10
-    [Close] => 209.8
-    [High] =>  211.4
-    [Low] => 208.5 
-    [Revenue] => 35.04B
-    [Open] => 209.9
-    [EPS] => N/A
-    [Volume] => 38,261,097
-    [MarketCap] => 35.8B
-    [DivYield] => N/A (N/A)
-    [AverageVol] => 46,203,498
-    [PERatio] => N/A
-    [SharesInIssue] => 17,063,763,749
-    */
-    
-    switch ($intent) {
-    case "get_share_price":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=filterSummary($dataArray);
-        break;
-    case "get_point_change":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=filterSummary($dataArray);
-        break;
-    case "percent_change":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=filterSummary($dataArray);
-        break;  
-    case "get_bid":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=filterSummary($dataArray);
-        break;
-    case "get_offer":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=filterSummary($dataArray);
-        break;
-   case "get_close":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=filterSummary($dataArray);
-        break;  
-    case "get_high":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=filterSummary($dataArray);
-        break;          
-    case "get_low":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=filterSummary($dataArray);
-        break;
-    case "get_revenue":
-        $dataArray=getCurrentForCompany($stockId);
-        $tmp=filterSummary($dataArray);
-        $tmp['Revenue']=$dataArray['Revenue'];
-        $tmp['MarketCap']=$dataArray['MarketCap'];
-        $dataArray=$tmp;
-        break;         
-    case "get_open":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=filterSummary($dataArray);
-        break;     
-    case "get_eps":
-        $dataArray=getCurrentForCompany($stockId);
-        //var_dump($dataArray);
-        $dataArray=array('EPS'=>$dataArray['EPS'],'DivYield'=>$dataArray['DivYield'],'PERatio'=>$dataArray['PERatio']);
-        break;         
-    case "get_volume":
-        $dataArray=getCurrentForCompany($stockId);
-        $tmp=filterSummary($dataArray);
-        $tmp['Volume']=$dataArray['Volume'];
-        $tmp['AverageVol']=$dataArray['AverageVol'];
-        $dataArray=$tmp;
-        break;            
-   case "get_market_cap":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('MarketCap'=>$dataArray['MarketCap'],'SharePrice'=>$dataArray['SharePrice'],'SharesInIssue'=>$dataArray['SharesInIssue'],'Volume'=>$dataArray['Volume']);
-        break;    
-   case "get_div_yield":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('DivYield'=>$dataArray['DivYield'],'EPS'=>$dataArray['EPS'],'PERatio'=>$dataArray['PERatio'],'Volume'=>$dataArray['Volume']);
-        break; 
-   case "get_average_vol":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('Volume'=>$dataArray['Volume'],'AverageVol'=>$dataArray['AverageVol']);
-        break;         
-   case "get_pe_ratio":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('PERatio'=>$dataArray['PERatio'],'DivYield'=>$dataArray['DivYield'],'EPS'=>$dataArray['EPS'],'Volume'=>$dataArray['Volume']);
-        break;                  
-   case "get_shares_in_issue":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=array('SharesInIssue'=>$dataArray['SharesInIssue'],'MarketCap'=>$dataArray['MarketCap'],'Volume'=>$dataArray['Volume'],'SharePrice'=>$dataArray['SharePrice']);
-        break;                 
-    case "get_stock_performance":
-        $objOutput->timeframe=$timeframe;
-        $dataArray=getTimeframe($stockId,$timeframe);
-        if($timeframe=="" or $timeframe=='Today'){
-            if($stockId=="FTSE100"){
-                $dataArray2=getSector350($stockId);
+
+    $complextIntent=array('get_stock_performance','get_news','get_sector_performance','get_buy_or_sell','get_intent_conversion','get_currency_conversion','Default Fallback Intent');
+    if(in_array($intent,$complextIntent) or stripos($intent,"Error")){
+        switch ($intent) {
+        case "get_intent_conversion":
+            echo $stockId . "</br>";
+            echo $intentConvert . "</br>";
+            echo $currency . "</br>";
+            $dataArray=getDataStockGeneric($intentConvert,$stockId);
+            $dataArray=getConversion($dataArray,$intentConvert,$currency);
+            break;
+        case "get_currency_conversion":
+            $dataArray=convertCurrency($currency,$currency1,100);
+            $objOutput->from=$currency;
+            $objOutput->to=$currency1;
+            break;
+            
+        case "get_stock_performance":
+            $objOutput->timeframe=$timeframe;
+            $dataArray=getTimeframe($stockId,$timeframe);
+            if($timeframe=="" or $timeframe=='Today'){
+                if($stockId=="FTSE100"){
+                    $dataArray2=getSector350($stockId);
+                }
+                else{
+                    $dataArray2=getCurrentForCompany($stockId);
+                    $dataArray2=filterSummary($dataArray2);
+                }
+                $objOutput->auxillary=$dataArray2;
             }
-            else{
-                $dataArray2=getCurrentForCompany($stockId);
-                $dataArray2=filterSummary($dataArray2);
-            }
-            $objOutput->auxillary=$dataArray2;
+            break;
+        case "get_news":
+            $dataArray=getRSS($stockId,False);
+            break;
+        case "get_sector_performance":
+            $dataArray=getSector350($stockId);
+            break;
+        case "get_buy_or_sell":
+            $dataArray=getBuyOrSell($stockId,$buyorsell);
+            $objOutput->buyOrSell=$buyorsell;
+            break;    
+        default:
+            echo "error";
+            $error=1;
+            $stockId="Error";
+            break;
         }
-        break;
-    case "get_news":
-        $dataArray=getRSS($stockId,False);
-        break;
-    case "get_sector_performance":
-        $dataArray=getSector350($stockId);
-        break;
-    case "get_buy_or_sell":
-        $dataArray=getBuyOrSell($stockId,$buyorsell);
-        $objOutput->buyOrSell=$buyorsell;
-        break;    
-    default:
-        echo "error";
-        $error=1;
-        $stockId="Error";
-        break;
+        if($error==0){
+            /*insert query into database*/
+            $conn=db_connection();
+            insert_query($conn, $queryString, $intent, $stockId);
+        }
+    }else{
+        $dataArray=getDataStockGeneric($intent,$stockId);
     }
-    if($error==0){
-        /*insert query into database*/
-        $conn=db_connection();
-        insert_query($conn, $queryString, $intent, $stockId);
-    }
+    
+    
+    
     $objOutput->stocks=$stockId;
     $objOutput->dataset=$dataArray;
     $jsonOutput = json_encode($objOutput, JSON_PRETTY_PRINT);
