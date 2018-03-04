@@ -11,6 +11,7 @@ include_once('../Database/interface.php');
 include_once('dlPage.php');
 include_once('genericstock.php');
 include_once('currconvert.php');
+include_once('getChange.php');
 function getIntent($jsonData){
 
     /*Parse Json*/
@@ -102,8 +103,16 @@ function getIntent($jsonData){
                     $dataArray2=getCurrentForCompany($stockId);
                     $dataArray2=filterSummary($dataArray2);
                 }
-                $objOutput->auxillary=$dataArray2;
+                
+            }else{
+                /*net change isnt given to us so this needs to be calculated*/
+                /*get the current price*/
+                /*calc the netchange from first value in data array and the current value*/
+                $dataArray2=getCurrentForCompany($stockId);
+                $dataArray2=filterSummary($dataArray2);
+                $dataArray2=getChange($dataArray2,$dataArray);
             }
+            $objOutput->auxillary=$dataArray2;
             break;
         case "get_news":
             $dataArray=getRSS($stockId,False);
