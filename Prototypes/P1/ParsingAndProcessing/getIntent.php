@@ -80,9 +80,9 @@ function getIntent($jsonData){
     if(in_array($intent,$complextIntent) or stripos($intent,"Error")){
         switch ($intent) {
         case "get_intent_conversion":
-            echo $stockId . "</br>";
-            echo $intentConvert . "</br>";
-            echo $currency . "</br>";
+            //echo $stockId . "</br>";
+            //echo $intentConvert . "</br>";
+            //echo $currency . "</br>";
             $dataArray=getDataStockGeneric($intentConvert,$stockId);
             $dataArray=getConversion($dataArray,$intentConvert,$currency);
             break;

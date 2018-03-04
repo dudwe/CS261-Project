@@ -30,7 +30,7 @@ function getConversion($dataSet,$intent,$to){
             break; 
     }
 
-    $rate=convertCurrency($to,100);
+    $rate=convertCurrency("GBP",$to,100);
     $convert=convertCurrency("GBP",$to,$data);
     $objOutput = new stdClass();
     $objOutput->intent=$intent;
