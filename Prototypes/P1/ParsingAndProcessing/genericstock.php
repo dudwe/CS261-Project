@@ -5,7 +5,7 @@ ini_set('display_errors', '1');
 include_once("getIntent.php");
 include_once('getCurrentForCompany.php');
 include_once('getSector.php');
-
+include_once('fastscrape.php');
 //print_r(getDataStockGeneric("get_share_price","BARC"));
 
 function getDataStockGeneric($intent, $stockId){
@@ -15,12 +15,11 @@ function getDataStockGeneric($intent, $stockId){
         $dataArray=filterSummary($dataArray);
         break;
     case "get_point_change":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=filterSummary($dataArray);
+        $dataArray=fastScrape($stockId);
+        //$dataArray=filterSummary($dataArray);
         break;
     case "percent_change":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=filterSummary($dataArray);
+        $dataArray=fastScrape($stockId);
         break;  
     case "get_bid":
         $dataArray=getCurrentForCompany($stockId);
@@ -35,12 +34,10 @@ function getDataStockGeneric($intent, $stockId){
         $dataArray=filterSummary($dataArray);
         break;  
     case "get_high":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=filterSummary($dataArray);
+        $dataArray=fastScrape($stockId);
         break;          
     case "get_low":
-        $dataArray=getCurrentForCompany($stockId);
-        $dataArray=filterSummary($dataArray);
+        $dataArray=fastScrape($stockId);
         break;
     case "get_revenue":
         $dataArray=getCurrentForCompany($stockId);

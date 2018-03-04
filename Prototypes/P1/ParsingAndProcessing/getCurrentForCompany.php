@@ -6,7 +6,7 @@ ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 include_once('../Database/interface.php');
 include_once('dlPage.php');
 
-
+//getCurrentForCompany("BARC");
 function getCurrentForCompany($stock){
     $conn= db_connection();
     $url = get_scrape_url($conn,$stock);
