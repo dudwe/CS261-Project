@@ -567,17 +567,25 @@ $(document).ready(function() {
     var headlineCount = newsArray.length;
     var newsDisplay = $("<div class='news-table'></div>");
 
-
     for (var i = 0; i < newsArray.length; i++) {
       var article = newsArray[i];
       var headline = article.title;
       var url = article.link;
       var description = article.desc;
-      var articleRow = $("<div class='news-row'><a class='headline tooltipped' data-position='top' ata-delay='50'></a><p class='headline-desc'></p></div>");
+      var sentiment = article.sentiment;
+      /*var accuracy = 0;
+      if (sentiment.sentiment === "positive") {
+        accuracy = parseFloat(sentiment.accuracy.positivity).toFixed(2) * 100;
+      }
+      else {
+        accuracy = parseFloat(sentiment.accuracy.negativity).toFixed(2) * 100;
+      }*/
+      var articleRow = $("<div class='news-row'><a class='headline tooltipped' data-position='top' ata-delay='50'></a><p><small class='headline-sentiment'></small></p><p class='headline-desc'></p></div>");
       console.log("HEADLINE: " + headline + " :: " + "URL: " + url);
       articleRow.find(".headline").text(headline);
       articleRow.find(".headline").attr("href", url);
       articleRow.find(".headline").attr("data-tooltip", url);
+      articleRow.find(".headline-sentiment").text(sentiment.sentiment.charAt(0).toUpperCase() + sentiment.sentiment.slice(1));
       articleRow.find(".headline-desc").text(description);
       articleRow.find(".tooltipped").tooltip({delay: 50});
       newsDisplay.append(articleRow);
@@ -814,16 +822,36 @@ $(document).ready(function() {
     var dataset = json.dataset;
 
     switch (intent) {
+      case "get_intent_conversion":
+        var conversionSpeech = getCurrencyConvertSpeech(dataset.intent, stock);
+        if (conversionSpeech === undefined || conversionSpeech === null) {
+          fallBackError(timestamp);
+          return;
+        }
+        else {
+          speech = conversionSpeech + parseFloat(dataset.convertedValue).toFixed(2) + ' ' + dataset.toCurrency;
+          speechRow = getSpeechDisplay(speech);
+          displayResponseList(timestamp, [speechRow]);
+        }
+        break; //TODO
       case "get_currency_conversion":
         speech = "The conversion rate from " + json.from + " to " + json.to + " is " + parseFloat(dataset).toFixed(2) + ".";
         speechRow = getSpeechDisplay(speech);
         displayResponseList(timestamp, [speechRow]);
-        break;
+        break; //TODO
       case "get_share_price":
         speech += dataset.SharePrice;
         speechRow = getSpeechDisplay(speech);
+        infoRow = getInfoListDisplay([
+          {info: "Bid", value: dataset.Bid},
+          {info: "Offer", value: dataset.Offer}
+          //{info: "Open", value: dataset.Open},
+          //{info: "Close", value: dataset.Close},
+          //{info: "Low", value: dataset.Low},
+          //{info: "High", value: dataset.High}
+        ]);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
         break;
       case "get_point_change":
         speech += dataset.PointChange;
@@ -1010,6 +1038,17 @@ $(document).ready(function() {
     console.log(speech);
     say(speech); //Outputs the response using voice synthesis.
     scrollToChatBottom(); //Scrolls to bottom of the chat window.
+  }
+
+  ///TODO
+  //Returns a default speech for specific intents when currency has been converted.
+  function getCurrencyConvertSpeech(intent, stock) {
+    switch (intent) {
+      case "get_share_price":
+        return "The share price of " + stock + " is ";
+      default:
+        return null;
+    }
   }
 
   //Error called if JSON is malformed or cannot identify intent.
