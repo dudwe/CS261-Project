@@ -112,7 +112,7 @@ ini_set('display_errors', '1');
                 $objOutput->desc=$node->getElementsByTagName('description')->item(0)->nodeValue;
                 $objOutput->link=$node->getElementsByTagName('link')->item(0)->nodeValue;
                 $objOutput->date=$node->getElementsByTagName('pubDate')->item(0)->nodeValue;
-                //$objOutput->sentiment=analyse_headline_sentiment($objOutput->title);/*TURN THIS OF FOR TESTSING*/
+                $objOutput->sentiment=analyse_headline_sentiment($objOutput->title);/*TURN THIS OF FOR TESTSING*/
                 array_push($feed, $objOutput);
             }
             

@@ -27,7 +27,7 @@ function getIntent($jsonData){
         }
         else if (array_key_exists('sectors',$arrayparam)){
             $stockId = $array['result']['parameters']['sectors'];
-        }else if (array_key_exists('sectors',$arrayparam)){
+        }else if (array_key_exists('stocksandsectors',$arrayparam)){
             $stockId = $array['result']['parameters']['stocksandsectors'];
         }else{
             $stockId = $array['result']['parameters']['currency'];
