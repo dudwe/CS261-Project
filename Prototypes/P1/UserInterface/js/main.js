@@ -814,6 +814,11 @@ $(document).ready(function() {
     var dataset = json.dataset;
 
     switch (intent) {
+      case "get_currency_conversion":
+        speech = "The conversion rate from " + json.from + " to " + json.to + " is " + parseFloat(dataset).toFixed(2) + ".";
+        speechRow = getSpeechDisplay(speech);
+        displayResponseList(timestamp, [speechRow]);
+        break;
       case "get_share_price":
         speech += dataset.SharePrice;
         speechRow = getSpeechDisplay(speech);
@@ -947,8 +952,8 @@ $(document).ready(function() {
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_pe_ratio": //TODO TEST NO PE RATIO
-        //speech += dataset[""];
+      case "get_pe_ratio":
+        speech += dataset.PERatio;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
           {info: "Dividend Yield", value: dataset.DivYield},
@@ -981,7 +986,7 @@ $(document).ready(function() {
         break;
       case "get_sector_performance": //TODO
         break;
-      case "get_buy_or_sell": //TODO
+      case "get_buy_or_sell":
         var movingAverages = dataset.movingAverages;
         var technicalIndicators = dataset.technicalIndicators;
         var summary = dataset.Summary;
