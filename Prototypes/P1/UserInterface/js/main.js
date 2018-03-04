@@ -814,6 +814,11 @@ $(document).ready(function() {
     var dataset = json.dataset;
 
     switch (intent) {
+      case "get_currency_conversion":
+        speech = "The conversion rate from " + json.from + " to " + json.to + " is " + parseFloat(dataset).toFixed(2) + ".";
+        speechRow = getSpeechDisplay(speech);
+        displayResponseList(timestamp, [speechRow]);
+        break;
       case "get_share_price":
         speech += dataset.SharePrice;
         speechRow = getSpeechDisplay(speech);
