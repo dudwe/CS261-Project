@@ -197,7 +197,7 @@ function populate_sectors($conn) {
         ('Support services',                    '/indices/support-services'),
         ('Tobacco',                             '/indices/tobacco'),
         ('Travel & Leisure',                    '/indices/travel---leisure'),
-        ('FTSE100',                    '/indices/uk-100')
+        ('FTSE100',                             '/indices/uk-100')
 ";
 
     if ($conn->query($sql) === TRUE) {
