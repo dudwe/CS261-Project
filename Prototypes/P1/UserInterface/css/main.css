@@ -70,6 +70,13 @@ nav {
   color: #116466;
 }
 
+.github {
+  height: 18px;
+  width: 18px;
+  margin-left: 10px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
 
 .container {
   margin: 0 auto!important;

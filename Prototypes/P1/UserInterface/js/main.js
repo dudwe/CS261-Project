@@ -27,7 +27,7 @@ $(document).ready(function() {
     $("#btn-send").click(submitQuery); //Redirect button click and ENTER to submitQuery function.
     var timestamp = new Date().toUTCString();
     displayQuery(getFormattedDate(timestamp), "Trader ChatBot Prototype P1");
-    displayResponseList(getFormattedDate(timestamp), ["Hello!"]);
+    displayResponseList(getFormattedDate(timestamp), ["Response JSON is output in console btw. FOR TESTING"]);
   }
 
 /*----------------------------------------------------------------------------*/
