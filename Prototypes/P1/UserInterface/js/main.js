@@ -17,6 +17,7 @@ $(document).ready(function() {
   var speechEnabled = false; //Flag for if speech synthesis is enabled.
   var pollLoop = 1000 * 60; //Milliseconds between each notification poll.
   var maxFavourites = 10; //Maximum number of favourites.
+  var queryList = ["Hello", "Happy", "Heil", "Hitler", "Helicopter"];
 
 /*----------------------------------------------------------------------------*/
 /* Initialisation*/
@@ -28,10 +29,25 @@ $(document).ready(function() {
     var timestamp = new Date().toUTCString();
     displayQuery(getFormattedDate(timestamp), "Trader ChatBot Prototype P1");
     displayResponseList(getFormattedDate(timestamp), ["Response JSON is output in console btw. FOR TESTING"]);
+
+    var availableTutorials = [
+               "ActionScript",
+               "Bootstrap",
+               "C",
+               "C++",
+            ];
+            $( "#tags" ).autocomplete({
+               source: availableTutorials,
+               autoFocus:true
+            });
+
   }
 
 /*----------------------------------------------------------------------------*/
 /*Speech API*/
+
+
+
 
   const artyom = new Artyom();
   var support_speech = artyom.speechSupported();
