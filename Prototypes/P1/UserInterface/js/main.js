@@ -424,7 +424,7 @@ $(document).ready(function() {
       pollRow += "value='" + pollRate + "'";
     }
     else {
-      pollRow += "value='-'";
+      pollRow += "value='0'";
     }
 
     pollRow += "></td>";
