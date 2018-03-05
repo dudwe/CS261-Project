@@ -30,17 +30,85 @@ $(document).ready(function() {
     displayQuery(getFormattedDate(timestamp), "Trader ChatBot Prototype P1");
     displayResponseList(getFormattedDate(timestamp), ["Response JSON is output in console btw. FOR TESTING"]);
 
-    var availableTutorials = [
-               "ActionScript",
-               "Bootstrap",
-               "C",
-               "C++",
-            ];
-            $( "#tags" ).autocomplete({
-               source: availableTutorials,
-               autoFocus:true
-            });
+    var single = $("#query").materialize_autocomplete({
+      limit: 5,
+      multiple: { enable: false },
+      dropdown: {
+        el: '#singleDropdown',
+        itemTemplate: '<li class="ac-item" data-id="<%= item.id %>" data-text=\'<%= item.text %>\'><a href="javascript:void(0)"><%= item.highlight %></a></li>'
+      }
+    });
 
+    var resultCache = {
+      'A': [
+        {
+          id: 'Abe',
+          text: 'Sia \"Zirdzi\u0146\u0161\"',
+          highlight: 'Sia \"Zirdzi\u0146\u0161\"'
+        },
+        {
+          id: 'Ari',
+          text: 'Ari',
+          highlight: '<strong>A</strong>ri'
+        }
+      ],
+      'B': [
+        {
+          id: 'Abe',
+          text: 'Abe',
+          highlight: '<strong>A</strong>be'
+        },
+        {
+          id: 'Baz',
+          text: 'Baz',
+          highlight: '<strong>B</strong>az'
+        }
+      ],
+      'BA': [
+        {
+          id: 'Baz',
+          text: 'Baz',
+          highlight: '<strong>Ba</strong>z'
+        }
+      ],
+      'BAZ': [
+        {
+          id: 'Baz',
+          text: 'Baz',
+          highlight: '<strong>Baz</strong>'
+        }
+      ],
+      'AB': [
+        {
+          id: 'Abe',
+          text: 'Abe',
+          highlight: '<strong>Ab</strong>e'
+        }
+      ],
+      'ABE': [
+        {
+          id: 'Abe',
+          text: 'Abe',
+          highlight: '<strong>Abe</strong>'
+        }
+      ],
+      'AR': [
+        {
+          id: 'Ari',
+          text: 'Ari',
+          highlight: '<strong>Ar</strong>i'
+        }
+      ],
+      'ARI': [
+        {
+          id: 'Ari',
+          text: 'Ari',
+          highlight: '<strong>Ari</strong>'
+        }
+      ]
+    };
+
+    single.resultCache = resultCache; //Appends the drop down choices to the query input.
   }
 
 /*----------------------------------------------------------------------------*/
