@@ -17,7 +17,6 @@ $(document).ready(function() {
   var speechEnabled = false; //Flag for if speech synthesis is enabled.
   var pollLoop = 1000 * 60; //Milliseconds between each notification poll.
   var maxFavourites = 10; //Maximum number of favourites.
-  var queryList = ["Hello", "Happy", "Heil", "Hitler", "Helicopter"];
 
 /*----------------------------------------------------------------------------*/
 /* Initialisation*/
@@ -30,92 +29,58 @@ $(document).ready(function() {
     displayQuery(getFormattedDate(timestamp), "Trader ChatBot Prototype P1");
     displayResponseList(getFormattedDate(timestamp), ["Response JSON is output in console btw. FOR TESTING"]);
 
+    //Dropdown Choices
+    var dropdownArr = ["What is the share price of ",
+      "What is the point change of ",
+      "What is the percentage change of ",
+      "What is the bid for ",
+      "What is the offer for ",
+      "What is the open for ",
+      "What is the close for ",
+      "What is the low for ",
+      "What is the high for ",
+      "What is the revenue of ",
+      "What is the EPS of ",
+      "What is the volume of ",
+      "What is the average volume ",
+      "What is the market cap of ",
+      "What is the dividend yield of ",
+      "What is the PE Ratio of ",
+      "How many shares in issue for ",
+      "Any news on ",
+      "Performance for ",
+      "Conversion rate of USD to ",
+      "Conversion rate of GBP to ",
+      "Conversion rate of Euro to "];
+
     var single = $("#query").materialize_autocomplete({
       limit: 5,
       multiple: { enable: false },
       dropdown: {
         el: '#singleDropdown',
         itemTemplate: '<li class="ac-item" data-id="<%= item.id %>" data-text=\'<%= item.text %>\'><a href="javascript:void(0)"><%= item.highlight %></a></li>'
+      },
+      getData: function(value, callback) {
+        var data  = [];
+        for (var i = 0; i < dropdownArr.length; i++) {
+          var id = "drop-" + i; //Loops through all dropdown choices.
+          if (dropdownArr[i].toUpperCase().includes(value)) {
+            var highlight = "<strong>" + dropdownArr[i] + "</strong>";
+            data.push({id: id, text: dropdownArr[i], highlight: highlight});
+          }
+        }
+        callback(value, data);
+      },
+      onSelect: function(item) {
+        $("#query").focus(); //Puts focus on the query input.
       }
     });
 
-    var resultCache = {
-      'A': [
-        {
-          id: 'Abe',
-          text: 'Sia \"Zirdzi\u0146\u0161\"',
-          highlight: 'Sia \"Zirdzi\u0146\u0161\"'
-        },
-        {
-          id: 'Ari',
-          text: 'Ari',
-          highlight: '<strong>A</strong>ri'
-        }
-      ],
-      'B': [
-        {
-          id: 'Abe',
-          text: 'Abe',
-          highlight: '<strong>A</strong>be'
-        },
-        {
-          id: 'Baz',
-          text: 'Baz',
-          highlight: '<strong>B</strong>az'
-        }
-      ],
-      'BA': [
-        {
-          id: 'Baz',
-          text: 'Baz',
-          highlight: '<strong>Ba</strong>z'
-        }
-      ],
-      'BAZ': [
-        {
-          id: 'Baz',
-          text: 'Baz',
-          highlight: '<strong>Baz</strong>'
-        }
-      ],
-      'AB': [
-        {
-          id: 'Abe',
-          text: 'Abe',
-          highlight: '<strong>Ab</strong>e'
-        }
-      ],
-      'ABE': [
-        {
-          id: 'Abe',
-          text: 'Abe',
-          highlight: '<strong>Abe</strong>'
-        }
-      ],
-      'AR': [
-        {
-          id: 'Ari',
-          text: 'Ari',
-          highlight: '<strong>Ar</strong>i'
-        }
-      ],
-      'ARI': [
-        {
-          id: 'Ari',
-          text: 'Ari',
-          highlight: '<strong>Ari</strong>'
-        }
-      ]
-    };
-
-    single.resultCache = resultCache; //Appends the drop down choices to the query input.
+    $("#query").focus(); //Puts focus on the query input.
   }
 
 /*----------------------------------------------------------------------------*/
 /*Speech API*/
-
-
-
 
   const artyom = new Artyom();
   var support_speech = artyom.speechSupported();
