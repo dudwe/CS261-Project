@@ -787,7 +787,8 @@ $(document).ready(function() {
           ticks: { beginAtZero: false },
           scaleLabel : { display: true, labelString: "Price" }
         }]},
-        title: { display: true, text: graphTitle}
+        title: { display: true, text: graphTitle},
+        elements: { point: { radius: 0 } }
       }
     });
   }
