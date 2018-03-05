@@ -30,7 +30,7 @@ $(document).ready(function() {
     displayResponseList(getFormattedDate(timestamp), ["Response JSON is output in console btw. FOR TESTING"]);
 
     //Dropdown Choices
-    var dropdownArr = ["What is the share price of ",
+    var dropdownArr = ["What is the share price for ",
       "What is the point change of ",
       "What is the percentage change of ",
       "What is the bid for ",
@@ -53,7 +53,7 @@ $(document).ready(function() {
       "Conversion rate of GBP to ",
       "Conversion rate of Euro to "];
 
-    var single = $("#query").materialize_autocomplete({
+    $("#query").materialize_autocomplete({
       limit: 5,
       multiple: { enable: false },
       dropdown: {
