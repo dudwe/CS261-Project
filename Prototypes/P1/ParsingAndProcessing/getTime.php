@@ -116,7 +116,7 @@ function getHistorical($ticker, $startDate, $endDate) {
     }
     $array=array_slice($array,1);
     array_pop ($array);
-    print_r($array);
+    //print_r($array);
     return $array;
 }
 ?>

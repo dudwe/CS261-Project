@@ -8,12 +8,12 @@ function getChange($current,$historical){
     //echo $historical[4];
     //echo "</br>";
     //echo $current['SharePrice'];
-    $pointchange=$current['SharePrice']-$historical[4];
+    $pointchange=round(($current['SharePrice']-$historical[4]),2);
     //echo "</br> Point change: ".$pointchange;
-    $percentageChange=(($current['SharePrice']-$historical[4])/$historical[4])*100;
+    $percentageChange=round((($current['SharePrice']-$historical[4])/$historical[4])*100,2);
     //echo "</br> Percentage change: ".$percentageChange;
     $current['PointChange']=$pointchange;
-    $current['PercentChange']=$percentageChange;
+    $current['PercentChange']=$percentageChange."%";
     
     
     //var_dump($current);

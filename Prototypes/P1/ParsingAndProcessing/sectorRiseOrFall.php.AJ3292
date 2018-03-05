@@ -1,0 +1,10 @@
+<?php
+    error_reporting(E_ALL);
+    ini_set('display_errors', '1');
+    include_once('../Database/interface.php');
+    function sectorRiseOrFall($sectorid,$ftse100){
+        $conn=db_connect();
+        $sql = "SELECT sector_name FROM sectors";
+        $res = $conn->query($sql);
+    }
+?>
