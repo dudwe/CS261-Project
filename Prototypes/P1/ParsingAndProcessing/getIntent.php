@@ -128,13 +128,19 @@ function getIntent($jsonData){
         default:
             echo "error";
             $error=1;
-            $stockId="Error";
+            //$stockId="Error";
             break;
         }
         if($error==0){
             /*insert query into database*/
             $conn=db_connection();
             insert_query($conn, $queryString, $intent, $stockId);
+        }else{
+            /*if($intent=="Default Fallback Intent"){
+                $dataArray=resolve_invalid_intent("",$queryString);
+            }else{
+                $dataArray=resolve_invalid_entity("",$queryString);
+            }*/
         }
     }else{
         $dataArray=getDataStockGeneric($intent,$stockId);

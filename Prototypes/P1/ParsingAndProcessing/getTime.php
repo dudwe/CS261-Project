@@ -112,11 +112,12 @@ function getHistorical($ticker, $startDate, $endDate) {
     $rows = explode("\n",$fp);
     $array = array();
     foreach($rows as $row) {
-        $array[] = str_getcsv($row);
+        $tmp=str_getcsv($row);
+        $tmp[0]=date("d/m/Y", strtotime($tmp[0]));
+        $array[] = $tmp;
     }
     $array=array_slice($array,1);
     array_pop ($array);
-    //print_r($array);
     return $array;
 }
 ?>

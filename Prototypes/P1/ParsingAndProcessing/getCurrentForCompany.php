@@ -66,7 +66,7 @@ function getCurrentForCompany($stock){
             if(strpos($block->plaintext, "Dividend") !== false){
                 $returnData['DivYield']=$element->innertext;
             }
-            if(strpos($block->plaintext, "Average Vol.") !== false){
+            if(strpos($block->plaintext, "Average Vol") !== false){
                 $returnData['AverageVol']=$element->innertext;
             }
             if(strpos($block->plaintext, "P/E Ratio") !== false){
