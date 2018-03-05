@@ -718,10 +718,21 @@ $(document).ready(function() {
   }
 
   //Formats a date in the format DD/MM/YYYY HH:MM:SS
-  function getFormattedDate(oldDate) {
-    var date = new Date(Date.parse(oldDate));
-    var newDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + date.getMonth()).slice(-2) + '/' + date.getFullYear();
+  function getFormattedDate(original) {
+    var date;
+
+    if (original.includes("/")) {
+      var splitDate = original.split("\/");
+      date = new Date(parseInt(splitDate[2], 10), parseInt(splitDate[1] - 1, 10), parseInt(splitDate[0], 10));
+    }
+    else {
+      var unixTimestamp = Date.parse(original);
+      date = new Date(unixTimestamp);
+    }
+
+    var newDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear();
     var newTime = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getSeconds()).slice(-2);
+    console.log(original + "::" + date);
     return newDate + ' ' + newTime;
   }
 
