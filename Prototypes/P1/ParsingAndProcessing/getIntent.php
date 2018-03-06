@@ -13,6 +13,7 @@ include_once('genericstock.php');
 include_once('currconvert.php');
 include_once('getChange.php');
 include_once('fastscrape.php');
+include_once('sectorRiseOrFall.php');
 function getIntent($jsonData){
 
     /*Parse Json*/
@@ -50,6 +51,9 @@ function getIntent($jsonData){
     if(array_key_exists('buy-sell-time-frame',$arrayparam)){
         $buyorsell=$array['result']['parameters']['buy-sell-time-frame'];
     }
+    if(array_key_exists('scope',$arrayparam)){
+        $scope=$array['result']['parameters']['scope'];
+    }
     $intent = $array['result']['metadata']['intentName'];
     
     /*Error Checking*/
@@ -77,7 +81,7 @@ function getIntent($jsonData){
     $error=0;
     
 
-    $complextIntent=array('get_stock_performance','get_news','get_sector_performance','get_buy_or_sell','get_intent_conversion','get_currency_conversion','Default Fallback Intent');
+    $complextIntent=array('get_stock_performance','get_news','get_sector_rising_or_falling','get_sector_performance','get_buy_or_sell','get_intent_conversion','get_currency_conversion','Default Fallback Intent');
     if(in_array($intent,$complextIntent) or stripos($intent,"Error")){
         switch ($intent) {
         case "get_intent_conversion":
@@ -116,7 +120,11 @@ function getIntent($jsonData){
             $objOutput->auxillary=$dataArray2;
             break;
         case "get_news":
-            $dataArray=getRSS($stockId,False);
+            if($scope=="FTSE100"){
+                $dataArray=getRSS($stockId,True);
+            }else{
+                $dataArray=getRSS($stockId,False);
+            }
             break;
         case "get_sector_performance":
             $dataArray=getSector350($stockId);
@@ -124,7 +132,10 @@ function getIntent($jsonData){
         case "get_buy_or_sell":
             $dataArray=getBuyOrSell($stockId,$buyorsell);
             $objOutput->buyOrSell=$buyorsell;
-            break;    
+            break;
+        case "get_sector_rising_or_falling":
+            $dataArray=sectorRiseOrFall($stockId,$timeframe);
+            break;
         default:
             echo "error";
             $error=1;
@@ -136,13 +147,15 @@ function getIntent($jsonData){
             $conn=db_connection();
             insert_query($conn, $queryString, $intent, $stockId);
         }else{
-            /*if($intent=="Default Fallback Intent"){
-                $dataArray=resolve_invalid_intent("",$queryString);
+            if($intent=="Default Fallback Intent"){
+                
             }else{
-                $dataArray=resolve_invalid_entity("",$queryString);
-            }*/
+                //$dataArray=resolve_invalid_entity("",$queryString);
+                //get_corrections(,$)
+            }
         }
     }else{
+
         $dataArray=getDataStockGeneric($intent,$stockId);
     }
     

@@ -51,26 +51,31 @@ ini_set('display_errors', '1');
 	}
 	
     function scanCSV($search){
-        $file = fopen("ftse350.csv","r");
-
-        while(! feof($file)){
-            $csv=fgetcsv($file);
-                if($search == $csv[0]){
-                        if($csv[1] !== ""){
-                                $tickers = array($csv[1]);
-                        }
-                        for($x = 2; $x < count($csv); $x++){
-                            if($csv[$x] !== ""){
-                                array_push($tickers, $csv[$x]);
-                            }
-                        }
-                    }
+        //echo $_SERVER['DOCUMENT_ROOT'];
+        
+        //file_get_contents("ftse350.csv","r");
+        //$file = fopen("ftse350.csv","r");
+        $csv = array_map('str_getcsv', file(__DIR__. '/ftse350.csv'));
+        //var_dump($csv);
+        foreach($csv as $row){
+            //var_dump($row);
+            if($search == $row[0]){
+                if($row[1] !== ""){
+                        $tickers = array($row[1]);
                 }
-        fclose($file);  
+                for($x = 2; $x < count($row); $x++){
+                    if($row[$x] !== ""){
+                        array_push($tickers, $row[$x]);
+                    }
+                }                
+            }
+        }
+        //var_dump($tickers);
         return $tickers;
     }
 	
     
+    //var_dump(getRSS("Banks",False));
 	function getRSS($search,$ftse100){
         $conn= db_connection();
         $rss = new DOMDocument();
