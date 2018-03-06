@@ -5,7 +5,7 @@ ini_set('display_errors', '1');
 ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 include_once('../Database/interface.php');
 include_once('dlPage.php');
-
+include_once('getSector.php');
 //fastScrape("BARC");
 function fastScrape($stockid){
         $html = (dlPage('https://finance.google.com/finance?q=LON%3A'.$stockid));

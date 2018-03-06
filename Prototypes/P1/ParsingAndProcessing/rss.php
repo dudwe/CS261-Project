@@ -2,13 +2,14 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
     include_once('../Database/interface.php');
+    include_once('getSector.php');
     include_once('../Database/SentimentAnalysis/analyse_sentiment.php');
 	//var_dump(getRSS("Fixed Line Telecommunications",True,$conn));
 
 
 	function get_tickers($sectorId){ // Create ticker list
         $conn=db_connection();
-   		$sql = "SELECT ticker_symbol FROM stocks WHERE sector_id = ".$sectorId;
+   		return getSector350("FTSE100");
 
 	    $result = $conn->query($sql);
 
