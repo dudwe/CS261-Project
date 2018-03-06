@@ -534,7 +534,7 @@ function get_faves($conn) {
         $sector_list[] = array(
             "id" => $row["sector_id"],
             "name" => $row["sector_name"],
-            "fav" => $row["fav"]
+            "fav" => $row["fav"],
             "poll_rate" => $row["poll_rate"]
         );
     }
