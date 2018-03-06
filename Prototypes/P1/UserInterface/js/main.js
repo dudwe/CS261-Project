@@ -100,8 +100,6 @@ $(document).ready(function() {
     },
     onEnd: function() {
       console.log("Dictation Ended.");
-      $("#query").val("ENDED");
-      checkQuery();
     },
     onResult: function(text) {
       console.log("Dictation Result.");
