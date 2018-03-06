@@ -517,7 +517,7 @@ function get_faves($conn) {
     $res = $conn->query($sql);
     while ($row = $res->fetch_assoc()) {
         $company_list[] = array(
-            "id" => $row["stock_id"],
+            "id" => $row["sid"],
             "ticker" => $row["ticker_symbol"],
             "name" => $row["stock_name"],
             "fav" => $row["fav"],
@@ -532,7 +532,7 @@ function get_faves($conn) {
     $res = $conn->query($sql);
     while ($row = $res->fetch_assoc()) {
         $sector_list[] = array(
-            "id" => $row["sector_id"],
+            "id" => $row["secid"],
             "name" => $row["sector_name"],
             "fav" => $row["fav"],
             "poll_rate" => $row["poll_rate"]
