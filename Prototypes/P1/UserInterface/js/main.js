@@ -85,23 +85,18 @@ $(document).ready(function() {
   const artyom = new Artyom();
   var support_speech = artyom.speechSupported();
   var support_recogn = artyom.recognizingSupported();
+  artyom.initialize({
+    lang: "en-GB",
+    debug: true
+  });
   console.log("Speech Synthesis Supported: " + support_speech);
   console.log("Speech Recognition Supported: " + support_recogn);
 
   //TODO
   var settings = {
     continuous: true,
-    onResult: function(text) {
-      console.log(text);
-      if (waiting) {
-
-      }
-      else {
-        $("#query").val($("#query").val() + text);
-      }
-    },
     onStart: function() {
-      console.log("Dictation started by the user"); //###
+      console.log("Dictation started by the user");
     },
     onEnd: function() {
       console.log("Dictation Ended.");
@@ -112,6 +107,7 @@ $(document).ready(function() {
       console.log("Dictation Result.");
       $("#query").val(text);
       checkQuery();
+      alert(text);
     }
   };
 
