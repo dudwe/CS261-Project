@@ -28,6 +28,55 @@ $(document).ready(function() {
     var timestamp = new Date().toUTCString();
     displayQuery(getFormattedDate(timestamp), "Trader ChatBot Prototype P1");
     displayResponseList(getFormattedDate(timestamp), ["Response JSON is output in console btw. FOR TESTING"]);
+
+    //Dropdown Choices
+    var dropdownArr = ["What is the share price for ",
+      "What is the point change of ",
+      "What is the percentage change of ",
+      "What is the bid for ",
+      "What is the offer for ",
+      "What is the open for ",
+      "What is the close for ",
+      "What is the low for ",
+      "What is the high for ",
+      "What is the revenue of ",
+      "What is the EPS of ",
+      "What is the volume of ",
+      "What is the average volume ",
+      "What is the market cap of ",
+      "What is the dividend yield of ",
+      "What is the PE Ratio of ",
+      "How many shares in issue for ",
+      "Any news on ",
+      "Performance for ",
+      "Conversion rate of USD to ",
+      "Conversion rate of GBP to ",
+      "Conversion rate of Euro to "];
+
+    $("#query").materialize_autocomplete({
+      limit: 5,
+      multiple: { enable: false },
+      dropdown: {
+        el: '#singleDropdown',
+        itemTemplate: '<li class="ac-item" data-id="<%= item.id %>" data-text=\'<%= item.text %>\'><a href="javascript:void(0)"><%= item.highlight %></a></li>'
+      },
+      getData: function(value, callback) {
+        var data  = [];
+        for (var i = 0; i < dropdownArr.length; i++) {
+          var id = "drop-" + i; //Loops through all dropdown choices.
+          if (dropdownArr[i].toUpperCase().includes(value)) {
+            var highlight = "<strong>" + dropdownArr[i] + "</strong>";
+            data.push({id: id, text: dropdownArr[i], highlight: highlight});
+          }
+        }
+        callback(value, data);
+      },
+      onSelect: function(item) {
+        $("#query").focus(); //Puts focus on the query input.
+      }
+    });
+
+    $("#query").focus(); //Puts focus on the query input.
   }
 
 /*----------------------------------------------------------------------------*/

@@ -11,11 +11,12 @@
   <meta name="description" content="">
   <meta name="keywords" content="chatbot trader ftse 100 chat bot assisant stock price">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> <!--jQuery-->
+  <script src="./js/jquery.materialize-autocomplete.min.js"></script> <!--jQuery Materialize Autocomplete UI-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css"> <!--Materialize CSS-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-  <script src="js/artyom.window.min.js"></script> <!--Artyom Speech API Wrapper-->
+  <script src="./js/artyom.window.min.js"></script> <!--Artyom Speech API Wrapper-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script> <!--Chart.js-->
-  <script src="js/main.js"></script> <!--Custom JS-->
+  <script src="./js/main.js"></script> <!--Custom JS-->
   <base href="" />
   <title>Trader ChatBot</title>
 </head>
@@ -57,9 +58,10 @@
       </div>
     </div>
     <div class="row p-t-1 m-t-1 m-b-0 p-b-0">
-      <div id="query-input" class="input-field col s10 offset-s1">
-        <input placeholder="Enter query here..." id="query" type="text" class="validate">
+      <div id="query-input" class="input-field col s10 offset-s1 ac-input">
+        <input placeholder="Enter query here..." id="query" type="text" class="validate" data-activates="singleDropdown" data-beloworigin="true" autocomplete="off">
       </div>
+      <ul id="singleDropdown" class="dropdown-content ac-dropdown"></ul>
     </div>
     <div id="query-error-div" class="row m-t-0 p-t-0">
       <div class="col s10 offset-s1">

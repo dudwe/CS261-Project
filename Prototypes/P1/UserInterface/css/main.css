@@ -298,7 +298,7 @@ body { font-family: 'News Cycle', sans-serif; }
 
 #chat-window {
   overflow-y: scroll;
-  height: 70vh;
+  height: 80vh;
   box-shadow: 0 2px 0 0 #c1c1c1!important;
   border-radius: 2px;
   padding: 1em 2em 1em 2em!important;
@@ -589,4 +589,47 @@ input.poll-rate-selector {
 @-webkit-keyframes flashred-text {
   0% { color: #e57373; }
   100% { color: #c62828; }
+}
+
+/*----------------------------------------------------------------------------*/
+/*Autocomplete*/
+
+.ac-appender {
+  padding: 0;
+  margin: 0;
+}
+
+.autocomplete {
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.autocomplete .ac-users {
+  padding-top: 0px;
+}
+
+.autocomplete .ac-users .chip {
+    -ms-flex: auto;
+    flex: auto;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+
+.autocomplete .ac-users .chip:last-child {
+    margin-right: 5px;
+}
+
+.autocomplete .ac-dropdown .ac-hover {
+    background: #eee;
+}
+
+.autocomplete .ac-input {
+    -ms-flex: 1;
+    flex: 1;
+    min-width: 150px;
+    padding-top: 0.6rem;
+}
+
+.autocomplete .ac-input input {
+    height: 2.4rem;
 }
