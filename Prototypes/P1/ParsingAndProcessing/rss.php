@@ -5,16 +5,11 @@ ini_set('display_errors', '1');
     include_once('getSector.php');
     include_once('../Database/SentimentAnalysis/analyse_sentiment.php');
 	//var_dump(getRSS("Fixed Line Telecommunications",True,$conn));
-
-
 	function get_tickers($sectorId){ // Create ticker list
         $conn=db_connection();
-   		return getSector350("FTSE100");
-
+        $sql = "SELECT ticker_symbol FROM stocks WHERE sector_id = ".$sectorId;
 	    $result = $conn->query($sql);
-
 	    $tickers= array();
-
 	    if ($conn->query($sql)) {
 	    	while($row = $result->fetch_assoc())
 	        {
@@ -25,9 +20,7 @@ ini_set('display_errors', '1');
 	            }
 	            array_push($tickers, $ticker);
 	        }
-
 	    	$result->close();
-
 	    	return $tickers;
 	    } else {
 	        echo "Error retrieving ticker symbols: " . $conn->error . "<br>";
@@ -35,17 +28,14 @@ ini_set('display_errors', '1');
 	    }
 	}
 		
-
 	
 	/*$res=getSingleSector("Banks");
 	print_r($res);
 	$tickers=get_tickers($res['sector_id']);
 	print_r($tickers);*/
-
     function getSingleSector($search){ // Create sectors list
         $conn=db_connection();
    		$sql = "SELECT sector_name,sector_id  FROM sectors WHERE sector_name = '".$search."'";
-
 	    $result = $conn->query($sql);
         
         return $res=$result->fetch_assoc();
@@ -104,8 +94,6 @@ ini_set('display_errors', '1');
             //echo $tickers;
         }
         
-
-
         $rss->load('https://feeds.finance.yahoo.com/rss/2.0/headline?s='
                     .$search.
                     '&region=UK&lang=en-US');
