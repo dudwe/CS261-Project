@@ -1074,7 +1074,7 @@ $(document).ready(function() {
         break;
       case "get_sector_performance": //TODO
         speechRow = getSpeechDisplay(speech);
-        stockTable = getStockDisplay(stock, json.auxillary.SharePrice, json.auxillary.PointChange, json.auxillary.PercentChange);
+        stockTable = getStockDisplay(stock, json.dataset.SharePrice, json.dataset.PointChange, json.dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_buy_or_sell":
