@@ -85,27 +85,27 @@ $(document).ready(function() {
   const artyom = new Artyom();
   var support_speech = artyom.speechSupported();
   var support_recogn = artyom.recognizingSupported();
+  artyom.initialize({
+    lang: "en-GB",
+    debug: true
+  });
   console.log("Speech Synthesis Supported: " + support_speech);
   console.log("Speech Recognition Supported: " + support_recogn);
 
+  //TODO
   var settings = {
     continuous: true,
-    onResult: function(text) {
-      console.log(text);
-      if (waiting) {
-
-      }
-      else {
-        $("#query").val($("#query").val() + text);
-      }
-    },
     onStart: function() {
-      console.log("Dictation started by the user"); //###
+      console.log("Dictation started by the user");
     },
     onEnd: function() {
-      console.log("Dictation stopped by the user"); //###
-      $("#query").val($("#query").val() + "hello");
-      checkQuery(); //###
+      console.log("Dictation Ended.");
+    },
+    onResult: function(text) {
+      console.log("Dictation Result.");
+      $("#query").val(text);
+      checkQuery();
+      alert(text);
     }
   };
 
@@ -148,7 +148,7 @@ $(document).ready(function() {
 
   //Toggles voice input.
   $("#btn-mic").click(function() {
-    var buttonText = $(this).children().first();
+    var buttonText = $("#mic-text");
     if (buttonText.text() === "mic") { //Start recording.
       if (support_recogn) { //Speech recognition is supported.
         buttonText.text("fiber_manual_record");
@@ -234,8 +234,9 @@ $(document).ready(function() {
 
   //Gets a jQuery object for a highlighted speech response row.
   function getSpeechDisplay(speech) {
-    var speechRow = $("<div class='m-0 p-0'><span class='quote'></span><span class='speech'></span><span class='quote'></span><div>");
-    speechRow.find(".quote").text('"');
+    //var speechRow = $("<div class='m-0 p-0'><span class='quote'></span><span class='speech'></span><span class='quote'></span><div>");
+    var speechRow = $("<div class='m-0 p-0'><span class='speech'></span><div>");
+    //speechRow.find(".quote").text('"');
     speechRow.find(".speech").text(speech);
     return speechRow;
   }
