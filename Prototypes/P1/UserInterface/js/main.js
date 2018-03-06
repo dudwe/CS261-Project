@@ -20,8 +20,9 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /* Initialisation*/
 
+  //Initialisation Operations.
   function initialisation() {
-    getFavourites();
+    getFavourites(); //Gets list of all companies and sectors.
     $("#fav-save").click(saveFavourites);
     $("#btn-send").click(submitQuery); //Redirect button click and ENTER to submitQuery function.
     var timestamp = new Date().toUTCString();
@@ -1072,7 +1073,7 @@ $(document).ready(function() {
         displayResponseList(timestamp, [speechRow, stockTable, graphRow]);
         createLineGraph(dataset);
         break;
-      case "get_sector_performance": //TODO
+      case "get_sector_performance":
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, json.dataset.SharePrice, json.dataset.PointChange, json.dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable]);
@@ -1090,7 +1091,7 @@ $(document).ready(function() {
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "Input Error": //TODO
+      case "Input Error":
         displayErrorResponse(timestamp, speech);
         break;
       default:
