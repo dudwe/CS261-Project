@@ -1091,6 +1091,15 @@ $(document).ready(function() {
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
+      case "get_sector_rising_or_falling":
+        speech = "Here is a summary of the " + stock + " sector performance.";
+        speechRow = getSpeechDisplay(speech);
+        var responseList = [speechRow];
+        for (var i = 0; i < dataset.length; i++) {
+          responseList.push(getStockDisplay(dataset.TickerSymbol, dataset.SharePrice, dataset.PointChange, dataset.PercentageChange));
+        }
+        displayResponseList(timestamp, responseList);
+        break;
       case "Input Error":
         displayErrorResponse(timestamp, speech);
         break;
