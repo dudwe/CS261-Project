@@ -3,6 +3,7 @@
   //TODO LINK FAVOURITE WITH DB LAYER
   //TODO LINK POLL WITH PARSING LAYER
   //TODO TEST VOICE INPUT
+  //###TODO### INDICATES USING DROPDOWNS
 
 $(document).ready(function() {
   $(".button-collapse").sideNav();
@@ -396,6 +397,7 @@ $(document).ready(function() {
         for (var j = 0; j < data.sectorList.length; j++) {
           sectorLog.add(data.sectorList[j]);
         }
+        $("select").material_select(); //###TODO###
       }
     });
   }
@@ -475,26 +477,31 @@ $(document).ready(function() {
     });
   }
 
+  //TODO
   //Adds a company row to the favourites modal.
   function addCompany(id, ticker, name, poll_rate, fav) {
     var tickerRow = "<td>" + ticker + "</td>";
     var nameRow = "<td>" + name + "</td>";
+
     var pollRow = "<td><input class='poll-rate-selector' data-id='" + id + "' ";
     pollRow += "type='number' min='0' max='1000' maxlength='4'";
-
-    if (poll_rate > 0) {
-      pollRow += "value='" + poll_rate + "'";
-    }
-    else {
-      pollRow += "value='0'";
-    }
-
+    if (poll_rate > 0) { pollRow += "value='" + poll_rate + "'"; }
+    else { pollRow += "value='0'"; }
     pollRow += "></td>";
+
+    //TODO
+    var testRow = "<td><div class='input-field col s12'><select>" +
+      "<option value='1' selected>5 Minutes</option>" +
+      "<option value='2'>15 Minutes</option>" +
+      "<option value='3'>1 Hour</option>" +
+      "<option value='4'>1 Day</option>" +
+      "</select></div></td>";
+
     var favRow = "<td><div class='switch'><label><input data-id='";
     favRow += id +  "' class='fav-company-switch' type='checkbox'";
     if (fav == "1") { favRow += " checked"; } //Marks the company as favourited.
     favRow += "><span class='lever'></span></label></div></td>";
-    var companyRow = "<tr>" + tickerRow + nameRow + pollRow + favRow + "</tr>";
+    var companyRow = "<tr>" + tickerRow + nameRow + pollRow + testRow + favRow + "</tr>"; //TODO
     $("#fav-company table tbody tr:last").after(companyRow); //Appends the company to the table.
   }
 
