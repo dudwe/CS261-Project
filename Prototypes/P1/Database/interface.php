@@ -1,5 +1,8 @@
 <?php
 
+error_reporting(E_ALL);
+ini_set("display_erros", E_ALL);
+
 include "globalvars.php";
 
 // ==================================================================
@@ -19,7 +22,15 @@ function  db_connection() {
         $conn = mysqli_connect($server, $user, $password, $database);
 
         if ($conn->connect_error) {
-            echo $conn->connect_error;
+
+            echo "HELLO SOMETHING IS WRONG";
+            $conn = mysqli_connect($server, $user, $password);
+            $conn->query("CREATE DATABASE " . $database);
+            $conn->select_db($database);
+
+            create_tables($conn);
+            populate_sectors($conn);
+            populate_stocks($conn);
         }
 
     }
