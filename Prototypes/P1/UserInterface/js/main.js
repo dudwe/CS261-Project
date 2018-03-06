@@ -148,7 +148,7 @@ $(document).ready(function() {
 
   //Toggles voice input.
   $("#btn-mic").click(function() {
-    var buttonText = $(this).children().first();
+    var buttonText = $("#mic-text");
     if (buttonText.text() === "mic") { //Start recording.
       if (support_recogn) { //Speech recognition is supported.
         buttonText.text("fiber_manual_record");
@@ -234,8 +234,9 @@ $(document).ready(function() {
 
   //Gets a jQuery object for a highlighted speech response row.
   function getSpeechDisplay(speech) {
-    var speechRow = $("<div class='m-0 p-0'><span class='quote'></span><span class='speech'></span><span class='quote'></span><div>");
-    speechRow.find(".quote").text('"');
+    //var speechRow = $("<div class='m-0 p-0'><span class='quote'></span><span class='speech'></span><span class='quote'></span><div>");
+    var speechRow = $("<div class='m-0 p-0'><span class='speech'></span><div>");
+    //speechRow.find(".quote").text('"');
     speechRow.find(".speech").text(speech);
     return speechRow;
   }
