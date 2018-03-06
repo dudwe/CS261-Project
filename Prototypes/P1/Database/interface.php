@@ -510,12 +510,19 @@ function get_faves($conn) {
     $sector_list = array();
 
     // Returns all stocks, with a 1 in column 'fav' if stock is in fav_stocks, 0 otherwise
-    $sql = "SELECT stock_id, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav FROM stocks";
+    $sql = "SELECT stock_id as sid, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav, IF (stock_id IN (SELECT stock_id FROM fav_stocks),(select notif_freq from fav_stocks where stock_id = sid),0) AS poll_rate FROM stocks";
+    // $sql = "SELECT stock_id, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav FROM stocks";
 
 
     $res = $conn->query($sql);
     while ($row = $res->fetch_assoc()) {
-        $company_list[] = array("id" => $row["stock_id"], "ticker" => $row["ticker_symbol"], "name" => $row["stock_name"], "fav" => $row["fav"]);
+        $company_list[] = array(
+            "id" => $row["stock_id"],
+            "ticker" => $row["ticker_symbol"],
+            "name" => $row["stock_name"],
+            "fav" => $row["fav"],
+            "poll_rate" => $row["poll_rate"]
+        );
     }
 
     // Returns all sectors, with a 1 in column 'fav' if sector is in fav_sectors, 0 otherwise
