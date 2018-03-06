@@ -100,22 +100,16 @@ function getIntent($jsonData){
         case "get_stock_performance":
             $objOutput->timeframe=$timeframe;
             $dataArray=getTimeframe($stockId,$timeframe);
-            if($timeframe=="" or $timeframe=='Today'){
-                if($stockId=="FTSE100"){
+            if($stockId=="FTSE100"){
                     $dataArray2=getSector350($stockId);
-                }
-                else{
+            }
+            else{
                     $dataArray2=fastScrape($stockId);
                     //$dataArray2=filterSummary($dataArray2);
-                }
-                
-            }else{
-                /*net change isnt given to us so this needs to be calculated*/
-                /*get the current price*/
-                /*calc the netchange from first value in data array and the current value*/
-                $dataArray2=fastScrape($stockId);
-                //$dataArray2=filterSummary($dataArray2);
+            }
+            if($timeframe!="" && $timeframe!='Today'){
                 $dataArray2=getChange($dataArray2,$dataArray);
+                
             }
             $objOutput->auxillary=$dataArray2;
             break;

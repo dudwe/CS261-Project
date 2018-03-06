@@ -95,13 +95,16 @@ function getHistoricalFTSE($startDate,$endDate){
     
      foreach($table->find('tr') as $tr){
         $day=array();
-        array_push($day,$tr->find('td',0)->plaintext);
+        $tmp=$tr->find('td',0)->plaintext;
+        $tmp=date("d/m/Y", strtotime($tmp));
+        array_push($day,$tmp);
         array_push($day,$tr->find('td',1)->plaintext);
         array_push($day,$tr->find('td',2)->plaintext);
         array_push($day,$tr->find('td',3)->plaintext);
         array_push($day,$tr->find('td',4)->plaintext);
         array_push($dataArray,$day);
      }
+     $dataArray=array_reverse($dataArray);
      return $dataArray;
 }
 
@@ -118,6 +121,7 @@ function getHistorical($ticker, $startDate, $endDate) {
     }
     $array=array_slice($array,1);
     array_pop ($array);
+    $array=array_reverse($array);
     return $array;
 }
 ?>

@@ -52,22 +52,24 @@
 
     <div id="overlay-container" class="m-t-1 m-b-1">
       <div id="overlay">
-        <a id="btn-speech" class="z-depth-2 right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Toggle Audio Output"><i class="material-icons">volume_off</i></a>
-        <a id="btn-mic" class="z-depth-2 right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Record Voice Input"><i class="material-icons">mic</i></a>
-        <a id="btn-send" class="z-depth-2 right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Submit Query"><i class="material-icons">send</i></a>
+        <div class="row m-0 p-0">
+          <div class="test-container">
+            <div class="test-left">
+              <div id="query-input" class="input-field col s10 offset-s1 ac-input left">
+                <input placeholder="Enter query here..." id="query" type="text" class="validate" data-activates="singleDropdown" data-beloworigin="true" autocomplete="off">
+              </div>
+              <span id="query-error-message">Query exceeds 250 characters.</span>
+              <ul id="singleDropdown" class="dropdown-content ac-dropdown"></ul>
+            </div>
+            <div class="test-right">
+              <a id="btn-speech" class="z-depth-2 right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Toggle Audio Output"><i class="material-icons">volume_off</i></a>
+              <a id="btn-mic" class="z-depth-2 right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Record Voice Input"><i class="material-icons">mic</i></a>
+              <a id="btn-send" class="z-depth-2 right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Submit Query"><i class="material-icons">send</i></a>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="row p-t-1 m-t-1 m-b-0 p-b-0">
-      <div id="query-input" class="input-field col s10 offset-s1 ac-input">
-        <input placeholder="Enter query here..." id="query" type="text" class="validate" data-activates="singleDropdown" data-beloworigin="true" autocomplete="off">
-      </div>
-      <ul id="singleDropdown" class="dropdown-content ac-dropdown"></ul>
-    </div>
-    <div id="query-error-div" class="row m-t-0 p-t-0">
-      <div class="col s10 offset-s1">
-        <span id="query-error-message">Query exceeds 250 characters.</span>
-      </div>
-    </div>
+    </div>    
   </div>
 
 </main>

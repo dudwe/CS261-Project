@@ -53,7 +53,7 @@
         //echo $res['sector_id'];
         $sql = "SELECT ticker_symbol FROM stocks where sector_id='".$res['sector_id']."'";
         $res = $conn->query($sql);
-        var_dump($res);
+        //var_dump($res);
         $result=array();
         while ($row = $res->fetch_assoc()) {
             //var_dump($row);
