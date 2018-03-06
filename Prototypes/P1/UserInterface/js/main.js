@@ -88,6 +88,7 @@ $(document).ready(function() {
   console.log("Speech Synthesis Supported: " + support_speech);
   console.log("Speech Recognition Supported: " + support_recogn);
 
+  //TODO
   var settings = {
     continuous: true,
     onResult: function(text) {
@@ -103,9 +104,14 @@ $(document).ready(function() {
       console.log("Dictation started by the user"); //###
     },
     onEnd: function() {
-      console.log("Dictation stopped by the user"); //###
-      $("#query").val($("#query").val() + "hello");
-      checkQuery(); //###
+      console.log("Dictation Ended.");
+      $("#query").val("ENDED");
+      checkQuery();
+    },
+    onResult: function(text) {
+      console.log("Dictation Result.");
+      $("#query").val(text);
+      checkQuery();
     }
   };
 
