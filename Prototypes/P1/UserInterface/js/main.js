@@ -1,6 +1,5 @@
 "use strict"; //Strict Mode.
 
-  //TODO GRAPH OUTPUT
   //TODO LINK FAVOURITE WITH DB LAYER
   //TODO LINK POLL WITH PARSING LAYER
   //TODO TEST VOICE INPUT
@@ -785,7 +784,7 @@ $(document).ready(function() {
     return newDate + ' ' + newTime;
   }
 
-  //TODO
+  //Creates a line graph plotting points for High, Low, Bid and Offer for a stock.
   function createLineGraph(dataset) {
     var ctx = $(".response-graph").get(-1).getContext("2d"); //Get context of the last canvas object.
 
@@ -894,7 +893,7 @@ $(document).ready(function() {
           speechRow = getSpeechDisplay(speech);
           displayResponseList(timestamp, [speechRow]);
         }
-        break; //TODO
+        break;
       case "get_currency_conversion":
         speech = "The conversion rate from " + json.from + " to " + json.to + " is " + parseFloat(dataset).toFixed(2) + ".";
         speechRow = getSpeechDisplay(speech);
@@ -1004,7 +1003,7 @@ $(document).ready(function() {
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_volume": //TODO ERROR MESSAGE RETURNED BEFORE JSON (UNDEFINED INDEX AVERAGEVOL
+      case "get_volume":
         speech += dataset.Volume;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
@@ -1033,7 +1032,7 @@ $(document).ready(function() {
         ]);
         displayResponseList(timestamp, [speechRow, infoRow]);
         break;
-      case "get_average_vol": //TODO ERROR MESSAGE RETURNED BEFORE JSON (UNDEFINED INDEX AVERAGE
+      case "get_average_vol":
         speech += dataset.AverageVol;
         speechRow = getSpeechDisplay(speech);
         infoRow = getInfoListDisplay([
@@ -1066,7 +1065,7 @@ $(document).ready(function() {
         newsRow = getNewsDisplay(dataset);
         displayResponseList(timestamp, [speechRow, newsRow]);
         break;
-      case "get_stock_performance": //TODO DATE CLOSE HIGH LOW OPEN VOLUME
+      case "get_stock_performance":
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, json.auxillary.SharePrice, json.auxillary.PointChange, json.auxillary.PercentChange);
         graphRow = getGraphDisplay();
@@ -1074,6 +1073,9 @@ $(document).ready(function() {
         createLineGraph(dataset);
         break;
       case "get_sector_performance": //TODO
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, json.auxillary.SharePrice, json.auxillary.PointChange, json.auxillary.PercentChange);
+        displayResponseList(timestamp, [speechRow, stockTable]);
         break;
       case "get_buy_or_sell":
         var movingAverages = dataset.movingAverages;
@@ -1101,8 +1103,7 @@ $(document).ready(function() {
     scrollToChatBottom(); //Scrolls to bottom of the chat window.
   }
 
-  ///TODO
-  //Returns a default speech for specific intents when currency has been converted.
+  //Returns the speech text when currency conversion is applies to a complex intent.
   function getCurrencyConvertSpeech(intent, stock) {
     switch (intent) {
       case "get_share_price":
