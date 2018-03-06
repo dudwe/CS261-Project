@@ -1107,7 +1107,7 @@ $(document).ready(function() {
         speechRow = getSpeechDisplay(speech);
         var responseList = [speechRow];
         for (var i = 0; i < dataset.length; i++) {
-          responseList.push(getStockDisplay(dataset.TickerSymbol, dataset.SharePrice, dataset.PointChange, dataset.PercentageChange));
+          responseList.push(getStockDisplay(dataset[i].TickerSymbol, dataset[i].SharePrice, dataset[i].PointChange, dataset[i].PercentChange));
         }
         displayResponseList(timestamp, responseList);
         break; //TODO TEST

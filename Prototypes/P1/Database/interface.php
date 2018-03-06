@@ -582,13 +582,13 @@ function update_fav_tables($conn, $json_obj) {
         if ($res->num_rows > 0) {
 
             // stock is in fav_stocks
-            $update_poll = "UPDATE fav_stocks SET notif_freq = " . $row["pollRate"] . " WHERE stock_id = " . $row["id"];
+            $update_poll = "UPDATE fav_stocks SET notif_freq = " . $row["poll_rate"] . " WHERE stock_id = " . $row["id"];
             $conn->query($update_poll);
 
         } else {
 
             // stock not yet in fav_stocks
-            insert_fav_stock_id($conn, $row["id"], $row["pollRate"]);
+            insert_fav_stock_id($conn, $row["id"], $row["poll_rate"]);
 
         }
 
@@ -604,13 +604,13 @@ function update_fav_tables($conn, $json_obj) {
         if ($res->num_rows > 0) {
 
             // sector is in fav_sectors
-            $update_poll = "UPDATE fav_sectors SET notif_freq = " . $row["pollRate"] . " WHERE sector_id = " . $row["id"];
+            $update_poll = "UPDATE fav_sectors SET notif_freq = " . $row["poll_rate"] . " WHERE sector_id = " . $row["id"];
             $conn->query($update_poll);
 
         } else {
 
             // sector not yet in fav_stock
-            insert_fav_sector_id($conn, $row["id"], $row["pollRate"]);
+            insert_fav_sector_id($conn, $row["id"], $row["poll_rate"]);
 
         }
 
