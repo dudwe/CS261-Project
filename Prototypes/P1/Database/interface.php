@@ -510,7 +510,7 @@ function get_faves($conn) {
     $sector_list = array();
 
     // Returns all stocks, with a 1 in column 'fav' if stock is in fav_stocks, 0 otherwise
-    $sql = "SELECT stock_id as sid, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav, IF (stock_id IN (SELECT stock_id FROM fav_stocks),(select notif_freq from fav_stocks where stock_id = sid),0) AS poll_rate FROM stocks";
+    $sql = "SELECT stock_id AS sid, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav, IF (stock_id IN (SELECT stock_id FROM fav_stocks),(SELECT notif_freq FROM fav_stocks WHERE stock_id = sid),0) AS poll_rate FROM stocks";
     // $sql = "SELECT stock_id, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav FROM stocks";
 
 
@@ -526,7 +526,8 @@ function get_faves($conn) {
     }
 
     // Returns all sectors, with a 1 in column 'fav' if sector is in fav_sectors, 0 otherwise
-    $sql = "SELECT sector_id, sector_name, IF (sector_id IN (SELECT sector_id FROM fav_sectors), 1, 0) AS fav FROM sectors";
+    $sql = "SELECT sector_id as secid, sector_name, IF (sector_id IN (SELECT sector_id FROM fav_sectors), 1, 0) AS fav, IF (sector_id IN (SELECT sector_id from fav_sectors),(SELECT notif_freq FROM fav_sectors WHERE sector_id = secid), 0) AS poll_rate FROM sectors";
+    // $sql = "SELECT sector_id, sector_name, IF (sector_id IN (SELECT sector_id FROM fav_sectors), 1, 0) AS fav FROM sectors";
 
     $res = $conn->query($sql);
     while ($row = $res->fetch_assoc()) {
