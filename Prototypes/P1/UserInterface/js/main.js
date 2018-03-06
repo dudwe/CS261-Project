@@ -293,16 +293,16 @@ $(document).ready(function() {
   }
 
   //Adds a company to the data structure and favourite modal.
-  //data :: {id: String, ticker: String, name: String, pollRate: Int, fav: Bool}
+  //data :: {id: String, ticker: String, name: String, poll_rate: Int, fav: Bool}
   companyLog.add = function(data) {
     this.list.push(data);
-    addCompany(data.id, data.ticker, data.name, data.pollRate, data.fav);
+    addCompany(data.id, data.ticker, data.name, data.poll_rate, data.fav);
   };
 
   companyLog.compareChanges = function() {
     var finalChangeLog = []; //List of all changes that differ from the stored list.
     for (var i = 0; i < this.changeLog.length; i++) {
-      var index = this.list.findIndex(e => ((e.id === this.changeLog[i].id) && ((e.fav != this.changeLog[i].fav) || (e.pollRate != this.changeLog[i].pollRate)))); //Finds index where company occurs and favourite is different.
+      var index = this.list.findIndex(e => ((e.id === this.changeLog[i].id) && ((e.fav != this.changeLog[i].fav) || (e.poll_rate != this.changeLog[i].poll_rate)))); //Finds index where company occurs and favourite is different.
       if (index !== -1) { //If the favourite is different add it to the finalised list.
         finalChangeLog.push(this.changeLog[i]);
       }
@@ -315,7 +315,7 @@ $(document).ready(function() {
       var index = this.list.findIndex(e => e.id === this.changeLog[i].id);  //Finds the index where the ID matches.
       if (index !== -1) { //If a matching ID is found, then update the favourite value.
         this.list[index].fav = this.changeLog[i].fav;
-        this.list[index].pollRate = this.changeLog[i].pollRate;
+        this.list[index].poll_rate = this.changeLog[i].poll_rate;
       }
     }
     this.clearChanges();
@@ -328,23 +328,23 @@ $(document).ready(function() {
       return companyID === e.id;
     });
     if (index !== -1) {
-      console.log("Rate: " + this.list[index].pollRate);
-      return this.list[index].pollRate;
+      console.log("Rate: " + this.list[index].poll_rate);
+      return this.list[index].poll_rate;
     }
     else { //No ID match.
       console.log("ERR");
-      return -1;
+      return 0;
     }
   };
 
   //Sets the poll rate for a specific company.
-  companyLog.setPollRate = function(companyID, pollRate) {
-    console.log("Setting poll rate for: " + companyID + " to " + pollRate);
+  companyLog.setPollRate = function(companyID, poll_rate) {
+    console.log("Setting poll rate for: " + companyID + " to " + poll_rate);
     var index = this.list.findIndex(function(e) {
       return companyID === e.id;
     });
     if (index !== -1) {
-      this.list[index].pollRate = pollRate;
+      this.list[index].poll_rate = poll_rate;
     }
   };
 
@@ -419,14 +419,26 @@ $(document).ready(function() {
 
     $(".fav-table-body-company tr:not(#company-no-result)").each(function() { //For each company row in the modal.
       var id = $(this).find(".poll-rate-selector").attr("data-id");
-      var pollRate = $(this).find(".poll-rate-selector").val();
+      var poll_rate = $(this).find(".poll-rate-selector").val();
       var fav = $(this).find(".fav-company-switch").prop("checked");
-      console.log("MODAL // COMPANY ID: " + id + " : " + fav + " : " + pollRate);
-      companyLog.addChange({id: id, fav: fav, pollRate: pollRate});
+      if (fav) {
+        fav = "1";
+      }
+      else {
+        fav = "0";
+      }
+      console.log("MODAL // COMPANY ID: " + id + " : " + fav + " : " + poll_rate);
+      companyLog.addChange({id: id, fav: fav, poll_rate: poll_rate});
     });
     $(".fav-table-body-sector tr:not(#sector-no-result)").each(function() { //For each sector row in the modal.
       var id = $(this).find(".fav-sector-switch").attr("data-id");
       var fav = $(this).find(".fav-sector-switch").prop("checked");
+      if (fav) {
+        fav = "1";
+      }
+      else {
+        fav = "0";
+      }
       console.log("MODAL //SECTOR ID: " + id + " : " + fav);
       sectorLog.addChange({id: id, fav: fav});
     });
@@ -463,14 +475,14 @@ $(document).ready(function() {
   }
 
   //Adds a company row to the favourites modal.
-  function addCompany(id, ticker, name, pollRate, fav) {
+  function addCompany(id, ticker, name, poll_rate, fav) {
     var tickerRow = "<td>" + ticker + "</td>";
     var nameRow = "<td>" + name + "</td>";
     var pollRow = "<td><input class='poll-rate-selector' data-id='" + id + "' ";
     pollRow += "type='number' min='0' max='1000' maxlength='4'";
 
-    if (pollRate > 0) {
-      pollRow += "value='" + pollRate + "'";
+    if (poll_rate > 0) {
+      pollRow += "value='" + poll_rate + "'";
     }
     else {
       pollRow += "value='0'";
@@ -479,7 +491,7 @@ $(document).ready(function() {
     pollRow += "></td>";
     var favRow = "<td><div class='switch'><label><input data-id='";
     favRow += id +  "' class='fav-company-switch' type='checkbox'";
-    if (fav) { favRow += " checked"; } //Marks the company as favourited.
+    if (fav == "1") { favRow += " checked"; } //Marks the company as favourited.
     favRow += "><span class='lever'></span></label></div></td>";
     var companyRow = "<tr>" + tickerRow + nameRow + pollRow + favRow + "</tr>";
     $("#fav-company table tbody tr:last").after(companyRow); //Appends the company to the table.
@@ -490,7 +502,7 @@ $(document).ready(function() {
     var nameRow = "<td>" + name + "</td>";
     var favRow = "<td><div class='switch'><label><input data-id='";
     favRow += id + "' class='fav-sector-switch' type='checkbox'";
-    if (fav) { favRow += " checked"; } //Marks the sector as favourited.
+    if (fav == "1") { favRow += " checked"; } //Marks the sector as favourited.
     favRow += "><span class='lever'></span></label></div></td>";
     var sectorRow = "<tr>" + nameRow + favRow + "</tr>";
     $("#fav-sector table tbody tr:last").after(sectorRow); //Appends the sector to the table.
@@ -553,8 +565,8 @@ $(document).ready(function() {
     var notificationObj = []; //List of all companies to send notification polls for.
     for (var i = 0; i < companyLog.list.length; i++) {
       var company = companyLog.list[i];
-      if ((company.fav === true) && (company.pollRate > 0)) {
-        if (pollCount % company.pollRate === 0) { //If current time indicates favourite should be polled.
+      if ((company.fav == "1") && (company.poll_rate > 0)) {
+        if (pollCount % company.poll_rate == 0) { //If current time indicates favourite should be polled.
           notificationObj.push({id: company.id, lastRec: company.lastRec}); //TODO
         }
       }
@@ -586,20 +598,20 @@ $(document).ready(function() {
     console.log("Change Poll Rates");
     $(".poll-rate-selector").each(function(index, element) {
       var companyID = $(this).attr("data-id");
-      var pollRate = $(this).val();
-      var valid = validatePollRate(pollRate);
+      var poll_rate = $(this).val();
+      var valid = validatePollRate(poll_rate);
       if (!valid) { //Replace existing invalid poll rate with valid stored poll rate.
-        pollRate = companyLog.getPollRate(companyID);
-        $(this).val(pollRate);
+        poll_rate = companyLog.getPollRate(companyID);
+        $(this).val(poll_rate);
       }
-      console.log(companyID + " at rate " + pollRate + " is " + valid);
+      console.log(companyID + " at rate " + poll_rate + " is " + valid);
     });
   }
 
   //Validates a poll rate to ensure it is an integer between 0 and 1000 inclusive.
-  function validatePollRate(pollRate) {
-    if ($.isNumeric(pollRate) && Math.floor(pollRate) == (+pollRate)) {
-      return (pollRate >= 0 && pollRate <= 1000);
+  function validatePollRate(poll_rate) {
+    if ($.isNumeric(poll_rate) && Math.floor(poll_rate) == (+poll_rate)) {
+      return (poll_rate >= 0 && poll_rate <= 1000);
     }
     else {
       return false;
@@ -856,7 +868,6 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /*Reponse Types*/
 
-  //TODO
   //Parse a response and execute display the appropriate data based off of the response intent.
   function parseResponse(data) {
     console.log("Parsing Response");
@@ -1099,7 +1110,7 @@ $(document).ready(function() {
           responseList.push(getStockDisplay(dataset.TickerSymbol, dataset.SharePrice, dataset.PointChange, dataset.PercentageChange));
         }
         displayResponseList(timestamp, responseList);
-        break;
+        break; //TODO TEST
       case "Input Error":
         displayErrorResponse(timestamp, speech);
         break;
