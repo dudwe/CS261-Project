@@ -103,10 +103,9 @@ $(document).ready(function() {
       console.log("Dictation Ended.");
     },
     onResult: function(text) {
-      console.log("Dictation Result.");
+      console.log("Dictation Result: " + text);
       $("#query").val(text);
       checkQuery();
-      alert(text);
     }
   };
 
@@ -422,26 +421,18 @@ $(document).ready(function() {
 
     $(".fav-table-body-company tr:not(#company-no-result)").each(function() { //For each company row in the modal.
       var id = $(this).find(".poll-rate-selector").attr("data-id");
-      var poll_rate = $(this).find(".poll-rate-selector").val();
+      var poll_rate = $(this).find(".poll-rate-selector").val(); //###TODO###
+      var poll_rate2 = $(this).find(".select-dropdown").val(); //###TODO###
+      console.log(poll_rate2); //###TODO###
       var fav = $(this).find(".fav-company-switch").prop("checked");
-      if (fav) {
-        fav = "1";
-      }
-      else {
-        fav = "0";
-      }
-      console.log("MODAL // COMPANY ID: " + id + " : " + fav + " : " + poll_rate);
-      companyLog.addChange({id: id, fav: fav, poll_rate: poll_rate});
+      fav = fav ? "1" : "0";
+      console.log("MODAL // COMPANY ID: " + id + " : " + fav + " : " + poll_rate2); //##TODO###
+      companyLog.addChange({id: id, fav: fav, poll_rate: poll_rate2}); //##TODO###
     });
     $(".fav-table-body-sector tr:not(#sector-no-result)").each(function() { //For each sector row in the modal.
       var id = $(this).find(".fav-sector-switch").attr("data-id");
       var fav = $(this).find(".fav-sector-switch").prop("checked");
-      if (fav) {
-        fav = "1";
-      }
-      else {
-        fav = "0";
-      }
+      fav = fav ? "1" : "0";
       console.log("MODAL //SECTOR ID: " + id + " : " + fav);
       sectorLog.addChange({id: id, fav: fav});
     });
@@ -490,7 +481,7 @@ $(document).ready(function() {
     pollRow += "></td>";
 
     //TODO
-    var testRow = "<td><div class='input-field col s12'><select>" +
+    var testRow = "<td><div class='input-field col s12'><select class='pollSelect'>" +
       "<option value='1' selected>5 Minutes</option>" +
       "<option value='2'>15 Minutes</option>" +
       "<option value='3'>1 Hour</option>" +
