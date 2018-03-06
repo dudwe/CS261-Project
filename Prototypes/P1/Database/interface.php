@@ -19,11 +19,10 @@ function  db_connection() {
         // Use the global variables as defined in globalvars.php
         global $server, $user, $password, $database;
 
-        $conn = mysqli_connect($server, $user, $password, $database);
+        $conn = mysqli_connect($server, $user, $password);
 
-        if ($conn->connect_error) {
+        if ($conn->select_db($database) == 0) {
 
-            echo "HELLO SOMETHING IS WRONG";
             $conn = mysqli_connect($server, $user, $password);
             $conn->query("CREATE DATABASE " . $database);
             $conn->select_db($database);
