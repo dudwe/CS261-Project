@@ -15,8 +15,14 @@ function  db_connection() {
         global $server, $user, $password, $database;
 
         $conn = mysqli_connect($server, $user, $password, $database);
-        // $conn = mysqli_connect("localhost", "bank", "password","traderbot_db");
+
+        // If the database doesn't exist
+        if ($conn->connect_error) {
+            echo $conn->connect_error;
+        }
+
     }
+
     return $conn;
 }
 

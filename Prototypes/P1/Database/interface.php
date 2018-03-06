@@ -17,6 +17,11 @@ function  db_connection() {
         global $server, $user, $password, $database;
 
         $conn = mysqli_connect($server, $user, $password, $database);
+
+        if ($conn->connect_error) {
+            echo $conn->connect_error;
+        }
+
     }
 
     return $conn;
@@ -486,29 +491,6 @@ function insert_fav_sector_id($conn, $sector_id, $freq) {
 // =                           PROCESSING                           =
 // ==================================================================
 
-/* Return JSON object of all favourite stocks */
-// function get_fav_stocks($conn) {
-//
-//     $sql = "SELECT stock_id,ticker_symbol,stock_name FROM stocks WHERE stock_id IN (SELECT stock_id FROM fav_stocks)";
-//
-//     if (($res = $conn->query($sql)) !== TRUE) {
-//         echo $sql . "<br>Error: " . $conn->error . "<br>";
-//         return 0;
-//     }
-//
-//     $arr = array();
-//
-//     while ($row = $res->fetch_assoc()) {
-//
-//         $arr[] = ['id' => $row["stock_id"], 'ticker' => $row["ticker_symbol"], 'name' => $row["stock_name"]];
-//
-//     }
-//
-//     $fav_stocks = json_encode($arr);
-//     return $fav_stocks;
-//
-// }
-
 /* Return JSON object of all favourite stocks and sectors */
 function get_faves($conn) {
 
@@ -676,8 +658,11 @@ function learn_sectors($conn) {
 }
 
 /* Suggest stocks to track based on the sectors learned */
-function suggest_stock_track($conn) {
+function suggest_stock_track($conn, $sectors) {
 
+    foreach ($sectors as $s) {
+
+    }
 
 }
 
@@ -689,11 +674,9 @@ function learn_stocks($conn) {
 
 }
 
-// TODO: error correction
-
-function resolve_invalid_intent($conn, $intent) {
-
-}
+// ==================================================================
+// =                     ERROR CORRECTION                           =
+// ==================================================================
 
 function resolve_invalid_entity($conn, $entity) {
 

@@ -3,3 +3,6 @@
 [x] suggestions - look at sectors of fav stocks, stocks of fav_sectors
 [x] error correction 
 [x] sentiment analysis
+
+[ ] suggest_query
+[ ] suggest stock to track
