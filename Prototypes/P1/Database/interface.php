@@ -55,7 +55,7 @@ function create_sectors($conn) {
     // Create sectors
     $sql = "CREATE TABLE IF NOT EXISTS sectors (
         sector_id       integer NOT NULL AUTO_INCREMENT,
-        sector_name     varchar(32),
+        sector_name     varchar(50),
         scrape_url      varchar(512),
         PRIMARY KEY (sector_id)
     )";
@@ -74,7 +74,7 @@ function create_stocks($conn) {
     // Create stocks
     $sql = "CREATE TABLE IF NOT EXISTS stocks (
         stock_id        integer NOT NULL AUTO_INCREMENT,
-        stock_name      varchar(32),
+        stock_name      varchar(50),
         ticker_symbol   varchar(4),
         sector_id       integer not null,
         scrape_url      varchar(512),
