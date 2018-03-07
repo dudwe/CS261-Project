@@ -97,6 +97,7 @@ ini_set('display_errors', '1');
         $rss->load('https://feeds.finance.yahoo.com/rss/2.0/headline?s='
                     .$search.
                     '&region=UK&lang=en-US');
+        
         $feed = array();
         
         foreach ($rss->getElementsByTagName('item') as $node) {

@@ -9,7 +9,7 @@ ini_set('display_errors', '1');
 
     //echo "test";
 
-dialogCheck("convert the share price of Tesco");
+
 function dialogCheck($query){
     try {
         $client = new Client('f4bc3c425f1c4e6b9c52f21493decb19');
@@ -22,25 +22,65 @@ function dialogCheck($query){
           
         } catch (\Exception $error) {
     }
-    //var_dump($response);
+    var_dump($response);
     $response=json_encode($response);
     $array = json_decode($response, true);
     $arrayparam=$array['result']['parameters'];
     $stockId="";
-    if(!empty($arrayparam)){
-        if(array_key_exists('stocks',$arrayparam)){
-            $stockId = $array['result']['parameters']['stocks'];
+     $intent = $array['result']['metadata']['intentName'];
+    if($intent!="Default Fallback Intent"){
+        if(!empty($arrayparam)){
+            if(array_key_exists('stocks',$arrayparam)){
+                if($array['result']['parameters']['stocks']==""){
+                    $intent="Default Fallback Intent";
+                }
+                $stockId = $array['result']['parameters']['stocks'];
+            }
+            else if (array_key_exists('sectors',$arrayparam)){
+                if($array['result']['parameters']['sectors']==""){
+                    $intent="Default Fallback Intent";
+                }            
+                $stockId = $array['result']['parameters']['sectors'];
+            }else if (array_key_exists('stocksandsectors',$arrayparam)){
+                if($array['result']['parameters']['stocksandsectors']==""){
+                    $intent="Default Fallback Intent";
+                }            
+                $stockId = $array['result']['parameters']['stocksandsectors'];
+            }else{
+                $stockId=="";
+                //$stockId = $array['result']['parameters']['currency'];
+            }
         }
-        else if (array_key_exists('sectors',$arrayparam)){
-            $stockId = $array['result']['parameters']['sectors'];
-        }else if (array_key_exists('stocksandsectors',$arrayparam)){
-            $stockId = $array['result']['parameters']['stocksandsectors'];
-        }else{
-            $stockId = $array['result']['parameters']['currency'];
+
+        if(array_key_exists('intent_convert',$arrayparam)){
+            if($array['result']['parameters']['intent_convert']==""){
+                $intent="Default Fallback Intent";
+            }
+            $intentConvert=$array['result']['parameters']['intent_convert'];
+        }
+        if(array_key_exists('currency',$arrayparam)){
+            if($array['result']['parameters']['currency']==""){
+                $intent="Default Fallback Intent";
+            }
+            $currency=$array['result']['parameters']['currency'];
+        }    
+        if(array_key_exists('currency1',$arrayparam)){
+            if($array['result']['parameters']['currency1']==""){
+                $intent="Default Fallback Intent";
+            }
+            $currency1=$array['result']['parameters']['currency1'];
+        }   
+        if(array_key_exists('time-frame',$arrayparam)){
+            $timeframe=$array['result']['parameters']['time-frame'];
+        }   
+        if(array_key_exists('buy-sell-time-frame',$arrayparam)){
+            $buyorsell=$array['result']['parameters']['buy-sell-time-frame'];
+        }  
+        if(array_key_exists('scope',$arrayparam)){
+            $scope=$array['result']['parameters']['scope'];
         }
     }
-    $intent = $array['result']['metadata']['intentName'];
-    if ($stockId=="" or $intent=="Default Fallback Intent"){
+    if ($intent=="Default Fallback Intent"){
         echo "failed";
         return False;
     }else{

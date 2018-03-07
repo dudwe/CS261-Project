@@ -57,6 +57,7 @@ function convertCurrency($from,$to,$amount){
 
     $regularExpression = '#\<span class=bld\>(.+?)\<\/span\>#s';
     preg_match($regularExpression, $response, $finalData);
+
     $rate = $finalData[0];
     $rate = strip_tags($rate);
     $rate = substr($rate, 0, -4);
