@@ -61,8 +61,8 @@ include "../interface.php";
 
 $conn = db_connection();
 
-//$faves = get_faves($conn);
-//echo $faves;
+$faves = get_faves($conn);
+echo $faves;
 
 //update_fav_tables($conn, $json);
 

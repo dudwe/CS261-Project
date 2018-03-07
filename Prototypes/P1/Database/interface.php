@@ -655,16 +655,20 @@ function get_faves($conn) {
     }
 
     // Returns all sectors, with a 1 in column 'fav' if sector is in fav_sectors, 0 otherwise
-    $sql = "SELECT sector_id as secid, sector_name, IF (sector_id IN (SELECT sector_id FROM fav_sectors), 1, 0) AS fav, IF (sector_id IN (SELECT sector_id from fav_sectors),(SELECT notif_freq FROM fav_sectors WHERE sector_id = secid), 0) AS poll_rate FROM sectors";
+    $sql = "SELECT sector_id as secid, sector_name, IF (sector_id IN (SELECT sector_id FROM fav_sectors), 1, 0) AS fav FROM sectors";
     // $sql = "SELECT sector_id, sector_name, IF (sector_id IN (SELECT sector_id FROM fav_sectors), 1, 0) AS fav FROM sectors";
 
     $res = $conn->query($sql);
+
+    if (!$res)
+        trigger_error('Invalid query: ' . $conn->error);
+
+
     while ($row = $res->fetch_assoc()) {
         $sector_list[] = array(
             "id" => $row["secid"],
             "name" => $row["sector_name"],
             "fav" => $row["fav"],
-            "poll_rate" => $row["poll_rate"]
         );
     }
 
