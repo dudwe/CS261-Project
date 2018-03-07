@@ -539,7 +539,7 @@ function insert_last_ping_stock($conn, $stock_id, $recommendation) {
 
     $datetime = date("Y-m-d H:i:s");
 
-    $sql = "INSERT INTO last_pinged_stocks (stock_id, last_ping, recommendation) VALUES (" . $stock_id . ",'" . $datetime . "','null')";
+    $sql = "INSERT INTO last_pinged_stocks (stock_id, last_ping, recommendation) VALUES (" . $stock_id . ",'" . $datetime . "','Not Selected')";
 
     if ($conn->query($sql) === TRUE) {
         return 1;
@@ -554,7 +554,7 @@ function insert_last_ping_sector($conn, $sector_id, $recommendation) {
 
     $datetime = date("Y-m-d H:i:s");
 
-    $sql = "INSERT INTO last_pinged_sectors (sector_id, last_ping, recommendation) VALUES (" . $sector_id . ",'" . $datetime . "','null')";
+    $sql = "INSERT INTO last_pinged_sectors (sector_id, last_ping, recommendation) VALUES (" . $sector_id . ",'" . $datetime . "','Not Selected')";
 
     if ($conn->query($sql) === TRUE) {
         return 1;
@@ -708,26 +708,33 @@ function update_fav_tables($conn, $json_obj) {
     // ID, FAV, POLLRATE
     foreach ($stock_list as $row) {
 
-        // First test existence
-        $exists = "SELECT stock_id, notif_freq FROM fav_stocks WHERE stock_id = " . $row["id"];
+        if ($row["fav"] == 0) {
 
-        echo $row["poll_rate"] . "<BR>";
-
-        $res = $conn->query($exists);
-
-        if ($res->num_rows > 0) {
-
-            // stock is in fav_stocks
-            $update_poll = "UPDATE fav_stocks SET notif_freq = '" . 
-                $row["poll_rate"] . "' WHERE stock_id = " . 
-                $row["id"];
-
-            $conn->query($update_poll);
+            $sql = "DELETE FROM fav_stocks WHERE stock_id = " . $row["id"];
+            $conn->query($sql);
 
         } else {
 
-            // stock not yet in fav_stocks
-            insert_fav_stock_id($conn, $row["id"], $row["poll_rate"]);
+            // First test existence
+            $exists = "SELECT stock_id FROM fav_stocks WHERE stock_id = " . $row["id"];
+
+            $res = $conn->query($exists);
+
+            if ($res->num_rows > 0) {
+
+                // stock is in fav_stocks
+                $update_poll = "UPDATE fav_stocks SET notif_freq = '" . 
+                    $row["poll_rate"] . "' WHERE stock_id = " . 
+                    $row["id"];
+
+                $conn->query($update_poll);
+
+            } else {
+
+                // stock not yet in fav_stocks
+                insert_fav_stock_id($conn, $row["id"], $row["poll_rate"]);
+
+            }
 
         }
 
@@ -735,25 +742,27 @@ function update_fav_tables($conn, $json_obj) {
 
     foreach ($sector_list as $row) {
 
-        // Test existence
-        $exists = "SELECT sector_id, notif_freq FROM fav_sectors WHERE sector_id = " . $row["id"];
+        if ($row["fav"] == 0) {
 
-        $res = $conn->query($exists);
-
-        if ($res->num_rows > 0) {
-
-            // sector is in fav_sectors
-            $update_poll = "UPDATE fav_sectors SET notif_freq = '" .
-                $row["[poll_rate"] .
-                "' WHERE sector_id = " .
-                $row["id"];
-
-            $conn->query($update_poll);
+            $sql = "DELETE FROM fav_sectors WHERE sector_id = " . $row["id"];
+            $conn->query($sql);
 
         } else {
 
-            // sector not yet in fav_stock
-            insert_fav_sector_id($conn, $row["id"]);
+            // Test existence
+            $exists = "SELECT sector_id FROM fav_sectors WHERE sector_id = " . $row["id"];
+
+            $res = $conn->query($exists);
+
+            if (!$res)
+                trigger_error('Invalid query: ' . $conn->error);
+
+            if ($res->num_rows <= 0) {
+
+                // sector not yet in fav_stock
+                insert_fav_sector_id($conn, $row["id"]);
+
+            }
 
         }
 
