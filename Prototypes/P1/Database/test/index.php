@@ -27,6 +27,47 @@
         <input type="submit" value="Suggest me a query!">
     </form>
 
+<?php
+$data = array(
+    "companyList" => array(
+        array(
+            "id" => 1,
+            "fav" => 1,
+            "poll_rate" => "5 Minutes"
+        ),
+        array(
+            "id" => 2,
+            "fav" => 1,
+            "poll_rate" => "1 Hour"
+        )
+    ),
+    "sectorList" => array(
+        array(
+            "id" => 1,
+            "fav" => 0
+        ),
+        array(
+            "id" => 2,
+            "fav" => 1
+        )
+    )
+);
+
+$json = json_encode($data);
+
+echo $json . "<BR>";
+
+include "../interface.php";
+
+$conn = db_connection();
+
+//$faves = get_faves($conn);
+//echo $faves;
+
+//update_fav_tables($conn, $json);
+
+?>
+
 </body>
 
 </html>

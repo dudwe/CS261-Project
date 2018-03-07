@@ -40,7 +40,8 @@ function  db_connection() {
 function create_tables($conn) {
 
     if (create_sectors($conn) && create_stocks($conn) && create_queries($conn) &&
-        create_history($conn) && create_fav_stocks($conn) && create_fav_sectors($conn)) {
+        create_history($conn) && create_fav_stocks($conn) && create_fav_sectors($conn) &&
+        create_last_pinged_stocks($conn) && create_last_pinged_sectors($conn)) {
         echo "Database created successfully!<br>";
         return 1;
     } else {
@@ -155,7 +156,6 @@ function create_fav_sectors($conn) {
     $sql = "CREATE TABLE IF NOT EXISTS fav_sectors (
         sector_id   integer,
         date_added  Date,
-        notif_freq  integer,
         FOREIGN KEY (sector_id) REFERENCES sectors(sector_id) ON DELETE CASCADE
     )";
 
@@ -478,7 +478,7 @@ return 0;
 function insert_fav_stock($conn, $stock_name, $freq) {
 
     $date = date("Y-m-d");
-    $sql = "INSERT INTO fav_stocks (stock_id, date_added, notif_freq) SELECT stock_id,'" . $date . "'," . $freq . " FROM stocks WHERE stock_name = '" . $stock_name . "'";
+    $sql = "INSERT INTO fav_stocks (stock_id, date_added, notif_freq) SELECT stock_id,'" . $date . "','" . $freq . "' FROM stocks WHERE stock_name = '" . $stock_name . "'";
 
     if ($conn->query($sql) === TRUE) {
         return 1;
@@ -493,7 +493,7 @@ function insert_fav_stock_id($conn, $stock_id, $freq) {
 
     $date = date("Y-m-d");
 
-    $sql = "INSERT INTO fav_stocks (stock_id, date_added, notif_freq) VALUES (" . $stock_id . ",'" . $date . "',". $freq . ")";
+    $sql = "INSERT INTO fav_stocks (stock_id, date_added, notif_freq) VALUES (" . $stock_id . ",'" . $date . "','". $freq . "')";
 
     if ($conn->query($sql) === TRUE) {
         return 1;
@@ -508,7 +508,7 @@ function insert_fav_stock_id($conn, $stock_id, $freq) {
 function insert_fav_sector($conn, $sector_name, $freq) {
 
     $date = date("Y-m-d");
-    $sql = "INSERT INTO fav_stocks (stock_id, date_added, notif_freq) SELECT sector_id,'" . $date . "'," . $freq . " FROM sectors WHERE sector_name = '" . $sector_name . "'";
+    $sql = "INSERT INTO fav_stocks (stock_id, date_added, notif_freq) SELECT sector_id,'" . $date . "','" . $freq . "' FROM sectors WHERE sector_name = '" . $sector_name . "'";
 
     if ($conn->query($sql) === TRUE) {
         return 1;
@@ -520,11 +520,11 @@ function insert_fav_sector($conn, $sector_name, $freq) {
 }
 
 /* Insert into fav_sectors using the sector_id */
-function insert_fav_sector_id($conn, $sector_id, $freq) {
+function insert_fav_sector_id($conn, $sector_id) {
 
     $date = date("Y-m-d");
 
-    $sql = "INSERT INTO fav_sectors (sector_id, date_added, notif_freq, last_notif) VALUES (" . $sector_id . ",'" . $date . "'," . $freq . ")";
+    $sql = "INSERT INTO fav_sectors (sector_id, date_added) VALUES (" . $sector_id . ",'" . $date . "')";
 
     if ($conn->query($sql) === TRUE) {
         return 1;
@@ -627,8 +627,6 @@ function update_recommendations($conn, $json) {
 
 }
 
-// TODO: find recommendations for ALL fav_stocks
-
 // ==================================================================
 // =                           PROCESSING                           =
 // ==================================================================
@@ -642,9 +640,8 @@ function get_faves($conn) {
     $sector_list = array();
 
     // Returns all stocks, with a 1 in column 'fav' if stock is in fav_stocks, 0 otherwise
-    $sql = "SELECT stock_id AS sid, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav, IF (stock_id IN (SELECT stock_id FROM fav_stocks),(SELECT notif_freq FROM fav_stocks WHERE stock_id = sid), 'Not Selected') AS poll_rate FROM stocks";
+    $sql = "SELECT stock_id AS sid, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav, IF (stock_id IN (SELECT stock_id FROM fav_stocks),(SELECT notif_freq FROM fav_stocks WHERE stock_id = sid), 'null') AS poll_rate FROM stocks";
     // $sql = "SELECT stock_id, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav FROM stocks";
-
 
     $res = $conn->query($sql);
     while ($row = $res->fetch_assoc()) {
@@ -706,21 +703,27 @@ function update_fav_tables($conn, $json_obj) {
 
     // ID, FAV, POLLRATE
     foreach ($stock_list as $row) {
+
         // First test existence
-        $exists = "SELECT stock_id FROM fav_stocks WHERE stock_id = " . $row["id"];
+        $exists = "SELECT stock_id, notif_freq FROM fav_stocks WHERE stock_id = " . $row["id"];
+
+        echo $row["poll_rate"] . "<BR>";
 
         $res = $conn->query($exists);
 
         if ($res->num_rows > 0) {
 
             // stock is in fav_stocks
-            $update_poll = "UPDATE fav_stocks SET notif_freq = " . $row["poll_rate"] . " WHERE stock_id = " . $row["id"];
+            $update_poll = "UPDATE fav_stocks SET notif_freq = '" . 
+                $row["poll_rate"] . "' WHERE stock_id = " . 
+                $row["id"];
+
             $conn->query($update_poll);
 
         } else {
 
             // stock not yet in fav_stocks
-            insert_fav_stock_id($conn, $row["id"], $row["poll_rate"]);
+            insert_fav_stock_id($conn, $row["id"], $row["notif_freq"]);
 
         }
 
@@ -729,20 +732,24 @@ function update_fav_tables($conn, $json_obj) {
     foreach ($sector_list as $row) {
 
         // Test existence
-        $exists = "SELECT sector_id FROM fav_sectors WHERE sector_id = " . $row["id"];
+        $exists = "SELECT sector_id, notif_freq FROM fav_sectors WHERE sector_id = " . $row["id"];
 
         $res = $conn->query($exists);
 
         if ($res->num_rows > 0) {
 
             // sector is in fav_sectors
-            $update_poll = "UPDATE fav_sectors SET notif_freq = " . $row["poll_rate"] . " WHERE sector_id = " . $row["id"];
+            $update_poll = "UPDATE fav_sectors SET notif_freq = '" .
+                $row["[poll_rate"] .
+                "' WHERE sector_id = " .
+                $row["id"];
+
             $conn->query($update_poll);
 
         } else {
 
             // sector not yet in fav_stock
-            insert_fav_sector_id($conn, $row["id"], $row["poll_rate"]);
+            insert_fav_sector_id($conn, $row["id"]);
 
         }
 
