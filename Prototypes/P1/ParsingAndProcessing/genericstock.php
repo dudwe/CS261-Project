@@ -9,6 +9,7 @@ include_once('fastscrape.php');
 //print_r(getDataStockGeneric("get_share_price","BARC"));
 
 function getDataStockGeneric($intent, $stockId){
+    $dataArray=array();
     switch($intent){
     case "get_share_price":
         $dataArray=getCurrentForCompany($stockId);

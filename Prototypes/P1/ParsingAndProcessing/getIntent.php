@@ -14,6 +14,7 @@ include_once('currconvert.php');
 include_once('getChange.php');
 include_once('fastscrape.php');
 include_once('sectorRiseOrFall.php');
+include_once('pingRSSScript.php');
 function getIntent($jsonData){
 
     /*Parse Json*/
@@ -78,17 +79,6 @@ function getIntent($jsonData){
     }
 
 
-    /*Error Checking*/
-    /*Fallback Intent error*/
-    /*if($stockId=="" & $intent=="Default Fallback Intent"){
-        $intent="Input Error";
-    }
-    /*StockId not detected*/
-    /*elseif($stockId=="" ){
-        //echo "Stock Code Not detected";
-        $intent="StockCodeError: ".$intent;
-    }*/
-
     $speech = $array['result']['fulfillment']['speech'];
 
     /*store query into database if no error*/
@@ -101,10 +91,19 @@ function getIntent($jsonData){
     /*determine which function to call*/
     $dataArray=array();
     $error=0;
-    
-    $complextIntent=array('get_stock_performance','get_news','get_sector_rising_or_falling','get_sector_performance','get_buy_or_sell','get_intent_conversion','get_currency_conversion','Default Fallback Intent');
+    $conn = db_connection();
+    $complextIntent=array('get_stock_performance','get_news','get_sector_rising_or_falling','get_sector_performance','get_buy_or_sell','get_intent_conversion','suggest_query','get_currency_conversion','get_favourites_news','Default Fallback Intent');
     if(in_array($intent,$complextIntent) or stripos($intent,"Error")){
         switch ($intent) {
+        case "suggest_query":
+            $dataArray=suggest_query($conn);
+            break;
+        case "get_favourites_news":
+            $dataArray=pingRSS();
+            break;     
+        case "get_favourites_performance":
+            $dataArray=pingRSS();
+            break;            
         case "get_intent_conversion":
             $dataArray=getDataStockGeneric($intentConvert,$stockId);
             $dataArray=getConversion($dataArray,$intentConvert,$currency);
@@ -114,7 +113,6 @@ function getIntent($jsonData){
             $objOutput->from=$currency;
             $objOutput->to=$currency1;
             break;
-            
         case "get_stock_performance":
             $objOutput->timeframe=$timeframe;
             $dataArray=getTimeframe($stockId,$timeframe);
@@ -159,12 +157,6 @@ function getIntent($jsonData){
             $conn=db_connection();
             insert_query($conn, $queryString, $intent, $stockId);
         }else{
-            if($intent=="Default Fallback Intent"){
-                
-            }else{
-                //$dataArray=resolve_invalid_entity("",$queryString);
-                //get_corrections(,$)
-            }
         }
     }else{
 
