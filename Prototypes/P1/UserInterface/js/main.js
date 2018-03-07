@@ -15,7 +15,6 @@ $(document).ready(function() {
   var timeout = 10000; //10 second timeout to AJAX responses.
   var waiting = false; //Flag for if the chatbot is waiting for a response.
   var speechEnabled = false; //Flag for if speech synthesis is enabled.
-  var pollLoop = 1000 * 60; //Milliseconds between each notification poll.
   var maxFavourites = 10; //Maximum number of favourites.
 
 /*----------------------------------------------------------------------------*/
@@ -322,33 +321,6 @@ $(document).ready(function() {
     this.clearChanges();
   };
 
-  //Gets the poll rate for a specific company.
-  companyLog.getPollRate = function(companyID) {
-    console.log("Getting poll rate for: " + companyID);
-    var index = this.list.findIndex(function(e) {
-      return companyID === e.id;
-    });
-    if (index !== -1) {
-      console.log("Rate: " + this.list[index].poll_rate);
-      return this.list[index].poll_rate;
-    }
-    else { //No ID match.
-      console.log("ERR");
-      return 0;
-    }
-  };
-
-  //Sets the poll rate for a specific company.
-  companyLog.setPollRate = function(companyID, poll_rate) {
-    console.log("Setting poll rate for: " + companyID + " to " + poll_rate);
-    var index = this.list.findIndex(function(e) {
-      return companyID === e.id;
-    });
-    if (index !== -1) {
-      this.list[index].poll_rate = poll_rate;
-    }
-  };
-
   //Adds a sector to the data structure and favourite modal.
   //data :: {id: String, name: String, fav: Bool}
   sectorLog.add = function(data) {
@@ -389,6 +361,7 @@ $(document).ready(function() {
         Materialize.toast("Failed to retrieve Favourites.", 2000, "rounded"); //Notify that synthesis is not supported.
       },
       success: function(data) {
+        console.log("GET FAVOURITES");
         console.log(data);
         for (var i = 0; i < data.companyList.length; i++) {
           companyLog.add(data.companyList[i]);
@@ -401,7 +374,6 @@ $(document).ready(function() {
     });
   }
 
-  //TODO
   //Sends a JSON object to the server of all companies and sectors which favourite value has been changed.
   function saveFavourites() {
     //Check Favourite Limit has not been reached.
@@ -417,35 +389,31 @@ $(document).ready(function() {
 
     companyLog.clearChanges();
     sectorLog.clearChanges();
-    changePollRates(); //Validates all poll rates, resets to original if invalid.
 
     $(".fav-table-body-company tr:not(#company-no-result)").each(function() { //For each company row in the modal.
       var id = $(this).find(".fav-company-switch").attr("data-id");
       var poll_rate = $(this).find(".poll-rate-selector").val(); //###TODO###
       var poll_rate2 = $(this).find(".select-dropdown").val(); //###TODO###
-      console.log(poll_rate2); //###TODO###
       var fav = $(this).find(".fav-company-switch").prop("checked");
       fav = fav ? "1" : "0";
-      console.log("MODAL // COMPANY ID: " + id + " : " + fav + " : " + poll_rate2); //##TODO###
       companyLog.addChange({id: id, fav: fav, poll_rate: poll_rate2}); //##TODO###
     });
     $(".fav-table-body-sector tr:not(#sector-no-result)").each(function() { //For each sector row in the modal.
       var id = $(this).find(".fav-sector-switch").attr("data-id");
       var fav = $(this).find(".fav-sector-switch").prop("checked");
       fav = fav ? "1" : "0";
-      console.log("MODAL //SECTOR ID: " + id + " : " + fav);
       sectorLog.addChange({id: id, fav: fav});
     });
 
     var companyChanges = companyLog.compareChanges(); //List of company changes that are different from the original.
     var sectorChanges = sectorLog.compareChanges(); //List of sector changes that are different from the original.
+
+    if (companyChanges.length === 0 && sectorChanges.length === 0) { return; } //Don't send AJAX request if nothing has changed.
+
     var sendData = {companyList: companyChanges, sectorList: sectorChanges};
 
     //Debugging
-    console.log("COMPANY LOG\n" + companyLog.toString());
-    console.log("SECTOR LOG\n" + sectorLog.toString());
-    console.log(companyChanges);
-    console.log(sectorChanges);
+    console.log("SAVE FAVOURITES");
     console.log(sendData);
 
     $.ajax({
@@ -576,34 +544,30 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /*Notifications*/
 
-  var poll = window.setInterval(pollNotifications, pollLoop); //Set pollNotifications to execute every minute.
-  var pollCount = 0; //Number of notification polls checked.
+  var pollMin = 1000 * 60; //1 minute in Milliseconds.
+  var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 0.1); //5 Mins => 5 Mins
+  var poll15Min = window.setInterval(pollNotifications.bind(null, "15 Minutes"), pollMin * 0.2); //15 Mins => 7.5 Mins
+  var pollHour = window.setInterval(pollNotifications.bind(null, "1 Hour"), pollMin * 15); //1 Hour => 15 Mins
+  var pollDay = window.setInterval(pollNotifications.bind(null, "1 Day"), pollMin * 60 * 3); //1 Day => 3 Hour
 
-  //TODO
-  //Identifies which favourites need to be polled to the server then sends the AJAX request.
-  function pollNotifications() {
-    pollCount++;
-    console.log("Poll Notifications (" + pollCount + ")");
-    var notificationObj = []; //List of all companies to send notification polls for.
+  function pollNotifications(pollTimeText) {
+    var companyList = [];
     for (var i = 0; i < companyLog.list.length; i++) {
-      var company = companyLog.list[i];
-      if ((company.fav == "1") && (company.poll_rate > 0)) {
-        if (pollCount % company.poll_rate == 0) { //If current time indicates favourite should be polled.
-          notificationObj.push({id: company.id, lastRec: company.lastRec}); //TODO
-        }
+      if (companyLog.list[i].fav == "1" && companyLog.list[i].poll_rate == pollTimeText) {
+        companyList.push(companyLog.list[i].id);
       }
     }
 
-    //Don't send AJAX request if nothing needs polling.
-    if (notificationObj.length === 0) { return; }
+    //Doesn't send AJAX request if no companies need polling.
+    if (companyList.length === 0) { return; }
 
-    console.log("NOTIFICATIONS");
-    console.log(notificationObj);
+    console.log("SEND NOTIFICATIONS (TIME: " + pollTimeText + ")");
+    console.log(companyList);
 
     //Sends the notification requests to the server.
     $.ajax({
       url: "../ParsingAndProcessing/getNotifications.php", //TODO
-      data: {notifications: notificationObj},
+      data: {companyList: companyList},
       method: "POST",
       timeout: timeout,
       error: function(xhr, ajaxOptions, thrownError) {
@@ -613,31 +577,7 @@ $(document).ready(function() {
         //TODO
       }
     });
-  }
 
-  //Saves changes to company poll rates.
-  function changePollRates() {
-    console.log("Change Poll Rates");
-    $(".poll-rate-selector").each(function(index, element) {
-      var companyID = $(this).attr("data-id");
-      var poll_rate = $(this).val();
-      var valid = validatePollRate(poll_rate);
-      if (!valid) { //Replace existing invalid poll rate with valid stored poll rate.
-        poll_rate = companyLog.getPollRate(companyID);
-        $(this).val(poll_rate);
-      }
-      console.log(companyID + " at rate " + poll_rate + " is " + valid);
-    });
-  }
-
-  //Validates a poll rate to ensure it is an integer between 0 and 1000 inclusive.
-  function validatePollRate(poll_rate) {
-    if ($.isNumeric(poll_rate) && Math.floor(poll_rate) == (+poll_rate)) {
-      return (poll_rate >= 0 && poll_rate <= 1000);
-    }
-    else {
-      return false;
-    }
   }
 
 /*----------------------------------------------------------------------------*/
@@ -815,7 +755,6 @@ $(document).ready(function() {
 
     var newDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear();
     var newTime = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getSeconds()).slice(-2);
-    console.log(original + "::" + date);
     return newDate + ' ' + newTime;
   }
 
@@ -892,7 +831,7 @@ $(document).ready(function() {
 
   //Parse a response and execute display the appropriate data based off of the response intent.
   function parseResponse(data) {
-    console.log("Parsing Response");
+    console.log("RESPONSE RAW DATA");
     console.log(data);
 
     var date = new Date();
@@ -1141,7 +1080,6 @@ $(document).ready(function() {
         return;
     }
 
-    console.log(speech);
     say(speech); //Outputs the response using voice synthesis.
     scrollToChatBottom(); //Scrolls to bottom of the chat window.
   }
