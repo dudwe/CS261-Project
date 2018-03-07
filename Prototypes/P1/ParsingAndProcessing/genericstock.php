@@ -57,6 +57,7 @@ function getDataStockGeneric($intent, $stockId){
         break;         
     case "get_volume":
         $dataArray=getCurrentForCompany($stockId);
+        
         $tmp=filterSummary($dataArray);
         $tmp['Volume']=$dataArray['Volume'];
         $tmp['AverageVol']=$dataArray['AverageVol'];
