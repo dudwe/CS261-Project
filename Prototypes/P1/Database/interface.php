@@ -1,7 +1,7 @@
 <?php
 
 error_reporting(E_ALL);
-ini_set("display_erros", E_ALL);
+ini_set("display_errors", E_ALL);
 
 include "globalvars.php";
 
@@ -163,6 +163,42 @@ function create_fav_sectors($conn) {
         return 1;
     } else {
         echo "Error creating table fav_sectors: " . $conn->error . "<br>";
+        return 0;
+    }
+
+}
+
+function create_last_pinged_stocks($conn) {
+
+    $sql = "CREATE TABLE IF NOT EXISTS last_pinged_stocks (
+        stock_id        integer,
+        last_ping       DateTime,
+        recommendation  varchar(4),
+        FOREIGN KEY (stock_id) REFERENCES stocks(stock_id) ON DELETE CASCADE
+    )";
+
+    if ($conn->query($sql) === TRUE) {
+        return 1;
+    } else {
+        echo "Error creating table last_pinged_stocks: " . $conn->error . "<br>";
+        return 0;
+    }
+
+}
+
+function create_last_pinged_sectors($conn) {
+
+    $sql = "CREATE TABLE IF NOT EXISTS last_pinged_sectors (
+        sector_id       integer,
+        last_ping       DateTime,
+        recommendation  varchar(4),
+        FOREIGN KEY (sector_id) REFERENCES sectors(sector_id) ON DELETE CASCADE
+    )";
+
+    if ($conn->query($sql) === TRUE) {
+        return 1;
+    } else {
+        echo "Error creating table last_pinged_sectors: " . $conn->error . "<br>";
         return 0;
     }
 
@@ -456,6 +492,7 @@ function insert_fav_stock($conn, $stock_name, $freq) {
 function insert_fav_stock_id($conn, $stock_id, $freq) {
 
     $date = date("Y-m-d");
+
     $sql = "INSERT INTO fav_stocks (stock_id, date_added, notif_freq) VALUES (" . $stock_id . ",'" . $date . "',". $freq . ")";
 
     if ($conn->query($sql) === TRUE) {
@@ -486,7 +523,8 @@ function insert_fav_sector($conn, $sector_name, $freq) {
 function insert_fav_sector_id($conn, $sector_id, $freq) {
 
     $date = date("Y-m-d");
-    $sql = "INSERT INTO fav_sectors (sector_id, date_added, notif_freq) VALUES (" . $sector_id . ",'" . $date . "'," . $freq . ")";
+
+    $sql = "INSERT INTO fav_sectors (sector_id, date_added, notif_freq, last_notif) VALUES (" . $sector_id . ",'" . $date . "'," . $freq . ")";
 
     if ($conn->query($sql) === TRUE) {
         return 1;
@@ -494,6 +532,98 @@ function insert_fav_sector_id($conn, $sector_id, $freq) {
         echo $sql . "<br>Error executing query: " . $conn->error . "<br>";
         return 0;
     }
+
+}
+
+function insert_last_ping_stock($conn, $stock_id, $recommendation) {
+
+    $datetime = date("Y-m-d H:i:s");
+
+    $sql = "INSERT INTO last_pinged_stocks (stock_id, last_ping, recommendation) VALUES (" . $stock_id . ",'" . $datetime . "','null')";
+
+    if ($conn->query($sql) === TRUE) {
+        return 1;
+    } else {
+        echo $sql . "<br>Error inserting to last_pinged_stocks: " . $conn->error . "<br>";
+        return 0;
+    }
+
+}
+
+function insert_last_ping_sector($conn, $sector_id, $recommendation) {
+
+    $datetime = date("Y-m-d H:i:s");
+
+    $sql = "INSERT INTO last_pinged_sectors (sector_id, last_ping, recommendation) VALUES (" . $sector_id . ",'" . $datetime . "','null')";
+
+    if ($conn->query($sql) === TRUE) {
+        return 1;
+    } else {
+        echo $sql . "<br>Error inserting to last_pinged_sectors: " . $conn->error . "<br>";
+        return 0;
+    }
+
+}
+
+function update_last_ping_stock($conn, $stock_id) {
+
+    $datetime = date("Y-m-s H:i:s");
+
+    $sql = "UPDATE last_pinged_stocks SET last_ping = '" . $datetime . "' WHERE stock_id = " . $stock_id;
+
+    if ($conn->query($sql) === TRUE) {
+        return 1;
+    } else {
+        echo "Error executing query: " . $conn->error . "<br>";
+        return 0;
+    }
+
+}
+
+function update_last_ping_sector($conn, $sector_id) {
+
+    $datetime = date("Y-m-s H:i:s");
+
+    $sql = "UPDATE last_pinged_sectors SET last_ping = '" . $datetime . "' WHERE sector_id = " . $sector_id;
+
+    if ($conn->query($sql) === TRUE) {
+        return 1;
+    } else {
+        echo "Error executing query: " . $conn->error . "<br>";
+        return 0;
+    }
+
+}
+
+function update_recommendations($conn, $json) {
+
+    $new_recommendations = array();
+
+    $data = json_decode($json, TRUE);
+    $companies = $data["companyList"];
+
+    foreach ($companies["id"] as $c) {
+
+        $sql = "SELECT notif_freq FROM fav_stocks WHERE stock_id = " . $c;
+        $res = $conn->query($sql);
+
+        $row = $res->fetch_assoc();
+
+        $recommendations = getBuyOrSell($c, $row["notif_freq"]);
+        $buysell = strtolower($recommendations["Summary"]);
+
+        $sql = "SELECT recommendation FROM last_pinged_stocks WHERE stock_id = " . $c;
+        $res = $conn->query($sql);
+
+        $row = $res->fetch_assoc();
+        if (strcmp(strtolower($row["recommendation"]), $buysell) != 0) {
+            update_last_ping_stock($conn, $c);
+            $companies[] = $c;
+        }
+
+    }
+
+    return json_encode($new_recommendations);
 
 }
 
