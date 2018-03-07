@@ -560,6 +560,10 @@ input.poll-rate-selector {
   border-radius: 1.2em!important;
 }
 
+.select-dropdown {
+  text-align: center;
+}
+
 /*----------------------------------------------------------------------------*/
 /*Graph Chart.js*/
 
