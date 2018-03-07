@@ -1,0 +1,1 @@
+For more details on the licence for our Apache server, please visit https://www.apache.org/licenses/LICENSE-2.0. Under section 4(a) of the licence, a copy of this licence should be available in any (re)distribution of this software.

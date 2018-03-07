@@ -3,6 +3,7 @@
   //TODO LINK FAVOURITE WITH DB LAYER
   //TODO LINK POLL WITH PARSING LAYER
   //TODO TEST VOICE INPUT
+  //###TODO### INDICATES USING DROPDOWNS
 
 $(document).ready(function() {
   $(".button-collapse").sideNav();
@@ -102,10 +103,9 @@ $(document).ready(function() {
       console.log("Dictation Ended.");
     },
     onResult: function(text) {
-      console.log("Dictation Result.");
+      console.log("Dictation Result: " + text);
       $("#query").val(text);
       checkQuery();
-      alert(text);
     }
   };
 
@@ -396,6 +396,7 @@ $(document).ready(function() {
         for (var j = 0; j < data.sectorList.length; j++) {
           sectorLog.add(data.sectorList[j]);
         }
+        $("select").material_select(); //###TODO###
       }
     });
   }
@@ -419,27 +420,19 @@ $(document).ready(function() {
     changePollRates(); //Validates all poll rates, resets to original if invalid.
 
     $(".fav-table-body-company tr:not(#company-no-result)").each(function() { //For each company row in the modal.
-      var id = $(this).find(".poll-rate-selector").attr("data-id");
-      var poll_rate = $(this).find(".poll-rate-selector").val();
+      var id = $(this).find(".fav-company-switch").attr("data-id");
+      var poll_rate = $(this).find(".poll-rate-selector").val(); //###TODO###
+      var poll_rate2 = $(this).find(".select-dropdown").val(); //###TODO###
+      console.log(poll_rate2); //###TODO###
       var fav = $(this).find(".fav-company-switch").prop("checked");
-      if (fav) {
-        fav = "1";
-      }
-      else {
-        fav = "0";
-      }
-      console.log("MODAL // COMPANY ID: " + id + " : " + fav + " : " + poll_rate);
-      companyLog.addChange({id: id, fav: fav, poll_rate: poll_rate});
+      fav = fav ? "1" : "0";
+      console.log("MODAL // COMPANY ID: " + id + " : " + fav + " : " + poll_rate2); //##TODO###
+      companyLog.addChange({id: id, fav: fav, poll_rate: poll_rate2}); //##TODO###
     });
     $(".fav-table-body-sector tr:not(#sector-no-result)").each(function() { //For each sector row in the modal.
       var id = $(this).find(".fav-sector-switch").attr("data-id");
       var fav = $(this).find(".fav-sector-switch").prop("checked");
-      if (fav) {
-        fav = "1";
-      }
-      else {
-        fav = "0";
-      }
+      fav = fav ? "1" : "0";
       console.log("MODAL //SECTOR ID: " + id + " : " + fav);
       sectorLog.addChange({id: id, fav: fav});
     });
@@ -475,26 +468,54 @@ $(document).ready(function() {
     });
   }
 
+  //TODO
   //Adds a company row to the favourites modal.
   function addCompany(id, ticker, name, poll_rate, fav) {
-    var tickerRow = "<td>" + ticker + "</td>";
-    var nameRow = "<td>" + name + "</td>";
-    var pollRow = "<td><input class='poll-rate-selector' data-id='" + id + "' ";
-    pollRow += "type='number' min='0' max='1000' maxlength='4'";
+    var tickerRow = $("<td></td>").text(ticker);
+    var nameRow = $("<td></td>").text(name);
+    var pollRow = $("<td></td>").text("placeholder"); //###TODO### REMOVE PLACEHOLDER LATER
 
-    if (poll_rate > 0) {
-      pollRow += "value='" + poll_rate + "'";
-    }
-    else {
-      pollRow += "value='0'";
+    //TODO
+    var testRow = $("<td><div class='input-field col s12'><select class='pollSelect'>" +
+      "<option value='0'>Not Selected</option>" +
+      "<option value='1'>5 Minutes</option>" +
+      "<option value='2'>15 Minutes</option>" +
+      "<option value='3'>1 Hour</option>" +
+      "<option value='4'>1 Day</option>" +
+      "</select></div></td>");
+
+    switch(poll_rate) {
+      case "5 Minutes":
+        testRow.find("option[value='1']").attr("selected", "selected");
+        break;
+      case "15 Minutes":
+        testRow.find("option[value='2']").attr("selected", "selected");
+        break;
+      case "1 Hour":
+        testRow.find("option[value='3']").attr("selected", "selected");
+        break;
+      case "1 Day":
+        testRow.find("option[value='4']").attr("selected", "selected");
+        break;
+      default: //Not Selected
+        testRow.find("option[value='0']").attr("selected", "selected");
+        break;
     }
 
-    pollRow += "></td>";
-    var favRow = "<td><div class='switch'><label><input data-id='";
+    var favRow = $("<td><div class='switch'><label><input class='fav-company-switch' type='checkbox'><span class='lever'></span></label></div></td>");
+    favRow.find("input").attr("data-id", id);
+    if (fav == "1") {
+      favRow.find("input").attr("checked", "checked");
+    }
+
+    /*var favRow = "<td><div class='switch'><label><input data-id='";
     favRow += id +  "' class='fav-company-switch' type='checkbox'";
     if (fav == "1") { favRow += " checked"; } //Marks the company as favourited.
-    favRow += "><span class='lever'></span></label></div></td>";
-    var companyRow = "<tr>" + tickerRow + nameRow + pollRow + favRow + "</tr>";
+    favRow += "><span class='lever'></span></label></div></td>";*/
+
+    var companyRow = $("<tr></tr>").append(tickerRow).append(nameRow).append(pollRow).append(testRow).append(favRow);
+
+    /*var companyRow = "<tr>" + tickerRow + nameRow + pollRow + testRow + favRow + "</tr>"; //TODO*/
     $("#fav-company table tbody tr:last").after(companyRow); //Appends the company to the table.
   }
 
