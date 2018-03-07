@@ -165,6 +165,22 @@ nav {
   color: #187ccc;
 }
 
+.news-row {
+  background-color: #fff9c4;
+  border-radius: 1em;
+  border: 2px solid #fff9c4;
+  padding: 1em;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  -webkit-transition: all 0.5s, -webkit-transform 2s; /* Safari */
+  transition: all 0.5s;
+}
+
+.news-row:hover {
+  border: 2px solid #fffde7;
+  background-color: #fff59d;
+}
+
 /*----------------------------------------------------------------------------*/
 /*Stocks*/
 

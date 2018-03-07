@@ -602,14 +602,14 @@ $(document).ready(function() {
       else {
         accuracy = parseFloat(sentiment.accuracy.negativity).toFixed(2) * 100;
       }*/
-      var articleRow = $("<div class='news-row'><a class='headline tooltipped' data-position='top' ata-delay='50'></a><p><small class='headline-sentiment'></small></p><p class='headline-desc'></p></div>");
+      var articleRow = $("<a class='tooltipped' data-position='top' data-delay='50'><div class='news-row'><p class='headline'></p><p><small class='headline-sentiment'></small></p><p class='headline-desc'></p></div></a>");
       console.log("HEADLINE: " + headline + " :: " + "URL: " + url);
       articleRow.find(".headline").text(headline);
-      articleRow.find(".headline").attr("href", url);
-      articleRow.find(".headline").attr("data-tooltip", url);
+      articleRow.attr("href", url);
+      articleRow.attr("data-tooltip", url);
       articleRow.find(".headline-sentiment").text(sentiment.sentiment.charAt(0).toUpperCase() + sentiment.sentiment.slice(1));
       articleRow.find(".headline-desc").text(description);
-      articleRow.find(".tooltipped").tooltip({delay: 50});
+      articleRow.tooltip({delay: 50});
       newsDisplay.append(articleRow);
     }
 
