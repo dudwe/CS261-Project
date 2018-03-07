@@ -533,7 +533,21 @@ input.valid[type="text"]:not(.browser-default) {
 
 .tabs {
   overflow: hidden!important;
+  border: none!important;
+  margin-bottom: 10px!important;
 }
+
+.tab {
+  border-radius: 1em!important;
+  border: 1px solid #ee6e73;
+  margin-bottom: 10px!important;
+}
+
+.indicator {
+  display: none!important;
+}
+
+
 
 .modal.modal-fixed-footer {
   height: 80%!important;
