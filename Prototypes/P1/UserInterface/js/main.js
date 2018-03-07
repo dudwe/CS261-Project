@@ -626,7 +626,7 @@ $(document).ready(function() {
       }
     }
 
-    var sentimentSummaryRow = $("<div><p>Sentiment Summary: <span class='sentiment-positive'></span><span class='sentiment-neutral'></span><span class='sentiment-negative'></span></div>");
+    var sentimentSummaryRow = $("<div class='sentiment-summary'><p>Sentiment Summary: <span class='sentiment-positive'></span><span class='sentiment-neutral'></span><span class='sentiment-negative'></span></div>");
     sentimentSummaryRow.find(".sentiment-positive").text("Positive (" + pos + ")");
     sentimentSummaryRow.find(".sentiment-neutral").text("Neutral (" + neutral + ")");
     sentimentSummaryRow.find(".sentiment-negative").text("Negative (" + neg + ")");
@@ -641,7 +641,7 @@ $(document).ready(function() {
     }
 
     //Hide overflow headlines.
-    $(newsDisplay).find("div").each(function(index) {
+    $(newsDisplay).find("div:not(.sentiment-summary)").each(function(index) {
       if (index + 1 > maxShownHeadlines) {
         $(this).hide();
       }
@@ -658,7 +658,7 @@ $(document).ready(function() {
       else if (op === "less") { //Hide Overflow
         $(this).attr("data-showmore", "more");
         $(this).text("Show " + moreCount + " more...");
-        $(this).parent().find("div").each(function(index) {
+        $(this).parent().find("div:not(.sentiment-summary)").each(function(index) {
           if (index + 1 > maxShownHeadlines) {
             $(this).fadeOut();
           }
