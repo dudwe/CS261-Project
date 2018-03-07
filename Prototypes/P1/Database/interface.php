@@ -627,6 +627,8 @@ function update_recommendations($conn, $json) {
 
 }
 
+// TODO: find recommendations for ALL fav_stocks
+
 // ==================================================================
 // =                           PROCESSING                           =
 // ==================================================================
