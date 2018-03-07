@@ -547,12 +547,14 @@ input.valid[type="text"]:not(.browser-default) {
   overflow: hidden!important;
   border: none!important;
   margin-bottom: 10px!important;
+  background-color: transparent!important;
 }
 
 .tab {
   border-radius: 1em!important;
   border: 1px solid #ee6e73;
   margin-bottom: 10px!important;
+  background-color: rgba(238,110,115,0.1)!important;
 }
 
 .indicator {
