@@ -181,6 +181,18 @@ nav {
   background-color: #fff59d;
 }
 
+.sentiment-positive { color: #43a047; }
+
+.sentiment-neutral { color: #ff6d00; }
+
+.sentiment-negative { color: #d32f2f; }
+
+.sentiment-positive,
+.sentiment-neutral,
+.sentiment-negative {
+  margin: 0 10px;
+}
+
 /*----------------------------------------------------------------------------*/
 /*Stocks*/
 
@@ -546,8 +558,6 @@ input.valid[type="text"]:not(.browser-default) {
 .indicator {
   display: none!important;
 }
-
-
 
 .modal.modal-fixed-footer {
   height: 80%!important;

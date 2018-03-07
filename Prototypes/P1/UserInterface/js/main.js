@@ -589,6 +589,9 @@ $(document).ready(function() {
     var maxShownHeadlines = 1; //Number of headlines initially shown.
     var headlineCount = newsArray.length;
     var newsDisplay = $("<div class='news-table'></div>");
+    var pos = 0;
+    var neutral = 0;
+    var neg = 0;
 
     for (var i = 0; i < newsArray.length; i++) {
       var article = newsArray[i];
@@ -611,7 +614,23 @@ $(document).ready(function() {
       articleRow.find(".headline-desc").text(description);
       articleRow.tooltip({delay: 50});
       newsDisplay.append(articleRow);
+
+      if (sentiment.sentiment === "positive") {
+        pos++;
+      }
+      else if (sentiment.sentiment === "negative") {
+        neg++;
+      }
+      else {
+        neutral++;
+      }
     }
+
+    var sentimentSummaryRow = $("<div><p>Sentiment Summary: <span class='sentiment-positive'></span><span class='sentiment-neutral'></span><span class='sentiment-negative'></span></div>");
+    sentimentSummaryRow.find(".sentiment-positive").text("Positive (" + pos + ")");
+    sentimentSummaryRow.find(".sentiment-neutral").text("Neutral (" + neutral + ")");
+    sentimentSummaryRow.find(".sentiment-negative").text("Negative (" + neg + ")");
+    newsDisplay.prepend(sentimentSummaryRow);
 
     //If number of news headlines more than maximum allowed to show then show more button.
     if (headlineCount > maxShownHeadlines) {
