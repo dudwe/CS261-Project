@@ -136,7 +136,7 @@ function create_fav_stocks($conn) {
     $sql = "CREATE TABLE IF NOT EXISTS fav_stocks (
         stock_id    integer,
         date_added  Date,
-        notif_freq  integer,
+        notif_freq  varchar(25),
         FOREIGN KEY (stock_id) REFERENCES stocks(stock_id) ON DELETE CASCADE
     )";
 
@@ -640,7 +640,7 @@ function get_faves($conn) {
     $sector_list = array();
 
     // Returns all stocks, with a 1 in column 'fav' if stock is in fav_stocks, 0 otherwise
-    $sql = "SELECT stock_id AS sid, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav, IF (stock_id IN (SELECT stock_id FROM fav_stocks),(SELECT notif_freq FROM fav_stocks WHERE stock_id = sid),0) AS poll_rate FROM stocks";
+    $sql = "SELECT stock_id AS sid, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav, IF (stock_id IN (SELECT stock_id FROM fav_stocks),(SELECT notif_freq FROM fav_stocks WHERE stock_id = sid), 'Not Selected') AS poll_rate FROM stocks";
     // $sql = "SELECT stock_id, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav FROM stocks";
 
 

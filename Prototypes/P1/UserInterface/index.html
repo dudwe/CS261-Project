@@ -63,7 +63,7 @@
             </div>
             <div class="test-right">
               <a id="btn-speech" class="z-depth-2 right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Toggle Audio Output"><i class="material-icons">volume_off</i></a>
-              <a id="btn-mic" class="z-depth-2 right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Record Voice Input"><i class="material-icons">mic</i></a>
+              <a id="btn-mic" class="z-depth-2 right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Record Voice Input"><i id="mic-text" class="material-icons">mic</i></a>
               <a id="btn-send" class="z-depth-2 right btn-round tooltipped btn-floating btn-large waves-effect waves-light" data-position="top" data-delay="500" data-tooltip="Submit Query"><i class="material-icons">send</i></a>
             </div>
           </div>
@@ -125,12 +125,13 @@
             <th>Ticker</th>
             <th>Company</th>
             <th>Poll Rate (mins.)</th>
+            <th>Test Column</th>
             <th>Favourite</th>
           </tr>
         </thead>
         <tbody class="fav-table-body-company">
           <tr id="company-no-result">
-            <td colspan="4">No results, please refine your search.</td>
+            <td colspan="5">No results, please refine your search.</td>
           </tr>
         </tbody>
       </table>
@@ -220,11 +221,11 @@
       <tr><td>Market Cap</td><td>Market cap of Aviva?</td></tr>
       <tr><td>Dividend Yield</td><td>Give me the dividend yield of BAE Systems</td></tr>
       <tr><td>PE Ratio</td><td>What is the PE Ratio for Intertek?</td></tr>
-      <tr><td>Shares in Issue</td><td>How many shows in issue are there are Coca-Cola?</td></tr>
+      <tr><td>Shares in Issue</td><td>How many shares in issue are there are Coca-Cola?</td></tr>
       <tr><td>News</td><td>Any news on G4S?</td></tr>
       <tr><td>Stock Performance</td><td>Give me the performance of PSON</td></tr>
       <tr><td>Sector Performance</td><td>How is the Electricity sector performing?</td></tr>
-      <tr><td>Currency Conversion</td><td>What is the current exchange rate or Euros to Dollars?, What is the share price of Tesco in Euros?</td></tr>
+      <tr><td>Currency Conversion</td><td>What is the current exchange rate for Euros to Dollars?, What is the share price of Tesco in Euros?</td></tr>
     </table>
 
   </div>
