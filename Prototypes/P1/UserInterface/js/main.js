@@ -17,6 +17,12 @@ $(document).ready(function() {
   var speechEnabled = false; //Flag for if speech synthesis is enabled.
   var maxFavourites = 10; //Maximum number of favourites.
 
+  var pollMin = 1000 * 60; //1 minute in Milliseconds.
+  var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 5); //5 Mins => 5 Mins
+  var poll15Min = window.setInterval(pollNotifications.bind(null, "15 Minutes"), pollMin * 7.5); //15 Mins => 7.5 Mins
+  var pollHour = window.setInterval(pollNotifications.bind(null, "1 Hour"), pollMin * 20); //1 Hour => 15 Mins
+  var pollDay = window.setInterval(pollNotifications.bind(null, "1 Day"), pollMin * 60 * 3); //1 Day => 3 Hour
+
 /*----------------------------------------------------------------------------*/
 /* Initialisation*/
 
@@ -25,6 +31,7 @@ $(document).ready(function() {
     getFavourites(); //Gets list of all companies and sectors.
     $("#fav-save").click(saveFavourites);
     $("#btn-send").click(submitQuery); //Redirect button click and ENTER to submitQuery function.
+
     var timestamp = new Date().toUTCString();
     displayQuery(getFormattedDate(timestamp), "Trader ChatBot Prototype P1");
     displayResponseList(getFormattedDate(timestamp), ["Response JSON is output in console btw. FOR TESTING"]);
@@ -543,12 +550,6 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /*Notifications*/
 
-  var pollMin = 1000 * 60; //1 minute in Milliseconds.
-  var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 5); //5 Mins => 5 Mins
-  var poll15Min = window.setInterval(pollNotifications.bind(null, "15 Minutes"), pollMin * 7.5); //15 Mins => 7.5 Mins
-  var pollHour = window.setInterval(pollNotifications.bind(null, "1 Hour"), pollMin * 20); //1 Hour => 15 Mins
-  var pollDay = window.setInterval(pollNotifications.bind(null, "1 Day"), pollMin * 60 * 3); //1 Day => 3 Hour
-
   function pollNotifications(pollTimeText) {
     var companyList = [];
     for (var i = 0; i < companyLog.list.length; i++) {
@@ -603,7 +604,6 @@ $(document).ready(function() {
         accuracy = parseFloat(sentiment.accuracy.negativity).toFixed(2) * 100;
       }*/
       var articleRow = $("<a class='tooltipped' data-position='top' data-delay='50'><div class='news-row'><p class='headline'></p><p><small class='headline-sentiment'></small></p><p class='headline-desc'></p></div></a>");
-      console.log("HEADLINE: " + headline + " :: " + "URL: " + url);
       articleRow.find(".headline").text(headline);
       articleRow.attr("href", url);
       articleRow.attr("data-tooltip", url);
