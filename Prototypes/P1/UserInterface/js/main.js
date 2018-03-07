@@ -441,10 +441,9 @@ $(document).ready(function() {
   function addCompany(id, ticker, name, poll_rate, fav) {
     var tickerRow = $("<td></td>").text(ticker);
     var nameRow = $("<td></td>").text(name);
-    var pollRow = $("<td></td>").text("placeholder"); //###TODO### REMOVE PLACEHOLDER LATER
+    var oldPollRow = $("<td></td>").text("placeholder"); //###TODO### REMOVE PLACEHOLDER LATER
 
-    //TODO
-    var testRow = $("<td><div class='input-field col s12'><select class='pollSelect'>" +
+    var pollRow = $("<td><div class='input-field col s12'><select class='pollSelect'>" +
       "<option value='0'>Not Selected</option>" +
       "<option value='1'>5 Minutes</option>" +
       "<option value='2'>15 Minutes</option>" +
@@ -454,19 +453,19 @@ $(document).ready(function() {
 
     switch(poll_rate) {
       case "5 Minutes":
-        testRow.find("option[value='1']").attr("selected", "selected");
+        pollRow.find("option[value='1']").attr("selected", "selected");
         break;
       case "15 Minutes":
-        testRow.find("option[value='2']").attr("selected", "selected");
+        pollRow.find("option[value='2']").attr("selected", "selected");
         break;
       case "1 Hour":
-        testRow.find("option[value='3']").attr("selected", "selected");
+        pollRow.find("option[value='3']").attr("selected", "selected");
         break;
       case "1 Day":
-        testRow.find("option[value='4']").attr("selected", "selected");
+        pollRow.find("option[value='4']").attr("selected", "selected");
         break;
       default: //Not Selected
-        testRow.find("option[value='0']").attr("selected", "selected");
+        pollRow.find("option[value='0']").attr("selected", "selected");
         break;
     }
 
@@ -481,7 +480,7 @@ $(document).ready(function() {
     if (fav == "1") { favRow += " checked"; } //Marks the company as favourited.
     favRow += "><span class='lever'></span></label></div></td>";*/
 
-    var companyRow = $("<tr></tr>").append(tickerRow).append(nameRow).append(pollRow).append(testRow).append(favRow);
+    var companyRow = $("<tr></tr>").append(tickerRow).append(nameRow).append(pollRow).append(favRow);
 
     /*var companyRow = "<tr>" + tickerRow + nameRow + pollRow + testRow + favRow + "</tr>"; //TODO*/
     $("#fav-company table tbody tr:last").after(companyRow); //Appends the company to the table.
@@ -545,9 +544,9 @@ $(document).ready(function() {
 /*Notifications*/
 
   var pollMin = 1000 * 60; //1 minute in Milliseconds.
-  var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 0.1); //5 Mins => 5 Mins
-  var poll15Min = window.setInterval(pollNotifications.bind(null, "15 Minutes"), pollMin * 0.2); //15 Mins => 7.5 Mins
-  var pollHour = window.setInterval(pollNotifications.bind(null, "1 Hour"), pollMin * 15); //1 Hour => 15 Mins
+  var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 5); //5 Mins => 5 Mins
+  var poll15Min = window.setInterval(pollNotifications.bind(null, "15 Minutes"), pollMin * 7.5); //15 Mins => 7.5 Mins
+  var pollHour = window.setInterval(pollNotifications.bind(null, "1 Hour"), pollMin * 20); //1 Hour => 15 Mins
   var pollDay = window.setInterval(pollNotifications.bind(null, "1 Day"), pollMin * 60 * 3); //1 Day => 3 Hour
 
   function pollNotifications(pollTimeText) {
