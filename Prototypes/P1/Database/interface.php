@@ -727,7 +727,7 @@ function update_fav_tables($conn, $json_obj) {
         } else {
 
             // stock not yet in fav_stocks
-            insert_fav_stock_id($conn, $row["id"], $row["notif_freq"]);
+            insert_fav_stock_id($conn, $row["id"], $row["poll_rate"]);
 
         }
 
