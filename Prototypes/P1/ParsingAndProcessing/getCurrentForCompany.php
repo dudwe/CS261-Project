@@ -34,11 +34,14 @@ function getCurrentForCompany($stock){
     $returnData['Offer']=$html->find('div[class=bottomText float_lang_base_1]',0)->find('li',1)->find('span',1)->find('span',1)->innertext;
     
     $table= $html->find('div[class=clear overviewDataTable"]',0);
-
+    
+    //$temp= $table->find('div[class="inlineblock"]',1)->find('span[class=float_lang_base_2 bold]',1)->innertext;
+    
     foreach($table->find('div[class="inlineblock"]') as $block) {
         //echo $block->plaintext;
         //echo "</br>";
         foreach($block->find('span[class=float_lang_base_2 bold]') as $element) {
+            
             if(strpos($block->plaintext, "Prev. Close") !== false){
                 $returnData['Close']=$element->innertext;
             }         
@@ -57,18 +60,23 @@ function getCurrentForCompany($stock){
             if(strpos($block->plaintext, "EPS") !== false){
                 $returnData['EPS']=$element->innertext;
             }
-            if(strpos($block->plaintext, "Volume") !== false){
+            if(strpos($block->innertext, "Volume") !== false & strpos($block->innertext, "Average Volume (3m)")== false){
+                //echo "</br>".$element->innertext;
+                //echo "</br>".$block->innertext;
                 $returnData['Volume']=$element->innertext;
             }
+            if(strpos($block->innertext, "Average Volume (3m)") !== false){
+                //echo "</br>".$element->innertext;
+                //echo "</br>".$block->innertext;
+                $returnData['AverageVol']=$element->innertext;
+            }            
             if(strpos($block->plaintext, "Market Cap") !== false){
                 $returnData['MarketCap']=$element->innertext;
             }
             if(strpos($block->plaintext, "Dividend") !== false){
                 $returnData['DivYield']=$element->innertext;
             }
-            if(strpos($block->plaintext, "Average Vol") !== false){
-                $returnData['AverageVol']=$element->innertext;
-            }
+
             if(strpos($block->plaintext, "P/E Ratio") !== false){
                 $returnData['PERatio']=$element->innertext;
             } 
