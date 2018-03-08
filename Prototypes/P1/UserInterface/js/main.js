@@ -1164,10 +1164,15 @@ $(document).ready(function() {
       case "get_favourites":
         speechRow = getSpeechDisplay(speech);
         var responseList = [speechRow];
+        var type = "Stock";
         for (var i = 0; i < dataset.length; i++) {
-          var type = "Stock";
-          if (dataset[i].notifFreq == "") {
+
+          if (type === "Stock" && dataset[i].notifFreq == "") {
             type = "Sector"
+            responseList.push(getSpeechDisplay("Favourite Sectors Summary"));
+          }
+          if (type === "Stock" && i === 0) {
+            responseList.push(getSpeechDisplay("Favourite Stocks Summary"));
           }
           infoRow = getInfoListDisplay([
             {info: type, value: dataset[i].tickerSymbol},
