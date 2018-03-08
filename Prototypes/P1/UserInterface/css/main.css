@@ -100,8 +100,15 @@ nav {
   margin-bottom: 1em!important;
   padding-bottom: 1em!important;
   border-bottom-width: 2px!important;
-  border-bottom-color: #ffca28!important;
   border-bottom-style: dashed!important;
+}
+
+.chat-response:not(.poll-response) > .chat-pad > .chat-response-row {
+  border-bottom-color: #ffca28!important;
+}
+
+.poll-response > .chat-pad > .chat-response-row {
+  border-bottom-color: #ce93d8!important;
 }
 
 .chat-response p .chat-response-row:last-child {
@@ -139,7 +146,7 @@ nav {
   width: 100%;
   background-color: transparent!important;
   border: none;
-  border: 1px solid rgba(255, 195, 0, 0.5);
+  border: 1px solid white;
   padding: 8px 4px 8px 4px!important;
   border-bottom-left-radius: 1em;
   border-bottom-right-radius: 1em;
@@ -165,20 +172,33 @@ nav {
   color: #187ccc;
 }
 
-.news-row {
+.poll-response > .chat-pad > .chat-response-row > .news-table > a > .news-row {
+  background-color: #f3e5f5;
+  border: 2px solid #e1bee7;
+}
+
+.poll-response > .chat-pad > .chat-response-row > .news-table > a > .news-row:hover {
+  background-color: #e1bee7;
+  border: 2px solid #f3e5f5;
+}
+
+.chat-response:not(.poll-response) > .chat-pad > .chat-response-row > .news-table > a > .news-row {
   background-color: #fff9c4;
-  border-radius: 1em;
   border: 2px solid #fff9c4;
+}
+
+.chat-response:not(.poll-response) > .chat-pad > .chat-response-row > .news-table > a > .news-row:hover {
+  border: 2px solid #fffde7;
+  background-color: #fff59d;
+}
+
+.news-row {
+  border-radius: 1em;
   padding: 1em;
   margin-top: 10px;
   margin-bottom: 10px;
   -webkit-transition: all 0.5s, -webkit-transform 2s; /* Safari */
   transition: all 0.5s;
-}
-
-.news-row:hover {
-  border: 2px solid #fffde7;
-  background-color: #fff59d;
 }
 
 .sentiment-positive { color: #43a047; }
@@ -410,6 +430,11 @@ input.valid[type="text"]:not(.browser-default) {
   padding-left: 2em;
 }
 
+.poll-border {
+  border-right: 2px solid #ce93d8;
+  padding-right: 2em;
+}
+
 .right-border {
   border-right: 2px solid #ffca28;
   padding-right: 2em;
@@ -453,6 +478,13 @@ input.valid[type="text"]:not(.browser-default) {
   background-color: #b3e5fc;``
   box-shadow: 0 2px 0 0 #e3f2fd!important;
   border-color: #81d4fa;
+}
+
+.poll-response {
+  float: right;
+  background-color: #f3e5f5!important;
+  box-shadow: 0 2px 0 0 #ba68c8!important;
+  border-color: #ce93d8!important;
 }
 
 .chat-response {

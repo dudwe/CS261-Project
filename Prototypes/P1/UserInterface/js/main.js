@@ -18,6 +18,7 @@ $(document).ready(function() {
   var maxFavourites = 10; //Maximum number of favourites.
 
   var pollMin = 1000 * 60; //1 minute in Milliseconds.
+  var pingRSS = window.setInterval(pollRSS, pollMin * 60); //Hourly RSS ping.
   var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 5); //5 Mins => 5 Mins
   var poll15Min = window.setInterval(pollNotifications.bind(null, "15 Minutes"), pollMin * 7.5); //15 Mins => 7.5 Mins
   var pollHour = window.setInterval(pollNotifications.bind(null, "1 Hour"), pollMin * 20); //1 Hour => 15 Mins
@@ -34,7 +35,7 @@ $(document).ready(function() {
 
     var timestamp = new Date().toUTCString();
     displayQuery(getFormattedDate(timestamp), "Trader ChatBot Prototype P1");
-    displayResponseList(getFormattedDate(timestamp), ["Response JSON is output in console btw. FOR TESTING"]);
+    displayResponseList(getFormattedDate(timestamp), ["Response JSON is output in console btw. FOR TESTING"], "right-border", "chat-response");
 
     //Dropdown Choices
     var dropdownArr = ["What is the share price for ",
@@ -248,8 +249,8 @@ $(document).ready(function() {
   }
 
   //Displays a list of response rows into the chat template.
-  function displayResponseList(timestamp, response) {
-    displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p class='chat-pad'></p>", "Received: ");
+  function displayResponseList(timestamp, response, borderType, responseType) {
+    displayChatTemplate(timestamp, borderType, "timestamp--right", responseType, "<p class='chat-pad'></p>", "Received: ");
     for (var i = 0; i < response.length; i++) {
       var responseRow = $("<div></div>").addClass("row chat-response-row").append(response[i]);
       $(".chat-response:last > .chat-pad").append(responseRow);
@@ -550,6 +551,7 @@ $(document).ready(function() {
 /*----------------------------------------------------------------------------*/
 /*Notifications*/
 
+  //Polls notifications for favourite companies on a selected time interval.
   function pollNotifications(pollTimeText) {
     var companyList = [];
     for (var i = 0; i < companyLog.list.length; i++) {
@@ -578,6 +580,23 @@ $(document).ready(function() {
       }
     });
 
+  }
+
+  //TODO
+  function pollRSS() {
+    //Sends the pollRSS request to the server.
+    $.ajax({
+      url: "../ParsingAndProcessing/pingRSS.php",
+      data: {companyList: companyList},
+      method: "POST",
+      timeout: timeout,
+      error: function(xhr, ajaxOptions, thrownError) {
+        console.log("No response from server for pollRSS.");
+      },
+      success: function(data) {
+        //TODO
+      }
+    });
   }
 
 /*----------------------------------------------------------------------------*/
@@ -882,13 +901,13 @@ $(document).ready(function() {
         else {
           speech = conversionSpeech + parseFloat(dataset.convertedValue).toFixed(2) + ' ' + dataset.toCurrency;
           speechRow = getSpeechDisplay(speech);
-          displayResponseList(timestamp, [speechRow]);
+          displayResponseList(timestamp, [speechRow], "right-border", "chat-response");
         }
         break;
       case "get_currency_conversion":
         speech = "The conversion rate from " + json.from + " to " + json.to + " is " + parseFloat(dataset).toFixed(2) + ".";
         speechRow = getSpeechDisplay(speech);
-        displayResponseList(timestamp, [speechRow]);
+        displayResponseList(timestamp, [speechRow], "right-border", "chat-response");
         break; //TODO
       case "get_share_price":
         speech += dataset.SharePrice;
@@ -902,19 +921,19 @@ $(document).ready(function() {
           //{info: "High", value: dataset.High}
         ]);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow], "right-border", "chat-response");
         break;
       case "get_point_change":
         speech += dataset.PointChange;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        displayResponseList(timestamp, [speechRow, stockTable], "right-border", "chat-response");
         break;
       case "percent_change":
         speech += dataset.PercentChange;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        displayResponseList(timestamp, [speechRow, stockTable], "right-border", "chat-response");
         break;
       case "get_bid":
         speech += dataset.Bid;
@@ -924,7 +943,7 @@ $(document).ready(function() {
           {info: "Bid", value: dataset.Bid},
           {info: "Offer", value: dataset.Offer}
         ]);
-        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow], "right-border", "chat-response");
         break;
       case "get_offer":
         speech += dataset.Offer;
@@ -934,7 +953,7 @@ $(document).ready(function() {
           {info: "Bid", value: dataset.Bid},
           {info: "Offer", value: dataset.Offer}
         ]);
-        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow], "right-border", "chat-response");
         break;
       case "get_open":
         speech += dataset.Open;
@@ -1054,19 +1073,19 @@ $(document).ready(function() {
       case "get_news":
         speechRow = getSpeechDisplay(speech);
         newsRow = getNewsDisplay(dataset);
-        displayResponseList(timestamp, [speechRow, newsRow]);
+        displayResponseList(timestamp, [speechRow, newsRow], "right-border", "chat-response");
         break;
       case "get_stock_performance":
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, json.auxillary.SharePrice, json.auxillary.PointChange, json.auxillary.PercentChange);
         graphRow = getGraphDisplay();
-        displayResponseList(timestamp, [speechRow, stockTable, graphRow]);
+        displayResponseList(timestamp, [speechRow, stockTable, graphRow], "right-border", "chat-response");
         createLineGraph(dataset);
         break;
       case "get_sector_performance":
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, json.dataset.SharePrice, json.dataset.PointChange, json.dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable]);
+        displayResponseList(timestamp, [speechRow, stockTable], "right-border", "chat-response");
         break;
       case "get_buy_or_sell":
         var movingAverages = dataset.movingAverages;
@@ -1079,7 +1098,7 @@ $(document).ready(function() {
           {info: "Technical Indicators", value: dataset.TechnicalIndicators},
           {info: "Summary", value: dataset.Summary}
         ]);
-        displayResponseList(timestamp, [speechRow, infoRow]);
+        displayResponseList(timestamp, [speechRow, infoRow], "right-border", "chat-response");
         break;
       case "get_sector_rising_or_falling":
         speech = "Here is a summary of the " + stock + " sector performance.";
@@ -1088,7 +1107,7 @@ $(document).ready(function() {
         for (var i = 0; i < dataset.length; i++) {
           responseList.push(getStockDisplay(dataset[i].TickerSymbol, dataset[i].SharePrice, dataset[i].PointChange, dataset[i].PercentChange));
         }
-        displayResponseList(timestamp, responseList);
+        displayResponseList(timestamp, responseList, "right-border", "chat-response");
         break; //TODO TEST
       case "Input Error":
         displayErrorResponse(timestamp, speech);
