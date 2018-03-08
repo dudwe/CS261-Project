@@ -418,7 +418,7 @@ $(document).ready(function() {
 
     if (companyChanges.length === 0 && sectorChanges.length === 0) { return; } //Don't send AJAX request if nothing has changed.
 
-    var sendData = {companyList: companyChanges, sectorList: sectorChanges};
+    var sendData = { "sendData": {companyList: companyChanges, sectorList: sectorChanges} };
 
     //Debugging
     console.log("SAVE FAVOURITES");
@@ -426,7 +426,7 @@ $(document).ready(function() {
 
     $.ajax({
       url: "../Database/scripts/save_favourites.php",
-      data: {sendData: sendData},
+      data: sendData,
       method: "POST",
       timeout: timeout,
       error: function(xhr, ajaxOptions, thrownError) {
@@ -435,6 +435,8 @@ $(document).ready(function() {
         console.log("(ERROR) Save Favourites");
       },
       success: function(data) {
+        console.log("SAVE FAVOURITES RESPONSE");
+        console.log(data);
         Materialize.Toast.removeAll(); //Remove all current toast notifications.
         Materialize.toast("Saved favourites.", 2000, "rounded");
         console.log("(SUCCESS) Save Favourites");

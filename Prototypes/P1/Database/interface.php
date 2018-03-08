@@ -697,6 +697,7 @@ function get_scrape_url($conn, $entity) {
 /* Update entries in fav_stocks and fav_sectors */
 function update_fav_tables($conn, $json_obj) {
 
+<<<<<<< HEAD
     $fav_list = json_decode($json_obj, TRUE);
 
     $stock_list = $fav_list["companyList"];
@@ -742,10 +743,56 @@ function update_fav_tables($conn, $json_obj) {
                 insert_fav_stock_id($conn, $row["id"], $row["poll_rate"]);
 
             }
+=======
+  if (array_key_exists("companyList", $json_obj)) {
+    echo "COMPANY LIST EXISTS\n";
+    $stock_list = $json_obj["companyList"];
+
+    // ID, FAV, POLLRATE
+    foreach ($stock_list as $row) {
+      if (is_numeric($row["id"])) {
+        echo "ROW ID IS NUMERIC<BR>";
+      }
+      if (intval($row["fav"]) == 0) {
+        $sql = "DELETE FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
+        // echo $sql . "<BR>";
+        if ($conn->query($sql) === TRUE) {
+>>>>>>> 1199d0994d8f8f6e50be4715bf48e3a0cc98ec96
 
         }
+        else {
+          echo "DISASTER: " . $conn->error . "<BR>";
+        }
+      }
+      else {
+        // First test existence
+        $exists = "SELECT stock_id FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
+        $res = $conn->query($exists);
 
+        if ($res->num_rows > 0) {
+          // stock is in fav_stocks
+          $update_poll = "UPDATE fav_stocks SET notif_freq = '" .
+          $row["poll_rate"] . "' WHERE stock_id = " .
+          intval($row["id"]);
+          // echo $update_poll . "<BR>";
+          if ($conn->query($update_poll) === TRUE) {
+
+          }
+          else {
+            echo "DISASTER: " . $conn->error . "<BR>";
+          }
+        }
+        else {
+          // stock not yet in fav_stocks
+          insert_fav_stock_id($conn, intval($row["id"]), $row["poll_rate"]);
+        }
+      }
     }
+  }
+
+  if (array_key_exists("sectorList", $json_obj)) {
+    echo "SECTOR LIST EXISTS\n";
+    $sector_list = $json_obj["sectorList"];
 
     foreach ($sector_list as $row) {
 
@@ -758,7 +805,6 @@ function update_fav_tables($conn, $json_obj) {
 
             // Test existence
             $exists = "SELECT sector_id FROM fav_sectors WHERE sector_id = " . $row["id"];
-
             $res = $conn->query($exists);
 
             if (!$res)
@@ -770,10 +816,9 @@ function update_fav_tables($conn, $json_obj) {
                 insert_fav_sector_id($conn, $row["id"]);
 
             }
-
         }
-
     }
+  }
 
 }
 
