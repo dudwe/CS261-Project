@@ -607,12 +607,11 @@ function get_recommendations($conn, $json) {
 
     foreach ($companies as $c) {
 
-        // $sql = "SELECT notif_freq FROM fav_stocks WHERE stock_id = " . $c["id"];
-        // $res = $conn->query($sql);
+        $sql = "SELECT ticker_symbol FROM stocks WHERE stock_id = " . $c["id"];
+        $res = $conn->query($sql);
 
-        // $row = $res->fetch_assoc();
-
-        // echo $c["poll_rate"];
+        $row = $res->fetch_assoc();
+        $ticker = $row["ticker_symbol"];
 
         if (strcmp($c["poll_rate"], "15 Minutes") == 0)
             $time = "15m";
@@ -623,11 +622,8 @@ function get_recommendations($conn, $json) {
         else
             $time = "5m";
 
-        echo "calling getBuyOrSell(".$c["id"].",'".$time."')";
-        $recommendations = getBuyOrSell($c["id"], $time);
+        $recommendations = getBuyOrSell($ticker, $time);
         $buysell = strtolower($recommendations["Summary"]);
-
-        echo $buysell;
 
         $sql = "SELECT recommendation FROM last_pinged_stocks WHERE stock_id = " . $c["id"];
         $res = $conn->query($sql);
@@ -681,13 +677,14 @@ function get_faves($conn) {
         $sector_list[] = array(
             "id" => $row["secid"],
             "name" => $row["sector_name"],
-            "fav" => $row["fav"],
+            "fav" => $row["fav"]
         );
     }
 
     $fav_list["companyList"] = $company_list;
     $fav_list["sectorList"] = $sector_list;
     $faves = json_encode($fav_list);
+
     return $faves;
 
 }
@@ -830,6 +827,7 @@ function suggest_query($conn) {
     return $suggested;
 
 }
+
 
 /* Return top 3 sectors that the user is interested in, based on what they track */
 function learn_sectors($conn) {

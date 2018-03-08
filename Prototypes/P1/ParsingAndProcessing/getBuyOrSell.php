@@ -9,11 +9,11 @@ include_once('dlPage.php');
 /*Moving Averages Technical Indicators Summary*/
 
 
-function getBuyOrSell($stockId,$time){
+function getBuyOrSell($ticker,$time){
     /*read into the database to get the relevant url from investing.com*/
     $conn= db_connection();
 
-    $url = get_scrape_url($conn,$stockId);
+    $url = get_scrape_url($conn,$ticker);
     if (stripos($time,'15m') !== false){
         $columnNumbers = 2;
     }

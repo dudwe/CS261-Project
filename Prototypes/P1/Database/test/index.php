@@ -64,12 +64,11 @@ include "../interface.php";
 
 $conn = db_connection();
 
-$recs = update_recommendations($conn, $json);
-$recs = json_decode($recs, TRUE);
+get_faves($conn);
 
-foreach ($recs as $r) {
-    echo $r . "<BR>";
-}
+// foreach ($recs as $r) {
+//     echo $r . "<BR>";
+// }
 
 
 //update_fav_tables($conn, $json);
