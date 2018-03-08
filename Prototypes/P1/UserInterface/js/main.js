@@ -1125,6 +1125,20 @@ $(document).ready(function() {
         }
         displayResponseList(timestamp, responseList, "right-border", "chat-response");
         break;
+      case "get_favourites":
+        speechRow = getSpeechDisplay(speech);
+        var responseList = [speechRow];
+        for (var i = 0; i < dataset.length; i++) {
+          infoRow = getInfoListDisplay([
+            {info: "Stock", value: dataset[i].tickerSymbol},
+            {info: "Moving Averages", value: dataset[i].buyOrSell.MovingAverages},
+            {info: "Technical Indicators", value: dataset[i].buyOrSell.TechnicalIndicators},
+            {info: "Summary", value: dataset[i].buyOrSell.Summary}
+          ]);
+          responseList.push(infoRow);
+        }
+        displayResponseList(timestamp, responseList, "right-border", "chat-response");
+        break;
       case "Input Error":
         displayErrorResponse(timestamp, speech);
         break;
