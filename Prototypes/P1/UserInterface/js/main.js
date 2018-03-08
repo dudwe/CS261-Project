@@ -7,7 +7,7 @@ $(document).ready(function() {
   $("#company-no-result, #sector-no-result, #query-error-message").hide();
   $('ul.tabs').tabs();
 
-  var timeout = 10000; //10 second timeout to AJAX responses.
+  var timeout = 15000; //15 second timeout to AJAX responses.
   var waiting = false; //Flag for if the chatbot is waiting for a response.
   var speechEnabled = false; //Flag for if speech synthesis is enabled.
   var maxFavourites = 10; //Maximum number of favourites.
@@ -1143,10 +1143,50 @@ $(document).ready(function() {
         }
         displayResponseList(timestamp, responseList, "right-border", "chat-response");
         break;
-      case "Input Error":
+      case "Input Error": //TODO
         displayErrorResponse(timestamp, speech);
         break;
-      default:
+      case "get_stock_summary":
+        speech = "Here is a summary for " + stock;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, json.auxillary.SharePrice, json.auxillary.PointChange, json.auxillary.PercentChange);
+        infoRow = getInfoListDisplay([
+          {info: "High", value: json.auxillary.High},
+          {info: "Low", value: json.auxillary.Low},
+          {info: "Open", value: json.auxillary.Open},
+          {info: "Volume", value: json.auxillary.Volume},
+          {info: "Average Volume", value: json.auxillary.AverageVol},
+          {info: "Market Cap", value: json.auxillary.MarketCap},
+          {info: "PE Ratio", value: json.auxillary.PERatio},
+          {info: "Dividend Yield", value: json.auxillary.DivYield},
+          {info: "EPS", value: json.auxillary.EPS},
+          {info: "Shares in Issue", value: json.auxillary.SharesInIssue}
+        ]);
+        newsRow = getNewsDisplay(json.news);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow, newsRow], "right-border", "chat-response");
+        break;
+      case "get_sector_summary": //TODO
+        speech = "Here is a summary for " + stock;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
+        var buyOrSellRow = getInfoListDisplay([
+          {info: "Moving Averages", value: json.buyOrSell.MovingAverages},
+          {info: "Technical Indicators", value: json.buyOrSell.TechnicalIndicators},
+          {info: "Summary", value: json.buyOrSell.Summary}
+        ]);
+        infoRow = getInfoListDisplay([
+          {info: "Low", value: dataset.Low},
+          {info: "High", value: dataset.High},
+          {info: "Open", value: dataset.Open},
+          {info: "Close", value: dataset.Close}
+          //{info: "Volume", value: dataset.Volume},
+        ]);
+        newsRow = getNewsDisplay(json.news);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow, buyOrSellRow, newsRow], "right-border", "chat-response");
+        break;
+      case "Default Fallback Intent": //TODO
+        break;
+      default: //TODO
         fallBackError(timestamp);
         return;
     }
