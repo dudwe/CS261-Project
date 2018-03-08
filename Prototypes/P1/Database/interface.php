@@ -696,11 +696,8 @@ function get_scrape_url($conn, $entity) {
 /* Update entries in fav_stocks and fav_sectors */
 function update_fav_tables($conn, $json_obj) {
 
-    $fav_list = json_decode($json_obj, TRUE);
-    var_dump($fav_list);
-
-    $stock_list = $fav_list["companyList"];
-    $sector_list = $fav_list["sectorList"];
+    $stock_list = $json_obj["companyList"];
+    $sector_list = $json_obj["sectorList"];
 
     // ID, FAV, POLLRATE
     foreach ($stock_list as $row) {
@@ -728,8 +725,8 @@ function update_fav_tables($conn, $json_obj) {
             if ($res->num_rows > 0) {
 
                 // stock is in fav_stocks
-                $update_poll = "UPDATE fav_stocks SET notif_freq = '" . 
-                    $row["poll_rate"] . "' WHERE stock_id = " . 
+                $update_poll = "UPDATE fav_stocks SET notif_freq = '" .
+                    $row["poll_rate"] . "' WHERE stock_id = " .
                     intval($row["id"]);
 
                 // echo $update_poll . "<BR>";
