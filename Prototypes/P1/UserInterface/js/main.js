@@ -945,7 +945,7 @@ $(document).ready(function() {
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable], "right-border", "chat-response");
         break;
-      case "percent_change":
+      case "get_percent_change":
         speech += dataset.PercentChange;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
