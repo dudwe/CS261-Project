@@ -1166,11 +1166,23 @@ $(document).ready(function() {
         displayResponseList(timestamp, [speechRow, stockTable, infoRow, newsRow], "right-border", "chat-response");
         break;
       case "get_sector_summary": //TODO
-
-
-
-
-
+        speech = "Here is a summary for " + stock;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
+        var buyOrSellRow = getInfoListDisplay([
+          {info: "Moving Averages", value: json.buyOrSell.MovingAverages},
+          {info: "Technical Indicators", value: json.buyOrSell.TechnicalIndicators},
+          {info: "Summary", value: json.buyOrSell.Summary}
+        ]);
+        infoRow = getInfoListDisplay([
+          {info: "Low", value: dataset.Low},
+          {info: "High", value: dataset.High},
+          {info: "Open", value: dataset.Open},
+          {info: "Close", value: dataset.Close}
+          //{info: "Volume", value: dataset.Volume},
+        ]);
+        newsRow = getNewsDisplay(json.news);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow, buyOrSellRow, newsRow], "right-border", "chat-response");
         break;
       case "Default Fallback Intent": //TODO
         break;
