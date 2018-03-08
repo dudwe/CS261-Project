@@ -628,7 +628,7 @@ $(document).ready(function() {
       var url = article.link;
       var description = article.desc;
       var sentiment = article.sentiment;
-      var articleRow = $("<a class='tooltipped' data-position='top' data-delay='50'><div class='news-row'><p class='headline'></p><p><small class='headline-sentiment'></small></p><p class='headline-desc'></p></div></a>");
+      var articleRow = $("<a target='_blank' class='tooltipped' data-position='top' data-delay='50'><div class='news-row'><p class='headline'></p><p><small class='headline-sentiment'></small></p><p class='headline-desc'></p></div></a>");
       articleRow.find(".headline").text(headline);
       articleRow.attr("href", url);
       articleRow.attr("data-tooltip", url);
