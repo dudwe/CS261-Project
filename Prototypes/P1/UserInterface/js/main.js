@@ -426,7 +426,7 @@ $(document).ready(function() {
 
     $.ajax({
       url: "../Database/scripts/save_favourites.php",
-      data: sendData,
+      data: {sendData: sendData},
       method: "POST",
       timeout: timeout,
       error: function(xhr, ajaxOptions, thrownError) {
