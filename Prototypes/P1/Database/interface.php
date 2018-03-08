@@ -1,4 +1,4 @@
-<?php
+n<?php
 
 error_reporting(E_ALL);
 ini_set("display_errors", E_ALL);
@@ -662,12 +662,14 @@ function correct_query($conn, $query_str) {
         }
 
         if ($perc >= 0.75) {
-            $suggested[] = $query_str;
+            $suggested[] = array($target, $perc);
         }
 
     }
 
-    return $best_str;
+    $suggested[] = array($best_str, $max_perc);
+
+    return $suggested;
 
 }
 
