@@ -602,8 +602,10 @@ function get_recommendations($conn, $json) {
 
     $new_recommendations = array();
 
-    $data = json_decode($json, TRUE);
-    $companies = $data["companyList"];
+    if (!array_key_exists("companyList". $json)) {
+      return;
+    }
+    $companies = $json["companyList"];
 
     foreach ($companies as $c) {
 
@@ -617,7 +619,7 @@ function get_recommendations($conn, $json) {
             $time = "15m";
         else if (strcmp($c["poll_rate"], "1 Hour") == 0)
             $time = "1h";
-        else if (strcmp($c["poll_rate"], "1 Day") == 0)
+        else if (strcmp($c["poll_rate"], "24 Hours") == 0)
             $time = "1D";
         else
             $time = "5m";

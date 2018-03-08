@@ -1,10 +1,5 @@
 "use strict"; //Strict Mode.
 
-  //TODO LINK FAVOURITE WITH DB LAYER
-  //TODO LINK POLL WITH PARSING LAYER
-  //TODO TEST VOICE INPUT
-  //###TODO### INDICATES USING DROPDOWNS
-
 $(document).ready(function() {
   $(".button-collapse").sideNav();
   $('.modal').modal();
@@ -102,7 +97,6 @@ $(document).ready(function() {
   console.log("Speech Synthesis Supported: " + support_speech);
   console.log("Speech Recognition Supported: " + support_recogn);
 
-  //TODO
   var settings = {
     continuous: true,
     onStart: function() {
@@ -379,15 +373,19 @@ $(document).ready(function() {
           var newPollRate;
           switch (pollRate) {
             case "5":
+            case "5 Minutes":
               newPollRate = "5 Minutes";
               break;
             case "15":
+            case "15 Minutes":
               newPollRate = "15 Minutes";
               break;
             case "1":
+            case "1 Hour":
               newPollRate = "1 Hour";
               break;
             case "24":
+            case "24 Hours":
               newPollRate = "24 Hours";
               break;
             default:
@@ -402,7 +400,7 @@ $(document).ready(function() {
         for (var j = 0; j < data.sectorList.length; j++) {
           sectorLog.add(data.sectorList[j]);
         }
-        $("select").material_select(); //###TODO###
+        $("select").material_select();
       }
     });
   }
@@ -425,11 +423,10 @@ $(document).ready(function() {
 
     $(".fav-table-body-company tr:not(#company-no-result)").each(function() { //For each company row in the modal.
       var id = $(this).find(".fav-company-switch").attr("data-id");
-      var poll_rate = $(this).find(".poll-rate-selector").val(); //###TODO###
-      var poll_rate2 = $(this).find(".select-dropdown").val(); //###TODO###
+      var poll_rate2 = $(this).find(".select-dropdown").val();
       var fav = $(this).find(".fav-company-switch").prop("checked");
       fav = fav ? "1" : "0";
-      companyLog.addChange({id: id, fav: fav, poll_rate: poll_rate2}); //##TODO###
+      companyLog.addChange({id: id, fav: fav, poll_rate: poll_rate2});
     });
     $(".fav-table-body-sector tr:not(#sector-no-result)").each(function() { //For each sector row in the modal.
       var id = $(this).find(".fav-sector-switch").attr("data-id");
@@ -469,12 +466,10 @@ $(document).ready(function() {
     });
   }
 
-  //TODO
   //Adds a company row to the favourites modal.
   function addCompany(id, ticker, name, poll_rate, fav) {
     var tickerRow = $("<td></td>").text(ticker);
     var nameRow = $("<td></td>").text(name);
-    var oldPollRow = $("<td></td>").text("placeholder"); //###TODO### REMOVE PLACEHOLDER LATER
 
     var pollRow = $("<td><div class='input-field col s12'><select class='pollSelect'>" +
       "<option value='0'>Not Selected</option>" +
@@ -508,14 +503,7 @@ $(document).ready(function() {
       favRow.find("input").attr("checked", "checked");
     }
 
-    /*var favRow = "<td><div class='switch'><label><input data-id='";
-    favRow += id +  "' class='fav-company-switch' type='checkbox'";
-    if (fav == "1") { favRow += " checked"; } //Marks the company as favourited.
-    favRow += "><span class='lever'></span></label></div></td>";*/
-
     var companyRow = $("<tr></tr>").append(tickerRow).append(nameRow).append(pollRow).append(favRow);
-
-    /*var companyRow = "<tr>" + tickerRow + nameRow + pollRow + testRow + favRow + "</tr>"; //TODO*/
     $("#fav-company table tbody tr:last").after(companyRow); //Appends the company to the table.
   }
 
@@ -581,7 +569,7 @@ $(document).ready(function() {
     var companyList = [];
     for (var i = 0; i < companyLog.list.length; i++) {
       if (companyLog.list[i].fav == "1" && companyLog.list[i].poll_rate == pollTimeText) {
-        companyList.push(companyLog.list[i].id);
+        companyList.push({"id": companyLog.list[i].id});
       }
     }
 
@@ -936,7 +924,7 @@ $(document).ready(function() {
         speech = "The conversion rate from " + json.from + " to " + json.to + " is " + parseFloat(dataset).toFixed(2) + ".";
         speechRow = getSpeechDisplay(speech);
         displayResponseList(timestamp, [speechRow], "right-border", "chat-response");
-        break; //TODO
+        break;
       case "get_share_price":
         speech += dataset.SharePrice;
         speechRow = getSpeechDisplay(speech);
@@ -1136,7 +1124,7 @@ $(document).ready(function() {
           responseList.push(getStockDisplay(dataset[i].TickerSymbol, dataset[i].SharePrice, dataset[i].PointChange, dataset[i].PercentChange));
         }
         displayResponseList(timestamp, responseList, "right-border", "chat-response");
-        break; //TODO TEST
+        break;
       case "Input Error":
         displayErrorResponse(timestamp, speech);
         break;
