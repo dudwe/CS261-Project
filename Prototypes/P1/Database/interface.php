@@ -602,8 +602,10 @@ function get_recommendations($conn, $json) {
 
     $new_recommendations = array();
 
-    $data = json_decode($json, TRUE);
-    $companies = $data["companyList"];
+    if (!array_key_exists("companyList". $json)) {
+      return;
+    }
+    $companies = $json["companyList"];
 
     foreach ($companies as $c) {
 
