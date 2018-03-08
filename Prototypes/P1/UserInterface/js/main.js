@@ -379,15 +379,19 @@ $(document).ready(function() {
           var newPollRate;
           switch (pollRate) {
             case "5":
+            case "5 Minutes":
               newPollRate = "5 Minutes";
               break;
             case "15":
+            case "15 Minutes":
               newPollRate = "15 Minutes";
               break;
             case "1":
+            case "1 Hour":
               newPollRate = "1 Hour";
               break;
             case "24":
+            case "24 Hours":
               newPollRate = "24 Hours";
               break;
             default:
