@@ -24,6 +24,7 @@ $(document).ready(function() {
   var pollHour = window.setInterval(pollNotifications.bind(null, "1 Hour"), pollMin * 20); //1 Hour => 15 Mins
   var pollDay = window.setInterval(pollNotifications.bind(null, "1 Day"), pollMin * 60 * 3); //1 Day => 3 Hour
 
+
 /*----------------------------------------------------------------------------*/
 /* Initialisation*/
 
@@ -85,6 +86,7 @@ $(document).ready(function() {
     });
 
     $("#query").focus(); //Puts focus on the query input.
+    pollRSS(); //Initial RSS Ping.
   }
 
 /*----------------------------------------------------------------------------*/
@@ -577,24 +579,32 @@ $(document).ready(function() {
       },
       success: function(data) {
         //TODO
+        console.log("POLL NOTIFICATIONS (SUCCESS)");
+        console.log(data);
       }
     });
 
   }
 
-  //TODO
+  //Displays RSS feeds every hour and on startup.
   function pollRSS() {
     //Sends the pollRSS request to the server.
     $.ajax({
       url: "../ParsingAndProcessing/pingRSS.php",
-      data: {companyList: companyList},
+      data: null,
       method: "POST",
       timeout: timeout,
       error: function(xhr, ajaxOptions, thrownError) {
         console.log("No response from server for pollRSS.");
       },
       success: function(data) {
-        //TODO
+        console.log("PING RSS");
+        data = JSON.parse(data);
+        var date = new Date();
+        var timestamp = getFormattedDate(date.toUTCString());
+        var speechRow = getSpeechDisplay("Hourly RSS");
+        var newsRow = getNewsDisplay(data);
+        displayResponseList(timestamp, [speechRow, newsRow], "poll-border", "chat-response poll-response");
       }
     });
   }
@@ -618,13 +628,6 @@ $(document).ready(function() {
       var url = article.link;
       var description = article.desc;
       var sentiment = article.sentiment;
-      /*var accuracy = 0;
-      if (sentiment.sentiment === "positive") {
-        accuracy = parseFloat(sentiment.accuracy.positivity).toFixed(2) * 100;
-      }
-      else {
-        accuracy = parseFloat(sentiment.accuracy.negativity).toFixed(2) * 100;
-      }*/
       var articleRow = $("<a class='tooltipped' data-position='top' data-delay='50'><div class='news-row'><p class='headline'></p><p><small class='headline-sentiment'></small></p><p class='headline-desc'></p></div></a>");
       articleRow.find(".headline").text(headline);
       articleRow.attr("href", url);
