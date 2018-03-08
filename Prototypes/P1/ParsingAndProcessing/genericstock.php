@@ -19,7 +19,7 @@ function getDataStockGeneric($intent, $stockId){
         $dataArray=fastScrape($stockId);
         //$dataArray=filterSummary($dataArray);
         break;
-    case "percent_change":
+    case "get_percent_change":
         $dataArray=fastScrape($stockId);
         break;  
     case "get_bid":
