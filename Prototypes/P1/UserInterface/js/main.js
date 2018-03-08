@@ -374,6 +374,29 @@ $(document).ready(function() {
         console.log("GET FAVOURITES");
         console.log(data);
         for (var i = 0; i < data.companyList.length; i++) {
+
+          var pollRate = data.companyList[i].poll_rate;
+          var newPollRate;
+          switch (pollRate) {
+            case "5":
+              newPollRate = "5 Minutes";
+              break;
+            case "15":
+              newPollRate = "15 Minutes";
+              break;
+            case "1":
+              newPollRate = "1 Hour";
+              break;
+            case "24":
+              newPollRate = "24 Hours";
+              break;
+            default:
+              newPollRate = "Not Selected";
+              break;
+          }
+
+          data.companyList[i].poll_rate = newPollRate;
+
           companyLog.add(data.companyList[i]);
         }
         for (var j = 0; j < data.sectorList.length; j++) {
