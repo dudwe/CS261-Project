@@ -631,7 +631,7 @@ function get_recommendations($conn, $json) {
         $row = $res->fetch_assoc();
         if (strcmp(strtolower($row["recommendation"]), $buysell) != 0) {
             update_last_ping_stock($conn, $c["id"]);
-            $companies[] = $c["id"];
+            $new_recommendations[] = $c["id"];
         }
 
     }
