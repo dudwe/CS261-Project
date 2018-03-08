@@ -864,6 +864,23 @@ function suggest_query($conn) {
 
 }
 
+function get_nonfaves($conn) {
+
+    // $sql = "SELECT stock_id, ticker_symbol, stock_name FROM stocks WHERE stock_id NOT IN (SELECT stock_id FROM fav_stocks) ORDER BY stock_id";
+    $sql = "SELECT stock_name FROM stocks WHERE stock_name NOT IN (SELECT entity FROM queries) AND stock_id NOT IN (SELECT stock_id FROM stocks)";
+    $res = $conn->query($sql);
+
+    $nonfaves = array();
+
+    while ($row = $res->fetch_assoc()) {
+
+        $nonfaves = $row["stock_name"];
+
+    }
+
+    return json_encode($nonfaves);
+
+}
 
 /* Return top 3 sectors that the user is interested in, based on what they track */
 function learn_sectors($conn) {
