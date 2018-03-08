@@ -19,10 +19,10 @@ $(document).ready(function() {
 
   var pollMin = 1000 * 60; //1 minute in Milliseconds.
   var pingRSS = window.setInterval(pollRSS, pollMin * 60); //Hourly RSS ping.
-  var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 5); //5 Mins => 5 Mins
+  var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 0.1); //5 Mins => 5 Mins
   var poll15Min = window.setInterval(pollNotifications.bind(null, "15 Minutes"), pollMin * 7.5); //15 Mins => 7.5 Mins
   var pollHour = window.setInterval(pollNotifications.bind(null, "1 Hour"), pollMin * 20); //1 Hour => 15 Mins
-  var pollDay = window.setInterval(pollNotifications.bind(null, "1 Day"), pollMin * 60 * 3); //1 Day => 3 Hour
+  var pollDay = window.setInterval(pollNotifications.bind(null, "24 Hours"), pollMin * 180); //24 Hours => 3 Hour
 
 
 /*----------------------------------------------------------------------------*/
@@ -458,7 +458,7 @@ $(document).ready(function() {
       "<option value='1'>5 Minutes</option>" +
       "<option value='2'>15 Minutes</option>" +
       "<option value='3'>1 Hour</option>" +
-      "<option value='4'>1 Day</option>" +
+      "<option value='4'>24 Hours</option>" +
       "</select></div></td>");
 
     switch(poll_rate) {
@@ -471,7 +471,7 @@ $(document).ready(function() {
       case "1 Hour":
         pollRow.find("option[value='3']").attr("selected", "selected");
         break;
-      case "1 Day":
+      case "24 Hours":
         pollRow.find("option[value='4']").attr("selected", "selected");
         break;
       default: //Not Selected
@@ -565,13 +565,15 @@ $(document).ready(function() {
     //Doesn't send AJAX request if no companies need polling.
     if (companyList.length === 0) { return; }
 
+    var sendData = {"sendData": {"companyList": companyList}};
+
     console.log("SEND NOTIFICATIONS (TIME: " + pollTimeText + ")");
-    console.log(companyList);
+    console.log(sendData);
 
     //Sends the notification requests to the server.
     $.ajax({
       url: "../Database/scripts/get_notifications.php",
-      data: {companyList: companyList},
+      data: sendData,
       method: "POST",
       timeout: timeout,
       error: function(xhr, ajaxOptions, thrownError) {
@@ -966,7 +968,7 @@ $(document).ready(function() {
           {info: "Open", value: dataset.Open},
           {info: "Close", value: dataset.Close}
         ]);
-        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow], "right-border", "chat-response");
         break;
       case "get_close":
         speech += dataset.Close;
@@ -976,7 +978,7 @@ $(document).ready(function() {
           {info: "Open", value: dataset.Open},
           {info: "Close", value: dataset.Close}
         ]);
-        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow], "right-border", "chat-response");
         break;
       case "get_high":
         speech += dataset.High;
@@ -986,7 +988,7 @@ $(document).ready(function() {
           {info: "Low", value: dataset.Low},
           {info: "High", value: dataset.High}
         ]);
-        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow], "right-border", "chat-response");
         break;
       case "get_low":
         speech += dataset.Low;
@@ -996,7 +998,7 @@ $(document).ready(function() {
           {info: "Low", value: dataset.Low},
           {info: "High", value: dataset.High}
         ]);
-        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow], "right-border", "chat-response");
         break;
       case "get_revenue":
         speech += dataset.Revenue;
@@ -1005,7 +1007,7 @@ $(document).ready(function() {
           {info: "Market Cap", value: dataset.MarketCap}
         ]);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow], "right-border", "chat-response");
         break;
       case "get_eps":
         speech += dataset.EPS;
@@ -1014,7 +1016,7 @@ $(document).ready(function() {
           {info: "Dividend Yield", value: dataset.DivYield},
           {info: "Price-Earnings Ratio", value: dataset.PERatio}
         ]);
-        displayResponseList(timestamp, [speechRow, infoRow]);
+        displayResponseList(timestamp, [speechRow, infoRow], "right-border", "chat-response");
         break;
       case "get_volume":
         speech += dataset.Volume;
@@ -1023,7 +1025,7 @@ $(document).ready(function() {
           {info: "Average Volume", value: dataset.AverageVol}
         ]);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
-        displayResponseList(timestamp, [speechRow, stockTable, infoRow]);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow], "right-border", "chat-response");
         break;
       case "get_market_cap":
         speech += dataset.MarketCap;
@@ -1033,7 +1035,7 @@ $(document).ready(function() {
           {info: "Shares in Issue", value: dataset.SharesInIssue},
           {info: "Volume", value: dataset.Volume}
         ]);
-        displayResponseList(timestamp, [speechRow, infoRow]);
+        displayResponseList(timestamp, [speechRow, infoRow], "right-border", "chat-response");
         break;
       case "get_div_yield":
         speech += dataset.DivYield;
@@ -1043,7 +1045,7 @@ $(document).ready(function() {
           {info: "Price-Earnings Ratio", value: dataset.PERatio},
           {info: "Volume", value: dataset.Volume}
         ]);
-        displayResponseList(timestamp, [speechRow, infoRow]);
+        displayResponseList(timestamp, [speechRow, infoRow], "right-border", "chat-response");
         break;
       case "get_average_vol":
         speech += dataset.AverageVol;
@@ -1051,7 +1053,7 @@ $(document).ready(function() {
         infoRow = getInfoListDisplay([
           {info: "Volume" , value: dataset.Volume}
         ]);
-        displayResponseList(timestamp, [speechRow, infoRow]);
+        displayResponseList(timestamp, [speechRow, infoRow], "right-border", "chat-response");
         break;
       case "get_pe_ratio":
         speech += dataset.PERatio;
@@ -1061,7 +1063,7 @@ $(document).ready(function() {
           {info: "Earnings per Share", value: dataset.EPS},
           {info: "Volume", value: dataset.Volume}
         ]);
-        displayResponseList(timestamp, [speechRow, infoRow]);
+        displayResponseList(timestamp, [speechRow, infoRow], "right-border", "chat-response");
         break;
       case "get_shares_in_issue":
         speech += dataset.SharesInIssue;
@@ -1071,7 +1073,7 @@ $(document).ready(function() {
           {info: "Volume", value: dataset.Volume},
           {info: "Share Price", value: dataset.SharePrice}
         ]);
-        displayResponseList(timestamp, [speechRow, infoRow]);
+        displayResponseList(timestamp, [speechRow, infoRow], "right-border", "chat-response");
         break;
       case "get_news":
         speechRow = getSpeechDisplay(speech);
