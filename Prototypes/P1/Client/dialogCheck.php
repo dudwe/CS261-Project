@@ -1,7 +1,7 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
-    include('../ParsingAndProcessing/getIntent.php');
+   
     require_once __DIR__.'/vendor/autoload.php';
     use DialogFlow\Client;
     use DialogFlow\Model\Query;
@@ -22,7 +22,7 @@ function dialogCheck($query){
           
         } catch (\Exception $error) {
     }
-    var_dump($response);
+    //var_dump($response);
     $response=json_encode($response);
     $array = json_decode($response, true);
     $arrayparam=$array['result']['parameters'];
@@ -81,10 +81,10 @@ function dialogCheck($query){
         }
     }
     if ($intent=="Default Fallback Intent"){
-        echo "failed";
+        //echo "failed";
         return False;
     }else{
-        echo "passed";
+        //echo "passed";
         return True;
     }
     //echo $stockId . "</br>";

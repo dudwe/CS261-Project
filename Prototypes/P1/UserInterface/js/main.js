@@ -7,18 +7,17 @@ $(document).ready(function() {
   $("#company-no-result, #sector-no-result, #query-error-message").hide();
   $('ul.tabs').tabs();
 
-  var timeout = 10000; //10 second timeout to AJAX responses.
+  var timeout = 15000; //15 second timeout to AJAX responses.
   var waiting = false; //Flag for if the chatbot is waiting for a response.
   var speechEnabled = false; //Flag for if speech synthesis is enabled.
   var maxFavourites = 10; //Maximum number of favourites.
 
   var pollMin = 1000 * 60; //1 minute in Milliseconds.
   var pingRSS = window.setInterval(pollRSS, pollMin * 60); //Hourly RSS ping.
-  var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 0.1); //5 Mins => 5 Mins
+  var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 5); //5 Mins => 5 Mins
   var poll15Min = window.setInterval(pollNotifications.bind(null, "15 Minutes"), pollMin * 7.5); //15 Mins => 7.5 Mins
   var pollHour = window.setInterval(pollNotifications.bind(null, "1 Hour"), pollMin * 20); //1 Hour => 15 Mins
   var pollDay = window.setInterval(pollNotifications.bind(null, "24 Hours"), pollMin * 180); //24 Hours => 3 Hour
-
 
 /*----------------------------------------------------------------------------*/
 /* Initialisation*/
@@ -618,6 +617,7 @@ $(document).ready(function() {
         var speechRow = getSpeechDisplay("Hourly RSS");
         var newsRow = getNewsDisplay(data);
         displayResponseList(timestamp, [speechRow, newsRow], "poll-border", "chat-response poll-response");
+        scrollToChatBottom();
       }
     });
   }
@@ -945,7 +945,7 @@ $(document).ready(function() {
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
         displayResponseList(timestamp, [speechRow, stockTable], "right-border", "chat-response");
         break;
-      case "percent_change":
+      case "get_percent_change":
         speech += dataset.PercentChange;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
@@ -1125,10 +1125,68 @@ $(document).ready(function() {
         }
         displayResponseList(timestamp, responseList, "right-border", "chat-response");
         break;
-      case "Input Error":
+      case "get_favourites":
+        speechRow = getSpeechDisplay(speech);
+        var responseList = [speechRow];
+        for (var i = 0; i < dataset.length; i++) {
+          var type = "Stock";
+          if (dataset[i].notifFreq == "") {
+            type = "Sector"
+          }
+          infoRow = getInfoListDisplay([
+            {info: type, value: dataset[i].tickerSymbol},
+            {info: "Moving Averages", value: dataset[i].buyOrSell.MovingAverages},
+            {info: "Technical Indicators", value: dataset[i].buyOrSell.TechnicalIndicators},
+            {info: "Summary", value: dataset[i].buyOrSell.Summary}
+          ]);
+          responseList.push(infoRow);
+        }
+        displayResponseList(timestamp, responseList, "right-border", "chat-response");
+        break;
+      case "Input Error": //TODO
         displayErrorResponse(timestamp, speech);
         break;
-      default:
+      case "get_stock_summary":
+        speech = "Here is a summary for " + stock;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, json.auxillary.SharePrice, json.auxillary.PointChange, json.auxillary.PercentChange);
+        infoRow = getInfoListDisplay([
+          {info: "High", value: json.auxillary.High},
+          {info: "Low", value: json.auxillary.Low},
+          {info: "Open", value: json.auxillary.Open},
+          {info: "Volume", value: json.auxillary.Volume},
+          {info: "Average Volume", value: json.auxillary.AverageVol},
+          {info: "Market Cap", value: json.auxillary.MarketCap},
+          {info: "PE Ratio", value: json.auxillary.PERatio},
+          {info: "Dividend Yield", value: json.auxillary.DivYield},
+          {info: "EPS", value: json.auxillary.EPS},
+          {info: "Shares in Issue", value: json.auxillary.SharesInIssue}
+        ]);
+        newsRow = getNewsDisplay(json.news);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow, newsRow], "right-border", "chat-response");
+        break;
+      case "get_sector_summary": //TODO
+        speech = "Here is a summary for " + stock;
+        speechRow = getSpeechDisplay(speech);
+        stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
+        var buyOrSellRow = getInfoListDisplay([
+          {info: "Moving Averages", value: json.buyOrSell.MovingAverages},
+          {info: "Technical Indicators", value: json.buyOrSell.TechnicalIndicators},
+          {info: "Summary", value: json.buyOrSell.Summary}
+        ]);
+        infoRow = getInfoListDisplay([
+          {info: "Low", value: dataset.Low},
+          {info: "High", value: dataset.High},
+          {info: "Open", value: dataset.Open},
+          {info: "Close", value: dataset.Close}
+          //{info: "Volume", value: dataset.Volume},
+        ]);
+        newsRow = getNewsDisplay(json.news);
+        displayResponseList(timestamp, [speechRow, stockTable, infoRow, buyOrSellRow, newsRow], "right-border", "chat-response");
+        break;
+      case "Default Fallback Intent": //TODO
+        break;
+      default: //TODO
         fallBackError(timestamp);
         return;
     }

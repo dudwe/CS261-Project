@@ -1,4 +1,4 @@
-n<?php
+<?php
 
 error_reporting(E_ALL);
 ini_set("display_errors", E_ALL);
@@ -602,7 +602,7 @@ function get_recommendations($conn, $json) {
 
     $new_recommendations = array();
 
-    if (!array_key_exists("companyList". $json)) {
+    if (!array_key_exists("companyList", $json)) {
       return;
     }
     $companies = $json["companyList"];
@@ -662,16 +662,15 @@ function correct_query($conn, $query_str) {
             $max_perc = $perc;
             $best_str = $target;
         }
-
-        if ($perc >= 0.75) {
-            $suggested[] = array($target, $perc);
-        }
-
+    }
+    if ($perc >= 75) {
+       // $suggested[] = array($target, $perc);
+       return array($best_str, $max_perc);
     }
 
-    $suggested[] = array($best_str, $max_perc);
+    //$suggested[] = array($best_str, $max_perc);
 
-    return $suggested;
+    //return $suggested;
 
 }
 
