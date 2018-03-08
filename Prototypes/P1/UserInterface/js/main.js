@@ -435,8 +435,6 @@ $(document).ready(function() {
         console.log("(ERROR) Save Favourites");
       },
       success: function(data) {
-        console.log("SAVE FAVOURITES RESPONSE");
-        console.log(data);
         Materialize.Toast.removeAll(); //Remove all current toast notifications.
         Materialize.toast("Saved favourites.", 2000, "rounded");
         console.log("(SUCCESS) Save Favourites");
