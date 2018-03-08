@@ -597,28 +597,45 @@ function update_last_ping_sector($conn, $sector_id) {
 
 function update_recommendations($conn, $json) {
 
+    // TODO
+    include_once("../../ParsingAndProcessing/getBuyOrSell.php");
+
     $new_recommendations = array();
 
     $data = json_decode($json, TRUE);
     $companies = $data["companyList"];
 
-    foreach ($companies["id"] as $c) {
+    foreach ($companies as $c) {
 
-        $sql = "SELECT notif_freq FROM fav_stocks WHERE stock_id = " . $c;
-        $res = $conn->query($sql);
+        // $sql = "SELECT notif_freq FROM fav_stocks WHERE stock_id = " . $c["id"];
+        // $res = $conn->query($sql);
 
-        $row = $res->fetch_assoc();
+        // $row = $res->fetch_assoc();
 
-        $recommendations = getBuyOrSell($c, $row["notif_freq"]);
+        // echo $c["poll_rate"];
+
+        if (strcmp($c["poll_rate"], "15 Minutes") == 0)
+            $time = "15m";
+        else if (strcmp($c["poll_rate"], "1 Hour") == 0)
+            $time = "1h";
+        else if (strcmp($c["poll_rate"], "1 Day") == 0)
+            $time = "1D";
+        else
+            $time = "5m";
+
+        echo "calling getBuyOrSell(".$c["id"].",'".$time."')";
+        $recommendations = getBuyOrSell($c["id"], $time);
         $buysell = strtolower($recommendations["Summary"]);
 
-        $sql = "SELECT recommendation FROM last_pinged_stocks WHERE stock_id = " . $c;
+        echo $buysell;
+
+        $sql = "SELECT recommendation FROM last_pinged_stocks WHERE stock_id = " . $c["id"];
         $res = $conn->query($sql);
 
         $row = $res->fetch_assoc();
         if (strcmp(strtolower($row["recommendation"]), $buysell) != 0) {
-            update_last_ping_stock($conn, $c);
-            $companies[] = $c;
+            update_last_ping_stock($conn, $c["id"]);
+            $companies[] = $c["id"];
         }
 
     }
@@ -746,7 +763,7 @@ function update_fav_tables($conn, $json_obj) {
     }
 
     if (array_key_exists("sectorList", $json_obj)) {
-        echo "SECTOR LIST EXISTS\n";
+
         $sector_list = $json_obj["sectorList"];
 
         foreach ($sector_list as $row) {
@@ -784,7 +801,7 @@ function suggest_query($conn) {
     // Weight function w: F x D -> N ; w(f,d) = f / (1 + CURDATE() - d)
     // Higher weight is better
 
-    $sql = "SELECT query_id, intent, entity FROM queries AS t1 NATURAL JOIN (SELECT query_id, (frequency / (1 + CURDATE() - last_asked)) AS weight FROM history) as t2 ORDER BY t2.weight DESC LIMIT 5";
+    $sql = "SELECT query_id, query_str, intent, entity FROM queries AS t1 NATURAL JOIN (SELECT query_id, (frequency / (1 + CURDATE() - last_asked)) AS weight FROM history) as t2 ORDER BY t2.weight DESC LIMIT 5";
 
     $suggested = array();
 

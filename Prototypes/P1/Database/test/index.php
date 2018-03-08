@@ -67,7 +67,10 @@ $conn = db_connection();
 //$faves = get_faves($conn);
 //echo $faves;
 
-update_fav_tables($conn, $json);
+//update_fav_tables($conn, $json);
+
+$recs = update_recommendations($conn, $json);
+var_dump($recs);
 
 ?>
 
