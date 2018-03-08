@@ -597,28 +597,29 @@ function update_last_ping_sector($conn, $sector_id) {
 
 function update_recommendations($conn, $json) {
 
+    // TODO
     $new_recommendations = array();
 
     $data = json_decode($json, TRUE);
     $companies = $data["companyList"];
 
-    foreach ($companies["id"] as $c) {
+    foreach ($companies as $c) {
 
-        $sql = "SELECT notif_freq FROM fav_stocks WHERE stock_id = " . $c;
+        $sql = "SELECT notif_freq FROM fav_stocks WHERE stock_id = " . $c["id"];
         $res = $conn->query($sql);
 
         $row = $res->fetch_assoc();
 
-        $recommendations = getBuyOrSell($c, $row["notif_freq"]);
+        $recommendations = getBuyOrSell($c["id"], $row["notif_freq"]);
         $buysell = strtolower($recommendations["Summary"]);
 
-        $sql = "SELECT recommendation FROM last_pinged_stocks WHERE stock_id = " . $c;
+        $sql = "SELECT recommendation FROM last_pinged_stocks WHERE stock_id = " . $c["id"];
         $res = $conn->query($sql);
 
         $row = $res->fetch_assoc();
         if (strcmp(strtolower($row["recommendation"]), $buysell) != 0) {
-            update_last_ping_stock($conn, $c);
-            $companies[] = $c;
+            update_last_ping_stock($conn, $c["id"]);
+            $new_recommendations[] = $c["id"];
         }
 
     }
@@ -697,7 +698,6 @@ function get_scrape_url($conn, $entity) {
 function update_fav_tables($conn, $json_obj) {
 
     $fav_list = json_decode($json_obj, TRUE);
-    var_dump($fav_list);
 
     $stock_list = $fav_list["companyList"];
     $sector_list = $fav_list["sectorList"];
@@ -705,13 +705,10 @@ function update_fav_tables($conn, $json_obj) {
     // ID, FAV, POLLRATE
     foreach ($stock_list as $row) {
 
-        if (is_numeric($row["id"]))
-            echo "ROW ID IS NUMERIC<BR>";
+        if ($row["fav"] == 0) {
 
-        if (intval($row["fav"]) == 0) {
+            $sql = "DELETE FROM fav_stocks WHERE stock_id = " . $row["id"];
 
-            $sql = "DELETE FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
-            // echo $sql . "<BR>";
             if ($conn->query($sql) === TRUE) {
 
             } else {
@@ -721,7 +718,7 @@ function update_fav_tables($conn, $json_obj) {
         } else {
 
             // First test existence
-            $exists = "SELECT stock_id FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
+            $exists = "SELECT stock_id FROM fav_stocks WHERE stock_id = " . $row["id"];
 
             $res = $conn->query($exists);
 
@@ -730,7 +727,7 @@ function update_fav_tables($conn, $json_obj) {
                 // stock is in fav_stocks
                 $update_poll = "UPDATE fav_stocks SET notif_freq = '" . 
                     $row["poll_rate"] . "' WHERE stock_id = " . 
-                    intval($row["id"]);
+                    $row["id"];
 
                 // echo $update_poll . "<BR>";
                 if ($conn->query($update_poll) === TRUE) {
@@ -742,7 +739,7 @@ function update_fav_tables($conn, $json_obj) {
             } else {
 
                 // stock not yet in fav_stocks
-                insert_fav_stock_id($conn, intval($row["id"]), $row["poll_rate"]);
+                insert_fav_stock_id($conn, $row["id"], $row["poll_rate"]);
 
             }
 
@@ -1008,3 +1005,11 @@ function get_corrections($conn, $word, $type) {
 
     return $distinct;
 }
+
+//call spellcheck
+//    call diaoogcheck -> true / false
+//    if flase -> scan history
+//        substring match
+//        find closest match
+//
+//        check 
