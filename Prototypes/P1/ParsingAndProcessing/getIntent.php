@@ -92,9 +92,32 @@ function getIntent($jsonData){
     $dataArray=array();
     $error=0;
     $conn = db_connection();
-    $complextIntent=array('get_stock_performance','get_news','get_sector_rising_or_falling','get_sector_performance','get_buy_or_sell','get_intent_conversion','suggest_query','get_currency_conversion','get_favourites_news','Default Fallback Intent');
+    $complextIntent=array('get_stock_performance','get_news','get_sector_rising_or_falling','get_sector_performance','get_buy_or_sell','get_intent_conversion','suggest_query','get_stock_summary','get_currency_conversion','get_favourites_news','get_sector_summary','Default Fallback Intent');
     if(in_array($intent,$complextIntent) or stripos($intent,"Error")){
         switch ($intent) {
+        // and 
+        case "get_stock_summary":
+            //$dataArray=fastScrape($st)
+            $dataArray=getTimeframe($stockId,"");
+            if($stockId=="FTSE100"){
+                    $dataArray2=getSector350($stockId);
+            }
+            else{
+                    $dataArray2=fastScrape($stockId);
+            }
+            $dataArray3=getRSS($stockId,False);
+            $dataArray4=getBuyOrSell($stockId,"");
+            $objOutput->auxillary=$dataArray2;
+            $objOutput->news=$dataArray3;
+            $objOutput->buyOrSell=$dataArray4;
+            break;
+        case "get_sector_summary":
+            $dataArray=getSector350($stockId);
+            $dataArray2=getRSS($stockId,False);
+            $dataArray3=getBuyOrSell($stockId,"");
+            $objOutput->news=$dataArray2;
+            $objOutput->buyOrSell=$dataArray3;
+            break;
         case "suggest_query":
             $dataArray=suggest_query($conn);
             break;
