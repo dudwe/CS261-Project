@@ -598,6 +598,8 @@ function update_last_ping_sector($conn, $sector_id) {
 function update_recommendations($conn, $json) {
 
     // TODO
+    include_once("../../ParsingAndProcessing/getBuyOrSell.php");
+
     $new_recommendations = array();
 
     $data = json_decode($json, TRUE);
@@ -605,13 +607,27 @@ function update_recommendations($conn, $json) {
 
     foreach ($companies as $c) {
 
-        $sql = "SELECT notif_freq FROM fav_stocks WHERE stock_id = " . $c["id"];
-        $res = $conn->query($sql);
+        // $sql = "SELECT notif_freq FROM fav_stocks WHERE stock_id = " . $c["id"];
+        // $res = $conn->query($sql);
 
-        $row = $res->fetch_assoc();
+        // $row = $res->fetch_assoc();
 
-        $recommendations = getBuyOrSell($c["id"], $row["notif_freq"]);
+        // echo $c["poll_rate"];
+
+        if (strcmp($c["poll_rate"], "15 Minutes") == 0)
+            $time = "15m";
+        else if (strcmp($c["poll_rate"], "1 Hour") == 0)
+            $time = "1h";
+        else if (strcmp($c["poll_rate"], "1 Day") == 0)
+            $time = "1D";
+        else
+            $time = "5m";
+
+        echo "calling getBuyOrSell(".$c["id"].",'".$time."')";
+        $recommendations = getBuyOrSell($c["id"], $time);
         $buysell = strtolower($recommendations["Summary"]);
+
+        echo $buysell;
 
         $sql = "SELECT recommendation FROM last_pinged_stocks WHERE stock_id = " . $c["id"];
         $res = $conn->query($sql);
@@ -619,7 +635,7 @@ function update_recommendations($conn, $json) {
         $row = $res->fetch_assoc();
         if (strcmp(strtolower($row["recommendation"]), $buysell) != 0) {
             update_last_ping_stock($conn, $c["id"]);
-            $new_recommendations[] = $c["id"];
+            $companies[] = $c["id"];
         }
 
     }
@@ -697,41 +713,23 @@ function get_scrape_url($conn, $entity) {
 /* Update entries in fav_stocks and fav_sectors */
 function update_fav_tables($conn, $json_obj) {
 
-<<<<<<< HEAD
-    $fav_list = json_decode($json_obj, TRUE);
+    if (array_key_exists("companyList", $json_obj)) {
 
-    $stock_list = $fav_list["companyList"];
-    $sector_list = $fav_list["sectorList"];
+        echo "COMPANY LIST EXISTS\n";
+        $stock_list = $json_obj["companyList"];
 
-    // ID, FAV, POLLRATE
-    foreach ($stock_list as $row) {
+        // ID, FAV, POLLRATE
+        foreach ($stock_list as $row) {
 
-        if ($row["fav"] == 0) {
-
-            $sql = "DELETE FROM fav_stocks WHERE stock_id = " . $row["id"];
-
-            if ($conn->query($sql) === TRUE) {
-
-            } else {
-                echo "DISASTER: " . $conn->error . "<BR>";
+            if (is_numeric($row["id"])) {
+                echo "ROW ID IS NUMERIC<BR>";
             }
 
-        } else {
+            if (intval($row["fav"]) == 0) {
 
-            // First test existence
-            $exists = "SELECT stock_id FROM fav_stocks WHERE stock_id = " . $row["id"];
+                $sql = "DELETE FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
 
-            $res = $conn->query($exists);
-
-            if ($res->num_rows > 0) {
-
-                // stock is in fav_stocks
-                $update_poll = "UPDATE fav_stocks SET notif_freq = '" . 
-                    $row["poll_rate"] . "' WHERE stock_id = " . 
-                    $row["id"];
-
-                // echo $update_poll . "<BR>";
-                if ($conn->query($update_poll) === TRUE) {
+                if ($conn->query($sql) === TRUE) {
 
                 } else {
                     echo "DISASTER: " . $conn->error . "<BR>";
@@ -739,86 +737,60 @@ function update_fav_tables($conn, $json_obj) {
 
             } else {
 
-                // stock not yet in fav_stocks
-                insert_fav_stock_id($conn, $row["id"], $row["poll_rate"]);
+                // First test existence
+                $exists = "SELECT stock_id FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
+                $res = $conn->query($exists);
 
-            }
-=======
-  if (array_key_exists("companyList", $json_obj)) {
-    echo "COMPANY LIST EXISTS\n";
-    $stock_list = $json_obj["companyList"];
+                if ($res->num_rows > 0) {
 
-    // ID, FAV, POLLRATE
-    foreach ($stock_list as $row) {
-      if (is_numeric($row["id"])) {
-        echo "ROW ID IS NUMERIC<BR>";
-      }
-      if (intval($row["fav"]) == 0) {
-        $sql = "DELETE FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
-        // echo $sql . "<BR>";
-        if ($conn->query($sql) === TRUE) {
->>>>>>> 1199d0994d8f8f6e50be4715bf48e3a0cc98ec96
+                    // stock is in fav_stocks
+                    $update_poll = "UPDATE fav_stocks SET notif_freq = '" .
+                        $row["poll_rate"] . "' WHERE stock_id = " .
+                        intval($row["id"]);
 
-        }
-        else {
-          echo "DISASTER: " . $conn->error . "<BR>";
-        }
-      }
-      else {
-        // First test existence
-        $exists = "SELECT stock_id FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
-        $res = $conn->query($exists);
+                    if ($conn->query($update_poll) !== TRUE) {
+                        echo "DISASTER: " . $conn->error . "<BR>";
+                    }
 
-        if ($res->num_rows > 0) {
-          // stock is in fav_stocks
-          $update_poll = "UPDATE fav_stocks SET notif_freq = '" .
-          $row["poll_rate"] . "' WHERE stock_id = " .
-          intval($row["id"]);
-          // echo $update_poll . "<BR>";
-          if ($conn->query($update_poll) === TRUE) {
+                } else {
 
-          }
-          else {
-            echo "DISASTER: " . $conn->error . "<BR>";
-          }
-        }
-        else {
-          // stock not yet in fav_stocks
-          insert_fav_stock_id($conn, intval($row["id"]), $row["poll_rate"]);
-        }
-      }
-    }
-  }
+                    // stock not yet in fav_stocks
+                    insert_fav_stock_id($conn, intval($row["id"]), $row["poll_rate"]);
 
-  if (array_key_exists("sectorList", $json_obj)) {
-    echo "SECTOR LIST EXISTS\n";
-    $sector_list = $json_obj["sectorList"];
-
-    foreach ($sector_list as $row) {
-
-        if ($row["fav"] == 0) {
-
-            $sql = "DELETE FROM fav_sectors WHERE sector_id = " . $row["id"];
-            $conn->query($sql);
-
-        } else {
-
-            // Test existence
-            $exists = "SELECT sector_id FROM fav_sectors WHERE sector_id = " . $row["id"];
-            $res = $conn->query($exists);
-
-            if (!$res)
-                trigger_error('Invalid query: ' . $conn->error);
-
-            if ($res->num_rows <= 0) {
-
-                // sector not yet in fav_stock
-                insert_fav_sector_id($conn, $row["id"]);
-
+                }
             }
         }
     }
-  }
+
+    if (array_key_exists("sectorList", $json_obj)) {
+
+        $sector_list = $json_obj["sectorList"];
+
+        foreach ($sector_list as $row) {
+
+            if ($row["fav"] == 0) {
+
+                $sql = "DELETE FROM fav_sectors WHERE sector_id = " . $row["id"];
+                $conn->query($sql);
+
+            } else {
+
+                // Test existence
+                $exists = "SELECT sector_id FROM fav_sectors WHERE sector_id = " . $row["id"];
+                $res = $conn->query($exists);
+
+                if (!$res)
+                    trigger_error('Invalid query: ' . $conn->error);
+
+                if ($res->num_rows <= 0) {
+
+                    // sector not yet in fav_stock
+                    insert_fav_sector_id($conn, $row["id"]);
+
+                }
+            }
+        }
+    }
 
 }
 
@@ -829,7 +801,7 @@ function suggest_query($conn) {
     // Weight function w: F x D -> N ; w(f,d) = f / (1 + CURDATE() - d)
     // Higher weight is better
 
-    $sql = "SELECT query_id, intent, entity FROM queries AS t1 NATURAL JOIN (SELECT query_id, (frequency / (1 + CURDATE() - last_asked)) AS weight FROM history) as t2 ORDER BY t2.weight DESC LIMIT 5";
+    $sql = "SELECT query_id, query_str, intent, entity FROM queries AS t1 NATURAL JOIN (SELECT query_id, (frequency / (1 + CURDATE() - last_asked)) AS weight FROM history) as t2 ORDER BY t2.weight DESC LIMIT 5";
 
     $suggested = array();
 
@@ -1050,11 +1022,3 @@ function get_corrections($conn, $word, $type) {
 
     return $distinct;
 }
-
-//call spellcheck
-//    call diaoogcheck -> true / false
-//    if flase -> scan history
-//        substring match
-//        find closest match
-//
-//        check 
