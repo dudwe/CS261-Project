@@ -1,5 +1,9 @@
 "use strict"; //Strict Mode.
 
+/*TODO 3. fav performance formatting
+  TODO 4. suggestions to add favs*/
+
+
 $(document).ready(function() {
   $(".button-collapse").sideNav();
   $('.modal').modal();
@@ -81,6 +85,7 @@ $(document).ready(function() {
 
     $("#query").focus(); //Puts focus on the query input.
     pollRSS(); //Initial RSS Ping.
+    getNonFav();
   }
 
 /*----------------------------------------------------------------------------*/
@@ -626,6 +631,29 @@ $(document).ready(function() {
         var newsRow = getNewsDisplay(data);
         displayResponseList(timestamp, [speechRow, newsRow], "poll-border", "chat-response poll-response");
         scrollToChatBottom();
+      }
+    });
+  }
+
+
+  function getNonFav() {
+    $.ajax({
+      url: "../Database/scripts/get_nonfaves.php",
+      data: null,
+      method: "POST",
+      timeout: timeout,
+      error: function(xhr, ajaxOptions, thrownError) {
+        console.log("No response from server for Get Non-Favs.");
+      },
+      success: function(data) {
+        console.log("GET NON-FAVES");
+        console.log(data);
+        //data = JSON.parse(data);
+        /*var date = new Date();
+        var timestamp = getFormattedDate(date.toUTCString());
+        var speechRow = getSpeechDisplay("Suggested Non-Favourite Track");
+        displayResponseList(timestamp, [speechRow], "poll-border", "chat-response poll-response");
+        scrollToChatBottom();*/
       }
     });
   }
@@ -1188,7 +1216,7 @@ $(document).ready(function() {
         newsRow = getNewsDisplay(json.news);
         displayResponseList(timestamp, [speechRow, stockTable, infoRow, buyOrSellRow, newsRow], "right-border", "chat-response");
         break;
-      case "Default Fallback Intent": //TODO
+      case "Default Fallback Intent":
         if (dataset != null) {
           speechRow = getSpeechDisplay(speech);
           var speechRow2 = getSpeechDisplay("Did you mean?: " + dataset);
