@@ -595,7 +595,7 @@ function update_last_ping_sector($conn, $sector_id) {
 
 }
 
-function update_recommendations($conn, $json) {
+function get_recommendations($conn, $json) {
 
     // TODO
     include_once("../ParsingAndProcessing/getBuyOrSell.php");

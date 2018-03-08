@@ -568,7 +568,7 @@ $(document).ready(function() {
 
     //Sends the notification requests to the server.
     $.ajax({
-      url: "../ParsingAndProcessing/getNotifications.php", //TODO
+      url: "../Database/scripts/get_notifications.php"
       data: {companyList: companyList},
       method: "POST",
       timeout: timeout,
