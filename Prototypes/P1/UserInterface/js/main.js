@@ -19,7 +19,7 @@ $(document).ready(function() {
 
   var pollMin = 1000 * 60; //1 minute in Milliseconds.
   var pingRSS = window.setInterval(pollRSS, pollMin * 60); //Hourly RSS ping.
-  var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 5); //5 Mins => 5 Mins
+  var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 0.1); //5 Mins => 5 Mins
   var poll15Min = window.setInterval(pollNotifications.bind(null, "15 Minutes"), pollMin * 7.5); //15 Mins => 7.5 Mins
   var pollHour = window.setInterval(pollNotifications.bind(null, "1 Hour"), pollMin * 20); //1 Hour => 15 Mins
   var pollDay = window.setInterval(pollNotifications.bind(null, "1 Day"), pollMin * 60 * 3); //1 Day => 3 Hour
@@ -565,13 +565,15 @@ $(document).ready(function() {
     //Doesn't send AJAX request if no companies need polling.
     if (companyList.length === 0) { return; }
 
+    var sendData = {"sendData": {"companyList": companyList}};
+
     console.log("SEND NOTIFICATIONS (TIME: " + pollTimeText + ")");
-    console.log(companyList);
+    console.log(sendData);
 
     //Sends the notification requests to the server.
     $.ajax({
       url: "../Database/scripts/get_notifications.php",
-      data: {companyList: companyList},
+      data: sendData,
       method: "POST",
       timeout: timeout,
       error: function(xhr, ajaxOptions, thrownError) {
