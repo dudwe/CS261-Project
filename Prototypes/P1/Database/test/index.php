@@ -33,7 +33,7 @@ $data = array(
         array(
             "id" => 1,
             "fav" => 1,
-            "poll_rate" => "10 Minutes"
+            "poll_rate" => "15 Minutes"
         ),
         array(
             "id" => 2,
@@ -59,8 +59,6 @@ $data = array(
 );
 
 $json = json_encode($data);
-
-//echo $json . "<BR>";
 
 include "../interface.php";
 

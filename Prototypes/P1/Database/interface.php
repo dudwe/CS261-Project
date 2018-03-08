@@ -640,7 +640,7 @@ function get_faves($conn) {
     $sector_list = array();
 
     // Returns all stocks, with a 1 in column 'fav' if stock is in fav_stocks, 0 otherwise
-    $sql = "SELECT stock_id AS sid, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav, IF (stock_id IN (SELECT stock_id FROM fav_stocks),(SELECT notif_freq FROM fav_stocks WHERE stock_id = sid), 'null') AS poll_rate FROM stocks";
+    $sql = "SELECT stock_id AS sid, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav, IF (stock_id IN (SELECT stock_id FROM fav_stocks),(SELECT notif_freq FROM fav_stocks WHERE stock_id = sid), 'Not Selected') AS poll_rate FROM stocks";
     // $sql = "SELECT stock_id, ticker_symbol, stock_name, IF (stock_id IN (SELECT stock_id FROM fav_stocks), 1, 0) AS fav FROM stocks";
 
     $res = $conn->query($sql);
@@ -659,10 +659,6 @@ function get_faves($conn) {
     // $sql = "SELECT sector_id, sector_name, IF (sector_id IN (SELECT sector_id FROM fav_sectors), 1, 0) AS fav FROM sectors";
 
     $res = $conn->query($sql);
-
-    if (!$res)
-        trigger_error('Invalid query: ' . $conn->error);
-
 
     while ($row = $res->fetch_assoc()) {
         $sector_list[] = array(
@@ -701,6 +697,7 @@ function get_scrape_url($conn, $entity) {
 function update_fav_tables($conn, $json_obj) {
 
     $fav_list = json_decode($json_obj, TRUE);
+    var_dump($fav_list);
 
     $stock_list = $fav_list["companyList"];
     $sector_list = $fav_list["sectorList"];
@@ -708,15 +705,23 @@ function update_fav_tables($conn, $json_obj) {
     // ID, FAV, POLLRATE
     foreach ($stock_list as $row) {
 
-        if ($row["fav"] == 0) {
+        if (is_numeric($row["id"]))
+            echo "ROW ID IS NUMERIC<BR>";
 
-            $sql = "DELETE FROM fav_stocks WHERE stock_id = " . $row["id"];
-            $conn->query($sql);
+        if (intval($row["fav"]) == 0) {
+
+            $sql = "DELETE FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
+            // echo $sql . "<BR>";
+            if ($conn->query($sql) === TRUE) {
+
+            } else {
+                echo "DISASTER: " . $conn->error . "<BR>";
+            }
 
         } else {
 
             // First test existence
-            $exists = "SELECT stock_id FROM fav_stocks WHERE stock_id = " . $row["id"];
+            $exists = "SELECT stock_id FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
 
             $res = $conn->query($exists);
 
@@ -725,14 +730,19 @@ function update_fav_tables($conn, $json_obj) {
                 // stock is in fav_stocks
                 $update_poll = "UPDATE fav_stocks SET notif_freq = '" . 
                     $row["poll_rate"] . "' WHERE stock_id = " . 
-                    $row["id"];
+                    intval($row["id"]);
 
-                $conn->query($update_poll);
+                // echo $update_poll . "<BR>";
+                if ($conn->query($update_poll) === TRUE) {
+
+                } else {
+                    echo "DISASTER: " . $conn->error . "<BR>";
+                }
 
             } else {
 
                 // stock not yet in fav_stocks
-                insert_fav_stock_id($conn, $row["id"], $row["poll_rate"]);
+                insert_fav_stock_id($conn, intval($row["id"]), $row["poll_rate"]);
 
             }
 
