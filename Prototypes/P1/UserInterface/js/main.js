@@ -1189,7 +1189,7 @@ $(document).ready(function() {
         displayResponseList(timestamp, [speechRow, stockTable, infoRow, buyOrSellRow, newsRow], "right-border", "chat-response");
         break;
       case "Default Fallback Intent": //TODO
-        if (dataset != "") {
+        if (dataset != null) {
           speechRow = getSpeechDisplay(speech);
           var speechRow2 = getSpeechDisplay("Did you mean?: " + dataset);
           displayErrorReponseList(timestamp, [speechRow, speechRow2]);
