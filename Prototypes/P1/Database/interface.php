@@ -696,80 +696,84 @@ function get_scrape_url($conn, $entity) {
 /* Update entries in fav_stocks and fav_sectors */
 function update_fav_tables($conn, $json_obj) {
 
-  if (array_key_exists("companyList", $json_obj)) {
-    echo "COMPANY LIST EXISTS\n";
-    $stock_list = $json_obj["companyList"];
+    if (array_key_exists("companyList", $json_obj)) {
 
-    // ID, FAV, POLLRATE
-    foreach ($stock_list as $row) {
-      if (is_numeric($row["id"])) {
-        echo "ROW ID IS NUMERIC<BR>";
-      }
-      if (intval($row["fav"]) == 0) {
-        $sql = "DELETE FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
-        // echo $sql . "<BR>";
-        if ($conn->query($sql) === TRUE) {
+        echo "COMPANY LIST EXISTS\n";
+        $stock_list = $json_obj["companyList"];
 
-        }
-        else {
-          echo "DISASTER: " . $conn->error . "<BR>";
-        }
-      }
-      else {
-        // First test existence
-        $exists = "SELECT stock_id FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
-        $res = $conn->query($exists);
+        // ID, FAV, POLLRATE
+        foreach ($stock_list as $row) {
 
-        if ($res->num_rows > 0) {
-          // stock is in fav_stocks
-          $update_poll = "UPDATE fav_stocks SET notif_freq = '" .
-          $row["poll_rate"] . "' WHERE stock_id = " .
-          intval($row["id"]);
-          // echo $update_poll . "<BR>";
-          if ($conn->query($update_poll) === TRUE) {
+            if (is_numeric($row["id"])) {
+                echo "ROW ID IS NUMERIC<BR>";
+            }
 
-          }
-          else {
-            echo "DISASTER: " . $conn->error . "<BR>";
-          }
-        }
-        else {
-          // stock not yet in fav_stocks
-          insert_fav_stock_id($conn, intval($row["id"]), $row["poll_rate"]);
-        }
-      }
-    }
-  }
+            if (intval($row["fav"]) == 0) {
 
-  if (array_key_exists("sectorList", $json_obj)) {
-    echo "SECTOR LIST EXISTS\n";
-    $sector_list = $json_obj["sectorList"];
+                $sql = "DELETE FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
 
-    foreach ($sector_list as $row) {
+                if ($conn->query($sql) === TRUE) {
 
-        if ($row["fav"] == 0) {
+                } else {
+                    echo "DISASTER: " . $conn->error . "<BR>";
+                }
 
-            $sql = "DELETE FROM fav_sectors WHERE sector_id = " . $row["id"];
-            $conn->query($sql);
+            } else {
 
-        } else {
+                // First test existence
+                $exists = "SELECT stock_id FROM fav_stocks WHERE stock_id = " . intval($row["id"]);
+                $res = $conn->query($exists);
 
-            // Test existence
-            $exists = "SELECT sector_id FROM fav_sectors WHERE sector_id = " . $row["id"];
-            $res = $conn->query($exists);
+                if ($res->num_rows > 0) {
 
-            if (!$res)
-                trigger_error('Invalid query: ' . $conn->error);
+                    // stock is in fav_stocks
+                    $update_poll = "UPDATE fav_stocks SET notif_freq = '" .
+                        $row["poll_rate"] . "' WHERE stock_id = " .
+                        intval($row["id"]);
 
-            if ($res->num_rows <= 0) {
+                    if ($conn->query($update_poll) !== TRUE) {
+                        echo "DISASTER: " . $conn->error . "<BR>";
+                    }
 
-                // sector not yet in fav_stock
-                insert_fav_sector_id($conn, $row["id"]);
+                } else {
 
+                    // stock not yet in fav_stocks
+                    insert_fav_stock_id($conn, intval($row["id"]), $row["poll_rate"]);
+
+                }
             }
         }
     }
-  }
+
+    if (array_key_exists("sectorList", $json_obj)) {
+        echo "SECTOR LIST EXISTS\n";
+        $sector_list = $json_obj["sectorList"];
+
+        foreach ($sector_list as $row) {
+
+            if ($row["fav"] == 0) {
+
+                $sql = "DELETE FROM fav_sectors WHERE sector_id = " . $row["id"];
+                $conn->query($sql);
+
+            } else {
+
+                // Test existence
+                $exists = "SELECT sector_id FROM fav_sectors WHERE sector_id = " . $row["id"];
+                $res = $conn->query($exists);
+
+                if (!$res)
+                    trigger_error('Invalid query: ' . $conn->error);
+
+                if ($res->num_rows <= 0) {
+
+                    // sector not yet in fav_stock
+                    insert_fav_sector_id($conn, $row["id"]);
+
+                }
+            }
+        }
+    }
 
 }
 
