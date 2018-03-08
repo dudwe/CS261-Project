@@ -14,7 +14,7 @@ function  db_connection() {
 
     static $conn;
 
-    if ($conn === NULL){
+    if ($conn === NULL) {
 
         // Use the global variables as defined in globalvars.php
         global $server, $user, $password, $database;
@@ -637,6 +637,29 @@ function get_recommendations($conn, $json) {
     }
 
     return json_encode($new_recommendations);
+
+}
+
+function correct_query($conn, $query_str) {
+
+    $sql = "SELECT query_str FROM queries";
+    $res = $conn->query($sql);
+
+    $max_perc = 0.0;
+    $best_str = "";
+
+    while ($row = $res->fetch_assoc()) {
+
+        $target = $row["query_str"];
+
+        if (similar_text($query_str, $target, $perc) > $max_perc) {
+            $max_perc = $perc;
+            $best_str = $target;
+        }
+
+    }
+
+    return $best_str;
 
 }
 

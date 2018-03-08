@@ -10,12 +10,17 @@ $dict_link = dict_init();
 
 if ($conn === TRUE) 
 
-    echo "connection established";
-    //SET @@global.sql_mode= 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'; run if fails to populate in terminal
-    //reset tables
-    echo drop_tables($conn);
-    echo create_tables($conn);
-    echo populate_sectors($conn);
-    echo populate_stocks($conn);
+    reset_db($conn);
+    $conn = db_connection();
+
+}
+
+    // echo "connection established";
+    // //SET @@global.sql_mode= 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'; run if fails to populate in terminal
+    // //reset tables
+    // echo drop_tables($conn);
+    // echo create_tables($conn);
+    // echo populate_sectors($conn);
+    // echo populate_stocks($conn);
 
 ?>
