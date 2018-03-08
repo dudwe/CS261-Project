@@ -1219,7 +1219,7 @@ $(document).ready(function() {
 
   //Error called if JSON is malformed or cannot identify intent.
   function fallBackError(timestamp) {
-    var error = "Could not understand response.";
+    var error = "Could not understand query.";
     displayErrorResponse(timestamp, error);
     console.log(error);
     say(error); //Outputs the response using voice synthesis.
