@@ -172,7 +172,7 @@ function getIntent($jsonData){
             $dataArray=sectorRiseOrFall($stockId,$timeframe);
             break;
         default:
-            echo "error";
+            //echo "error";
             $error=1;
             //$stockId="Error";
             break;

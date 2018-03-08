@@ -14,7 +14,7 @@ function errorCorrect($string){
     $text=$html->find('div[id="did_you_mean"]',0)->find('a',0)->innertext;
     $text=str_replace("</b>"," ",$text);
     $text=str_replace("<b>"," ",$text);
-    echo $text;
+    //echo $text;
     //echo $href;
     
     //$html->find('d')

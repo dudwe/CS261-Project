@@ -28,7 +28,7 @@ ini_set('display_errors', '1');
     }
 
         /*Debug method for working without the UI*/
-        /*$query = "what is the spot price of barclays?";
+        /*$query = "Wat is teh purcentag cangee of brclas?";
         try {
             $client = new Client('f4bc3c425f1c4e6b9c52f21493decb19');
             $queryApi = new QueryApi($client);
@@ -39,9 +39,9 @@ ini_set('display_errors', '1');
             ]);
             $response = new Query($meaning);
 
-            echo $response->getResult()->getFulfillment()->getSpeech();
+            //echo $response->getResult()->getFulfillment()->getSpeech();
         } catch (\Exception $error) {
-            echo $error->getMessage();
+           // echo $error->getMessage();
         }
         getIntent($response);*/
 ?>
