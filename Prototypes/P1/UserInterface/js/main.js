@@ -199,6 +199,14 @@ $(document).ready(function() {
     $(".chat-response-error:last > p").text(response);
   }
 
+  function displayErrorReponseList(timestamp, response) {
+    displayChatTemplate(timestamp, "right-border-error", "timestamp--right", "chat-response-error", "<p></p>", "Received: ");
+    for (var i = 0; i < response.length; i++) {
+      var responseRow = $("<div></div>").addClass("row chat-response-row").append(response[i]);
+      $(".chat-response-error:last > p").append(responseRow);
+    }
+  }
+
   //Adds a new text reponse to the chat window.
   function displayGraphResponse(timestamp, response) {
     displayChatTemplate(timestamp, "right-border", "timestamp--right", "chat-response", "<p></p><canvas class='response-graph'></canvas>", "Received: ");
@@ -1143,9 +1151,6 @@ $(document).ready(function() {
         }
         displayResponseList(timestamp, responseList, "right-border", "chat-response");
         break;
-      case "Input Error": //TODO
-        displayErrorResponse(timestamp, speech);
-        break;
       case "get_stock_summary":
         speech = "Here is a summary for " + stock;
         speechRow = getSpeechDisplay(speech);
@@ -1165,7 +1170,7 @@ $(document).ready(function() {
         newsRow = getNewsDisplay(json.news);
         displayResponseList(timestamp, [speechRow, stockTable, infoRow, newsRow], "right-border", "chat-response");
         break;
-      case "get_sector_summary": //TODO
+      case "get_sector_summary":
         speech = "Here is a summary for " + stock;
         speechRow = getSpeechDisplay(speech);
         stockTable = getStockDisplay(stock, dataset.SharePrice, dataset.PointChange, dataset.PercentChange);
@@ -1179,14 +1184,21 @@ $(document).ready(function() {
           {info: "High", value: dataset.High},
           {info: "Open", value: dataset.Open},
           {info: "Close", value: dataset.Close}
-          //{info: "Volume", value: dataset.Volume},
         ]);
         newsRow = getNewsDisplay(json.news);
         displayResponseList(timestamp, [speechRow, stockTable, infoRow, buyOrSellRow, newsRow], "right-border", "chat-response");
         break;
       case "Default Fallback Intent": //TODO
+        if (dataset != "") {
+          speechRow = getSpeechDisplay(speech);
+          var speechRow2 = getSpeechDisplay("Did you mean?: " + dataset);
+          displayErrorReponseList(timestamp, [speechRow, speechRow2]);
+        }
+        else {
+          displayErrorResponse(timestamp, speech);
+        }
         break;
-      default: //TODO
+      default:
         fallBackError(timestamp);
         return;
     }

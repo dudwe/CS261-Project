@@ -111,6 +111,16 @@ nav {
   border-bottom-color: #ce93d8!important;
 }
 
+.chat-response-error > p > .chat-response-row {
+  border-bottom-color: #ef9a9a!important;
+}
+
+.chat-response-error > p > .chat-response-row:last-child {
+  margin-bottom: 0!important;
+  padding-bottom: 0em!important;
+  border-bottom: none!important;
+}
+
 .chat-response p .chat-response-row:last-child {
   margin-bottom: 0!important;
   padding-bottom: 0em!important;
