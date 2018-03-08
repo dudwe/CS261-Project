@@ -648,13 +648,21 @@ function correct_query($conn, $query_str) {
     $max_perc = 0.0;
     $best_str = "";
 
+    $suggested = array();
+
     while ($row = $res->fetch_assoc()) {
 
         $target = $row["query_str"];
 
-        if (similar_text($query_str, $target, $perc) > $max_perc) {
+        similar_text($query_str, $target, $perc);
+
+        if ($perc > $max_perc) {
             $max_perc = $perc;
             $best_str = $target;
+        }
+
+        if ($perc >= 0.75) {
+            $suggested[] = $query_str;
         }
 
     }
