@@ -5,19 +5,22 @@ include_once('../ParsingAndProcessing/simple_html_dom.php');
 include_once('../ParsingAndProcessing/dlPage.php');
 ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 
-errorCorrect("wht is teh vlume of barcays");
+//verrorCorrect("wht is teh vlume of barcays");
 function errorCorrect($string){
     $string=str_replace(" ","+",$string);
     $html = (dlPage('https://duckduckgo.com/?q='.$string));
     //var_dump($html);
     //$temp =$html->find('div[id="did_you_mean"]',0)->find('div[class="msg__wrap"]',0)->find('span[class="msg__line"]',1);
-    $href=$html->find('div[id="did_you_mean"]',0)->find('a',0)->href;
-    //echo $href."</br>";
-    $href=str_replace("/html/?q=","",$href);
-    $href=str_replace("%20"," ",$href);
-    $href=str_replace("%22"," ",$href);
+    $text=$html->find('div[id="did_you_mean"]',0)->find('a',0)->innertext;
+    $text=str_replace("</b>"," ",$text);
+    $text=str_replace("<b>"," ",$text);
+    echo $text;
     //echo $href;
-    return $href;
+    
+    //$html->find('d')
+    
+    
+    return $text;
 }
 /*foreach($html->find('div[id="did_you_mean"]') as $block){
     //echo "fopund it"; 

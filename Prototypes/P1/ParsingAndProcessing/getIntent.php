@@ -8,6 +8,7 @@ include_once('getSector.php');
 include_once('rss.php');
 include_once('getBuyOrSell.php');
 include_once('../Database/interface.php');
+include_once('../Database/errorHandle.php');
 include_once('dlPage.php');
 include_once('genericstock.php');
 include_once('currconvert.php');
@@ -181,6 +182,7 @@ function getIntent($jsonData){
             $conn=db_connection();
             insert_query($conn, $queryString, $intent, $stockId);
         }else{
+            $dataArray=errorHandle($queryString);
         }
     }else{
 
