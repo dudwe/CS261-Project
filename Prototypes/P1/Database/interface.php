@@ -602,7 +602,7 @@ function get_recommendations($conn, $json) {
 
     $new_recommendations = array();
 
-    if (!array_key_exists("companyList". $json)) {
+    if (!array_key_exists("companyList", $json)) {
       return;
     }
     $companies = $json["companyList"];
