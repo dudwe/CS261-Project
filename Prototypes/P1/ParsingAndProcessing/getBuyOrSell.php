@@ -12,6 +12,7 @@ include_once('dlPage.php');
 function getBuyOrSell($stockId,$time){
     /*read into the database to get the relevant url from investing.com*/
     $conn= db_connection();
+
     $url = get_scrape_url($conn,$stockId);
     if (stripos($time,'15m') !== false){
         $columnNumbers = 2;
