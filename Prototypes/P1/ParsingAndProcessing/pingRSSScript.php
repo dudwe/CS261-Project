@@ -51,7 +51,7 @@ function filteredRSS($search){
     foreach ($rss->getElementsByTagName('item') as $node) {
         //var_dump($node);
         //echo timedif($node->getElementsByTagName('pubDate')->item(0)->nodeValue,$currenttime);
-        if(timedif($node->getElementsByTagName('pubDate')->item(0)->nodeValue,$currenttime)<=60){
+        if(timedif($node->getElementsByTagName('pubDate')->item(0)->nodeValue,$currenttime)<=60000){
             $tmp= $node->getElementsByTagName('title')->item(0)->nodeValue;
             $tempArray = explode(" ",$tmp);
             if (!in_array("Form",$tempArray)){
