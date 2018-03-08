@@ -435,8 +435,6 @@ $(document).ready(function() {
         console.log("(ERROR) Save Favourites");
       },
       success: function(data) {
-        console.log("SAVE FAVOURITES RESPONSE");
-        console.log(data);
         Materialize.Toast.removeAll(); //Remove all current toast notifications.
         Materialize.toast("Saved favourites.", 2000, "rounded");
         console.log("(SUCCESS) Save Favourites");
@@ -570,7 +568,7 @@ $(document).ready(function() {
 
     //Sends the notification requests to the server.
     $.ajax({
-      url: "../ParsingAndProcessing/getNotifications.php", //TODO
+      url: "../Database/scripts/get_notifications.php",
       data: {companyList: companyList},
       method: "POST",
       timeout: timeout,
