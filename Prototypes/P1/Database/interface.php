@@ -390,7 +390,7 @@ function reset_db($conn) {
 
 function drop_tables($conn) {
 
-    $sql = "DROP TABLE fav_sectors, fav_stocks, history, queries, stocks, sectors";
+    $sql = "DROP TABLE last_pinged_stocks, last_pinged_sectors, fav_sectors, fav_stocks, history, queries, stocks, sectors";
 
     if ($conn->multi_query($sql) === TRUE) {
         return 1;
@@ -665,6 +665,7 @@ function get_faves($conn) {
             "fav" => $row["fav"],
             "poll_rate" => $row["poll_rate"]
         );
+
     }
 
     // Returns all sectors, with a 1 in column 'fav' if sector is in fav_sectors, 0 otherwise
