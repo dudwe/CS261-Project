@@ -15,6 +15,7 @@ include_once('getChange.php');
 include_once('fastscrape.php');
 include_once('sectorRiseOrFall.php');
 include_once('pingRSSScript.php');
+include_once('favBuyOrSell.php');
 function getIntent($jsonData){
 
     /*Parse Json*/
@@ -92,7 +93,7 @@ function getIntent($jsonData){
     $dataArray=array();
     $error=0;
     $conn = db_connection();
-    $complextIntent=array('get_stock_performance','get_news','get_sector_rising_or_falling','get_sector_performance','get_buy_or_sell','get_intent_conversion','suggest_query','get_stock_summary','get_currency_conversion','get_favourites_news','get_sector_summary','Default Fallback Intent');
+    $complextIntent=array('get_stock_performance','get_news','get_sector_rising_or_falling','get_sector_performance','get_buy_or_sell','get_intent_conversion','suggest_query','get_stock_summary','get_currency_conversion','get_favourites_news','get_favourites','get_sector_summary','Default Fallback Intent');
     if(in_array($intent,$complextIntent) or stripos($intent,"Error")){
         switch ($intent) {
         // and 
@@ -124,8 +125,8 @@ function getIntent($jsonData){
         case "get_favourites_news":
             $dataArray=pingRSS();
             break;     
-        case "get_favourites_performance":
-            $dataArray=pingRSS();
+        case "get_favourites":
+            $dataArray=favBuyOrSell();
             break;            
         case "get_intent_conversion":
             $dataArray=getDataStockGeneric($intentConvert,$stockId);
