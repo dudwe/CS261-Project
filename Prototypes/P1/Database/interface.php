@@ -14,7 +14,7 @@ function  db_connection() {
 
     static $conn;
 
-    if ($conn === NULL){
+    if ($conn === NULL) {
 
         // Use the global variables as defined in globalvars.php
         global $server, $user, $password, $database;
@@ -390,7 +390,7 @@ function reset_db($conn) {
 
 function drop_tables($conn) {
 
-    $sql = "DROP TABLE fav_sectors, fav_stocks, history, queries, stocks, sectors";
+    $sql = "DROP TABLE last_pinged_stocks, last_pinged_sectors, fav_sectors, fav_stocks, history, queries, stocks, sectors";
 
     if ($conn->multi_query($sql) === TRUE) {
         return 1;
@@ -631,12 +631,43 @@ function get_recommendations($conn, $json) {
         $row = $res->fetch_assoc();
         if (strcmp(strtolower($row["recommendation"]), $buysell) != 0) {
             update_last_ping_stock($conn, $c["id"]);
-            $companies[] = $c["id"];
+            $new_recommendations[] = $c["id"];
         }
 
     }
 
     return json_encode($new_recommendations);
+
+}
+
+function correct_query($conn, $query_str) {
+
+    $sql = "SELECT query_str FROM queries";
+    $res = $conn->query($sql);
+
+    $max_perc = 0.0;
+    $best_str = "";
+
+    $suggested = array();
+
+    while ($row = $res->fetch_assoc()) {
+
+        $target = $row["query_str"];
+
+        similar_text($query_str, $target, $perc);
+
+        if ($perc > $max_perc) {
+            $max_perc = $perc;
+            $best_str = $target;
+        }
+
+        if ($perc >= 0.75) {
+            $suggested[] = $query_str;
+        }
+
+    }
+
+    return $best_str;
 
 }
 
@@ -665,6 +696,7 @@ function get_faves($conn) {
             "fav" => $row["fav"],
             "poll_rate" => $row["poll_rate"]
         );
+
     }
 
     // Returns all sectors, with a 1 in column 'fav' if sector is in fav_sectors, 0 otherwise
