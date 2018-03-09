@@ -603,7 +603,7 @@ function get_recommendations($conn, $json) {
     $new_recommendations = array();
 
     if (!array_key_exists("companyList", $json)) {
-      return;
+        return;
     }
     $companies = $json["companyList"];
 
@@ -853,20 +853,20 @@ function suggest_query($conn) {
                 "tracked" => ($fav_res->num_rows > 0) ? "tracked" : "untracked"
             );
 
-            array_push($suggested, $suggestion);
+            $suggested[] = $suggestion;
 
         }
 
     }
 
-    return $suggested;
+    return json_encode($suggested);
 
 }
 
 function get_nonfaves($conn) {
 
     // $sql = "SELECT stock_id, ticker_symbol, stock_name FROM stocks WHERE stock_id NOT IN (SELECT stock_id FROM fav_stocks) ORDER BY stock_id";
-    $sql = "SELECT stock_name FROM stocks WHERE stock_name NOT IN (SELECT entity FROM queries) AND stock_id NOT IN (SELECT stock_id FROM stocks)";
+    $sql = "SELECT stock_name FROM stocks WHERE stock_name IN (SELECT entity FROM queries) AND stock_id NOT IN (SELECT stock_id FROM fav_stocks)";
     $res = $conn->query($sql);
 
     $nonfaves = array();
@@ -907,20 +907,23 @@ function learn_sectors($conn) {
 }
 
 /* Suggest stocks to track based on the sectors learned */
-function suggest_stock_track($conn, $sectors) {
+function suggest_stock_track($conn) {
+
+    $suggested = array();
+    $sectors = learn_sectors($conn);
 
     foreach ($sectors as $s) {
 
+        $sql = "SELECT stock_name FROM stocks WHERE sector_id = " . $s;
+        $res = $conn->query($sql);
+
+        while ($row = fetch_assoc()) {
+            $suggested[] = $row["stock_name"];
+        }
+
     }
 
-}
-
-// TODO: this
-/* Return 3 stocks they do not currently track based on which sectors they track */
-function learn_stocks($conn) {
-
-    $sql = "";
-
+    return json_encode($suggested);
 }
 
 // ==================================================================
@@ -932,16 +935,6 @@ function resolve_invalid_entity($conn, $entity) {
     return get_corrections($conn, $entity);
 
 }
-
-// TODO
-//      write up notes of final report for database
-//      finish learning
-//
-//      How are faves doing
-//      from faves in persons table, get fave and call get buy or sell, return data set
-//          BARC        BUY
-//          MRW         SELL
-//          etc...
 
 /**
  * @param: string $word - intent/entity to correct
