@@ -171,9 +171,9 @@ function create_fav_sectors($conn) {
 function create_last_pinged_stocks($conn) {
 
     $sql = "CREATE TABLE IF NOT EXISTS last_pinged_stocks (
-        stock_id        integer,
+        stock_id        integer UNIQUE,
         last_ping       DateTime,
-        recommendation  varchar(4),
+        recommendation  text(32),
         FOREIGN KEY (stock_id) REFERENCES stocks(stock_id) ON DELETE CASCADE
     )";
 
@@ -191,7 +191,7 @@ function create_last_pinged_sectors($conn) {
     $sql = "CREATE TABLE IF NOT EXISTS last_pinged_sectors (
         sector_id       integer,
         last_ping       DateTime,
-        recommendation  varchar(4),
+        recommendation  text(32),
         FOREIGN KEY (sector_id) REFERENCES sectors(sector_id) ON DELETE CASCADE
     )";
 
@@ -565,11 +565,11 @@ function insert_last_ping_sector($conn, $sector_id, $recommendation) {
 
 }
 
-function update_last_ping_stock($conn, $stock_id) {
+function update_last_ping_stock($conn, $stock_id, $recommendation) {
 
     $datetime = date("Y-m-s H:i:s");
 
-    $sql = "UPDATE last_pinged_stocks SET last_ping = '" . $datetime . "' WHERE stock_id = " . $stock_id;
+    $sql = "UPDATE last_pinged_stocks SET last_ping = '" . $datetime . "', recommendation = '" . $recommendation . "' WHERE stock_id = " . $stock_id;
 
     if ($conn->query($sql) === TRUE) {
         return 1;
@@ -605,25 +605,31 @@ function get_recommendations($conn, $json) {
         return;
     }
     $companies = $json["companyList"];
-
+    //var_dump($companies);
     foreach ($companies as $c) {
 
         $sql = "SELECT ticker_symbol FROM stocks WHERE stock_id = " . $c["id"];
         $res = $conn->query($sql);
-
         $row = $res->fetch_assoc();
-        $ticker = $row["ticker_symbol"];
 
-        if (strcmp($c["poll_rate"], "15 Minutes") == 0)
+        $ticker = $row["ticker_symbol"];
+        $sql2="select notif_freq from fav_stocks where stock_id='".$c["id"]."'";
+        $freq=$conn->query($sql2);
+        //var_dump($freq);
+        $freq=$freq->fetch_assoc();
+        //echo "Freq:   ".$freq['notif_freq'];
+
+        //echo $c["poll_rate"];
+        if (strcmp($freq['notif_freq'], "15 Minutes") == 0)
             $time = "15m";
-        else if (strcmp($c["poll_rate"], "1 Hour") == 0)
+        else if (strcmp($freq['notif_freq'], "1 Hour") == 0)
             $time = "1h";
-        else if (strcmp($c["poll_rate"], "24 Hours") == 0)
+        else if (strcmp($freq['notif_freq'], "24 Hours") == 0)
             $time = "1D";
         else
             $time = "5m";
 
-        $recommendations = getBuyOrSell($ticker, $time);
+        $recommendations = getBuyOrSellDb($ticker, $time);
         $buysell = strtolower($recommendations["Summary"]);
 
         $sql = "SELECT recommendation FROM last_pinged_stocks WHERE stock_id = " . $c["id"];
@@ -631,8 +637,18 @@ function get_recommendations($conn, $json) {
 
         $row = $res->fetch_assoc();
         if (strcmp(strtolower($row["recommendation"]), $buysell) != 0) {
-            update_last_ping_stock($conn, $c["id"]);
-            $new_recommendations[] = $c["id"];
+            // echo $row["recommendation"] .$buysell;
+            insert_last_ping_stock($conn, $c["id"], $buysell);
+            update_last_ping_stock($conn, $c["id"], $buysell);
+            $objOutput = new stdClass();
+            $objOutput->stockid=$ticker;
+            $objOutput->buyOrSell=$buysell;
+            array_push($new_recommendations,$objOutput);
+        } else {
+            $objOutput = new stdClass();
+            $objOutput->stockid=$ticker;
+            $objOutput->buyOrSell=$buysell;
+            array_push($new_recommendations,$objOutput);
         }
 
     }
@@ -640,6 +656,54 @@ function get_recommendations($conn, $json) {
     return json_encode($new_recommendations);
 
 }
+
+// function get_recommendations($conn, $json) {
+// 
+//     include_once(__dir__.'/../ParsingAndProcessing/getBuyOrSell.php');
+// 
+//     $new_recommendations = array();
+// 
+//     if (!array_key_exists("companyList", $json)) {
+//         return;
+//     }
+// 
+//     $data = json_decode($json, TRUE);
+//     $companies = $data["companyList"];
+// 
+//     foreach ($companies as $c) {
+// 
+//         $sql = "SELECT ticker_symbol FROM stocks WHERE stock_id = " . $c["id"];
+//         $res = $conn->query($sql);
+// 
+//         $row = $res->fetch_assoc();
+//         $ticker = $row["ticker_symbol"];
+// 
+//         if (strcmp($c["poll_rate"], "15 Minutes") === 0)
+//             $time = "15m";
+//         else if (strcmp($c["poll_rate"], "1 Hour") === 0)
+//             $time = "1h";
+//         else if (strcmp($c["poll_rate"], "24 Hours") === 0)
+//             $time = "1D";
+//         else
+//             $time = "5m";
+// 
+//         $recommendations = getBuyOrSell($ticker, $time);
+//         $buysell = strtolower($recommendations["Summary"]);
+// 
+//         $sql = "SELECT recommendation FROM last_pinged_stocks WHERE stock_id = " . $c["id"];
+//         $res = $conn->query($sql);
+// 
+//         $row = $res->fetch_assoc();
+//         if (strcmp(strtolower($row["recommendation"]), $buysell) != 0) {
+//             update_last_ping_stock($conn, $c["id"]);
+//             $new_recommendations[] = $c["id"];
+//         }
+// 
+//     }
+// 
+//     return json_encode($new_recommendations);
+// 
+// }
 
 function correct_query($conn, $query_str) {
 
