@@ -16,9 +16,9 @@ $(document).ready(function() {
   var speechEnabled = false; //Flag for if speech synthesis is enabled.
   var maxFavourites = 10; //Maximum number of favourites.
 
-  var pollMin = 1000 * 60; //1 minute in Milliseconds.
+  var pollMin = 1000 * 10; //1 minute in Milliseconds.
   var pingRSS = window.setInterval(pollRSS, pollMin * 60); //Hourly RSS ping.
-  var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 5); //5 Mins => 5 Mins
+  var poll5Min = window.setInterval(pollNotifications.bind(null, "5 Minutes"), pollMin * 1); //5 Mins => 5 Mins
   var poll15Min = window.setInterval(pollNotifications.bind(null, "15 Minutes"), pollMin * 7.5); //15 Mins => 7.5 Mins
   var pollHour = window.setInterval(pollNotifications.bind(null, "1 Hour"), pollMin * 20); //1 Hour => 15 Mins
   var pollDay = window.setInterval(pollNotifications.bind(null, "24 Hours"), pollMin * 180); //24 Hours => 3 Hour

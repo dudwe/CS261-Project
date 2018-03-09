@@ -635,21 +635,35 @@ function get_recommendations($conn, $json) {
         $sql = "SELECT recommendation FROM last_pinged_stocks WHERE stock_id = " . $c["id"];
         $res = $conn->query($sql);
 
-        $row = $res->fetch_assoc();
-        if (strcmp(strtolower($row["recommendation"]), $buysell) != 0) {
-            // echo $row["recommendation"] .$buysell;
-            insert_last_ping_stock($conn, $c["id"], $buysell);
-            update_last_ping_stock($conn, $c["id"], $buysell);
-            $objOutput = new stdClass();
-            $objOutput->stockid=$ticker;
-            $objOutput->buyOrSell=$buysell;
-            array_push($new_recommendations,$objOutput);
-        } else {
-            $objOutput = new stdClass();
-            $objOutput->stockid=$ticker;
-            $objOutput->buyOrSell=$buysell;
-            array_push($new_recommendations,$objOutput);
-        }
+         $row = $res->fetch_assoc();
+        // var_dump($row);
+        foreach($row as $r){
+            
+            // echo $r . "<br>";
+            if ($r != $buysell) {
+                // echo $row["recommendation"] .$buysell;
+                // insert_last_ping_stock($conn, $c["id"], $buysell);
+                //
+                if ($r == NULL) {
+                    insert_last_ping_stock($conn, $c["id"], $buysell);
+                } else {
+                    update_last_ping_stock($conn, $c["id"], $buysell);
+                }
+
+                $objOutput = new stdClass();
+                $objOutput->stockid=$ticker;
+                $objOutput->buyOrSell=$buysell;
+                array_push($new_recommendations,$objOutput);
+            } else {
+                $objOutput = new stdClass();
+                $objOutput->stockid=$ticker;
+                $objOutput->buyOrSell=$buysell;
+                array_push($new_recommendations,$objOutput);
+            }
+        } 
+
+
+        
 
     }
 
