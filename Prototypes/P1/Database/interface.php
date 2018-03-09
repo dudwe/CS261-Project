@@ -597,7 +597,7 @@ function update_last_ping_sector($conn, $sector_id) {
 
 function get_recommendations($conn, $json) {
 
-    include_once(__dir__.'/../ParsingAndProcessing/getBuyOrSell.php';);
+    include_once(__dir__.'/../ParsingAndProcessing/getBuyOrSell.php');
 
     $new_recommendations = array();
 
