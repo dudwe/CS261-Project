@@ -991,7 +991,7 @@ function suggest_stock_track($conn) {
 
     foreach ($sectors as $s) {
 
-        $sql = "SELECT stock_name FROM stocks WHERE sector_id = " . $s;
+        $sql = "SELECT stock_name FROM stocks WHERE sector_id = " . $s " AND stock_id NOT IN (SELECT stock_id FROM fav_stocks)";
         $res = $conn->query($sql);
 
         while ($row = fetch_assoc()) {
