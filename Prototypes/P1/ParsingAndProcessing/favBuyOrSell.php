@@ -11,17 +11,17 @@ function favBuyOrSell(){
     $array=array();
     foreach($res as $r){
         $objOutput = new stdClass();
-        $objOutput->tickerSymbol=$r['ticker_symbol'];
-        $objOutput->notifFreq=$r['notif_freq'];
-        $objOutput->buyOrSell=getBuyOrSell($r['ticker_symbol'],$r['notif_freq']);
+        $objOutput->tickerSymbol= strtolower($r['ticker_symbol']);
+        $objOutput->notifFreq = strtolower($r['notif_freq']);
+        $objOutput->buyOrSell = strtolower(getBuyOrSell($r['ticker_symbol'],$r['notif_freq']));
         array_push($array,$objOutput);
     }
     $res=$conn->query($sql2);
     foreach($res as $r){
         $objOutput = new stdClass();
-        $objOutput->tickerSymbol=$r['sector_name'];
-        $objOutput->notifFreq="";
-        $objOutput->buyOrSell=getBuyOrSell($r['sector_name'],"");
+        $objOutput->tickerSymbol = strtolower($r['sector_name']);
+        $objOutput->notifFreq = "";
+        $objOutput->buyOrSell = strtolower(getBuyOrSell($r['sector_name'],""));
         array_push($array,$objOutput);
     }
     //echo "returning: ";

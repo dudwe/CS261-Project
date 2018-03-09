@@ -43,9 +43,9 @@ function getBuyOrSellDb($ticker,$time){
     
     $alt= array();
     
-    $alt['MovingAverages']=$html->find('table[class="genTbl closedTbl technicalSummaryTbl"]',0)->find('tr',1)->find('td',$columnNumbers)->plaintext;
-    $alt['TechnicalIndicators']=$html->find('table[class="genTbl closedTbl technicalSummaryTbl"]',0)->find('tr',2)->find('td',$columnNumbers)->plaintext;
-    $alt['Summary']=$html->find('table[class="genTbl closedTbl technicalSummaryTbl"]',0)->find('tr',3)->find('td',$columnNumbers)->plaintext;
+    $alt['MovingAverages'] = strtolower($html->find('table[class="genTbl closedTbl technicalSummaryTbl"]',0)->find('tr',1)->find('td',$columnNumbers)->plaintext);
+    $alt['TechnicalIndicators'] = strtolower($html->find('table[class="genTbl closedTbl technicalSummaryTbl"]',0)->find('tr',2)->find('td',$columnNumbers)->plaintext);
+    $alt['Summary'] = strtolower($html->find('table[class="genTbl closedTbl technicalSummaryTbl"]',0)->find('tr',3)->find('td',$columnNumbers)->plaintext);
 
     return($alt);
 }
