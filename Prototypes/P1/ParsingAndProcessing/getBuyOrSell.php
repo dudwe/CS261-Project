@@ -3,7 +3,7 @@ include_once('simple_html_dom.php');
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
-include_once('../Database/interface.php');
+include_once(__dir__.'/../Database/interface.php');
 include_once('dlPage.php');
 
 /*Moving Averages Technical Indicators Summary*/
@@ -11,6 +11,7 @@ include_once('dlPage.php');
 //getBuyOrSell("BARC","");
 //print_r(getBuyOrSell('CCL', '5m'));
 function getBuyOrSell($ticker,$time){
+    //var_dunp($ticker);
     /*read into the database to get the relevant url from investing.com*/
     //echo "ticker: ". $ticker." time: ". $time;
     $conn= db_connection();
